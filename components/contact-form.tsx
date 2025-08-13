@@ -18,13 +18,18 @@ export default function ContactForm({ variant = "light" }: ContactFormProps) {
   const [state, setState] = useState<State | null>(null)
   const [submitted, setSubmitted] = useState(false)
 
-  // Inizializza EmailJS una sola volta sul client
+  // Inizializza EmailJS (key pubblica)
   useEffect(() => {
     const pk = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
     if (pk) {
       try {
         emailjs.init(pk)
-      } catch {}
+        // console.log("[ContactForm] emailjs.init OK")
+      } catch (e) {
+        console.error("[ContactForm] emailjs.init error:", e)
+      }
+    } else {
+      console.warn("[ContactForm] Public key mancante")
     }
   }, [])
 
@@ -55,10 +60,8 @@ export default function ContactForm({ variant = "light" }: ContactFormProps) {
     const formData = new FormData(form)
     const payload = Object.fromEntries(formData.entries())
 
-    // Honeypot anti-bot: se "company" è pieno, non inviamo
-    if (payload.company) {
-      return
-    }
+    // Honeypot anti-bot
+    if (payload.company) return
 
     // Campi obbligatori
     if (
@@ -77,6 +80,7 @@ export default function ContactForm({ variant = "light" }: ContactFormProps) {
       })
       return
     }
+
     if (!validPhone10(payload.phone)) {
       toast({
         title: "Numero non valido",
@@ -89,8 +93,7 @@ export default function ContactForm({ variant = "light" }: ContactFormProps) {
     setLoading(true)
     setState(null)
 
-    // Mappatura dei campi del form verso le VAR del tuo template EmailJS
-    // Il tuo template usa: {{name}}, {{email}}, {{phone}}, {{flight_number}}, {{flight_date}}, {{message}}
+    // Mappa verso le variabili del template EmailJS
     const templateParams = {
       name: String(payload.name || ""),
       email: String(payload.email || ""),
@@ -109,8 +112,12 @@ export default function ContactForm({ variant = "light" }: ContactFormProps) {
         throw new Error("EmailJS non è configurato (mancano le variabili).")
       }
 
-      // Invio diretto via EmailJS (niente /api)
-      await emailjs.send(serviceId, templateId, templateParams)
+      console.log("[ContactForm] service:", serviceId, "template:", templateId)
+      console.log("[ContactForm] sending params:", templateParams)
+
+      // Passo anche la public key a send per massima compatibilità
+      const result = await emailjs.send(serviceId, templateId, templateParams, publicKey)
+      console.log("[ContactForm] emailjs result:", result?.status, result?.text)
 
       setState({ ok: true, message: "Richiesta inviata con successo." })
       setSubmitted(true)
@@ -120,6 +127,7 @@ export default function ContactForm({ variant = "light" }: ContactFormProps) {
       } catch {}
       form.reset()
     } catch (err: any) {
+      console.error("[ContactForm] emailjs error:", err)
       setState({ ok: false, message: err?.message || "Invio non riuscito. Riprova più tardi." })
       toast({
         title: "Invio non riuscito",
