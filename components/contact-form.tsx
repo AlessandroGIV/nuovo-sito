@@ -1,14 +1,13 @@
 "use client"
 
 import type React from "react"
-
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { Send, CheckCircle } from "lucide-react"
-import emailjs from "@emailjs/browser" // ⬅️ EmailJS SDK
+import emailjs from "@emailjs/browser"
 
 type State = { ok: boolean; message: string }
 type ContactFormProps = { variant?: "light" | "dark" }
@@ -19,15 +18,20 @@ export default function ContactForm({ variant = "light" }: ContactFormProps) {
   const [state, setState] = useState<State | null>(null)
   const [submitted, setSubmitted] = useState(false)
 
+  // Inizializza EmailJS una sola volta sul client
+  useEffect(() => {
+    const pk = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
+    if (pk) {
+      try {
+        emailjs.init(pk)
+      } catch {}
+    }
+  }, [])
+
   const isDark = variant === "dark"
   const labelClass = isDark ? "text-white" : "text-[#072534]"
   const helperTextClass = isDark ? "text-white/70" : "text-neutral-600"
   const inputClass = isDark ? "bg-[#243947] border-white/10 text-white placeholder:text-white/60" : ""
-
-  // 🔐 valori presi da .env.local (li hai già creati)
-  const SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID
-  const TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID
-  const PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
 
   function validPhone10(v: string | FormDataEntryValue | null) {
     const s = (typeof v === "string" ? v : "") ?? ""
@@ -47,15 +51,16 @@ export default function ContactForm({ variant = "light" }: ContactFormProps) {
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (loading) return
-
     const form = e.currentTarget
     const formData = new FormData(form)
     const payload = Object.fromEntries(formData.entries())
 
-    // honeypot: se questo campo nascosto è pieno, blocchiamo (bot)
-    if (payload.company) return
+    // Honeypot anti-bot: se "company" è pieno, non inviamo
+    if (payload.company) {
+      return
+    }
 
-    // validazione base
+    // Campi obbligatori
     if (
       !payload.name ||
       !payload.email ||
@@ -81,51 +86,44 @@ export default function ContactForm({ variant = "light" }: ContactFormProps) {
       return
     }
 
-    // controllo variabili ambiente
-    if (!SERVICE_ID || !TEMPLATE_ID || !PUBLIC_KEY) {
-      toast({
-        title: "Configurazione mancante",
-        description: "Mancano i dati EmailJS (.env.local).",
-        variant: "destructive",
-      })
-      setState({ ok: false, message: "Configurazione EmailJS mancante." })
-      return
-    }
-
-    // mappatura campi -> placeholders del template EmailJS
-    // (assicurati che nel template esistano: name, email, phone, flight_number, flight_date, message)
-    const templateParams = {
-      name: String(payload.name),
-      email: String(payload.email),
-      phone: String(payload.phone),
-      flight_number: String(payload.flightNumber),
-      flight_date: String(payload.date),
-      message: String(payload.description ?? ""),
-    }
-
     setLoading(true)
     setState(null)
 
-    try {
-      // ✉️ invio tramite EmailJS
-      const result = await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, PUBLIC_KEY)
+    // Mappatura dei campi del form verso le VAR del tuo template EmailJS
+    // Il tuo template usa: {{name}}, {{email}}, {{phone}}, {{flight_number}}, {{flight_date}}, {{message}}
+    const templateParams = {
+      name: String(payload.name || ""),
+      email: String(payload.email || ""),
+      phone: String(payload.phone || ""),
+      flight_number: String(payload.flightNumber || ""),
+      flight_date: String(payload.date || ""),
+      message: String(payload.description || ""),
+    }
 
-      if (result.status >= 200 && result.status < 300) {
-        setState({ ok: true, message: "Richiesta inviata." })
-        setSubmitted(true)
-        toast({ title: "Richiesta inviata", description: "Ti ricontatteremo entro 24 ore." })
-        try {
-          window.scrollTo({ top: 0, behavior: "smooth" })
-        } catch {}
-        form.reset()
-      } else {
-        throw new Error("Invio non riuscito")
+    const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID
+    const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID
+    const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
+
+    try {
+      if (!serviceId || !templateId || !publicKey) {
+        throw new Error("EmailJS non è configurato (mancano le variabili).")
       }
-    } catch (err) {
-      setState({ ok: false, message: "Errore durante l'invio. Riprova più tardi." })
+
+      // Invio diretto via EmailJS (niente /api)
+      await emailjs.send(serviceId, templateId, templateParams)
+
+      setState({ ok: true, message: "Richiesta inviata con successo." })
+      setSubmitted(true)
+      toast({ title: "Richiesta inviata", description: "Ti ricontatteremo entro 24 ore." })
+      try {
+        window.scrollTo({ top: 0, behavior: "smooth" })
+      } catch {}
+      form.reset()
+    } catch (err: any) {
+      setState({ ok: false, message: err?.message || "Invio non riuscito. Riprova più tardi." })
       toast({
         title: "Invio non riuscito",
-        description: "Si è verificato un errore con il servizio email.",
+        description: err?.message || "Riprova più tardi.",
         variant: "destructive",
       })
     } finally {
@@ -158,7 +156,7 @@ export default function ContactForm({ variant = "light" }: ContactFormProps) {
 
   return (
     <form id="contact-form" onSubmit={onSubmit} className="space-y-4">
-      {/* honeypot anti-bot */}
+      {/* Honeypot anti-bot */}
       <input type="text" name="company" className="hidden" tabIndex={-1} autoComplete="off" />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -226,10 +224,7 @@ export default function ContactForm({ variant = "light" }: ContactFormProps) {
           <input id="privacy" name="privacy" type="checkbox" className="mt-1" required />
           <span>
             Acconsento al trattamento dei miei dati personali come descritto nella{" "}
-            <a href="/privacy" className="underline">
-              Privacy Policy
-            </a>{" "}
-            *
+            <a href="/privacy" className="underline">Privacy Policy</a> *
           </span>
         </label>
 
@@ -237,10 +232,7 @@ export default function ContactForm({ variant = "light" }: ContactFormProps) {
           <input id="terms" name="terms" type="checkbox" className="mt-1" required />
           <span>
             Dichiaro di aver preso visione e accettato i termini e condizioni del servizio —{" "}
-            <a href="/termini" className="underline">
-              Termini e condizioni
-            </a>{" "}
-            *
+            <a href="/termini" className="underline">Termini e condizioni</a> *
           </span>
         </label>
       </div>
@@ -265,13 +257,9 @@ export default function ContactForm({ variant = "light" }: ContactFormProps) {
 
       <div className={`text-center text-sm ${helperTextClass}`}>
         In alternativa, puoi scriverci direttamente a{" "}
-        <a
-          className={isDark ? "font-semibold text-[#FFC300]" : "font-semibold text-[#072534]"}
-          href="mailto:info@giustiziainvolo.it"
-        >
+        <a className={isDark ? "font-semibold text-[#FFC300]" : "font-semibold text-[#072534]"} href="mailto:info@giustiziainvolo.it">
           info@giustiziainvolo.it
-        </a>
-        .
+        </a>.
       </div>
     </form>
   )
