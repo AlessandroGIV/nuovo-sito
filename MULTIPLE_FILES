@@ -1,0 +1,188 @@
+/// components/request-form.tsx
+import React, { useState } from 'react';
+import { Input } from 'antd';
+
+const RequestForm = () => {
+  const [leg1, setLeg1] = useState({ schedDep: '' });
+  const [leg2, setLeg2] = useState({ schedDep: '' });
+
+  return (
+    <div>
+      {/* Dettagli volo */}
+      <div>
+        <label>Orario di partenza</label>
+        <Input
+          type="time"
+          step="any"
+          placeholder="HH:MM"
+          value={leg1.schedDep}
+          onChange={(e) => setLeg1({ ...leg1, schedDep: e.target.value })}
+        />
+      </div>
+      {/* Volo 2 */}
+      <div>
+        <label>Orario di partenza</label>
+        <Input
+          type="time"
+          step="any"
+          placeholder="HH:MM"
+          value={leg2.schedDep}
+          onChange={(e) => setLeg2({ ...leg2, schedDep: e.target.value })}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default RequestForm;
+
+// components/global-airport-input.tsx
+import React, { useState, useEffect, useMemo } from 'react';
+import { Input } from 'antd';
+
+type WorldAirport = Record<string, unknown>;
+
+type AirportSimple = {
+  iata: string;
+  name: string;
+  city: string;
+  country: string;
+};
+
+function toSimple(a: WorldAirport): AirportSimple | null {
+  const iata =
+    (a.iata as string) ||
+    (a.iata_code as string) ||
+    (a.IATA as string) ||
+    (a.code as string) ||
+    "";
+  const name =
+    (a.name as string) ||
+    (a.airport_name as string) ||
+    (a.display_name as string) ||
+    "";
+  const city =
+    (a.city as string) ||
+    (a.municipality as string) ||
+    (a.town as string) ||
+    (a.locale as string) ||
+    "";
+  const country =
+    (a.country as string) ||
+    (a.country_name as string) ||
+    (a.iso_country as string) ||
+    "";
+  if (!(iata || name || city)) return null;
+  return {
+    iata: iata.toString().trim(),
+    name: name.toString().trim(),
+    city: city.toString().trim(),
+    country: country.toString().trim(),
+  };
+}
+
+const GlobalAirportInput = ({ onChange }) => {
+  const [airports, setAirports] = useState<AirportSimple[] | null>(null);
+  const [q, setQ] = useState('');
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      const res = await fetch('/api/airports');
+      const raw = (await res.json()) as WorldAirport[];
+      const simplified = raw
+        .map(toSimple)
+        .filter((x): x is AirportSimple => Boolean(x));
+      if (open) setAirports(simplified);
+      setLoading(false);
+    };
+    load();
+  }, [open]);
+
+  useEffect(() => {
+    function onDoc(e) {
+      if (e.target.closest('.airport-input')) return;
+      setOpen(false);
+    }
+    document.addEventListener('click', onDoc);
+    return () => document.removeEventListener('click', onDoc);
+  }, []);
+
+  useEffect(() => {
+    function onKey(e) {
+      if (e.key === "Escape") setOpen(false);
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, []);
+
+  const results = useMemo(() => {
+    const query = q.toLowerCase();
+    if (!airports || query.length < 2) return [];
+    const starts = (s?: string) => (s ? s.toLowerCase().startsWith(query) : false);
+    const filtered = airports.filter(
+      (a) => starts(a.iata) || starts(a.city) || starts(a.name)
+    );
+    filtered.sort((a, b) => {
+      const aHas = a.iata ? 0 : 1;
+      const bHas = b.iata ? 0 : 1;
+      if (aHas !== bHas) return aHas - bHas;
+      const ac = (a.city || "").localeCompare(b.city || "");
+      if (ac !== 0) return ac;
+      return (a.name || "").localeCompare(b.name || "");
+    });
+    return filtered.slice(0, 50);
+  }, [airports, q]);
+
+  const selectOption = (a: AirportSimple) => {
+    const iata = a.iata ? ` (${a.iata})` : "";
+    const name = a.name ? ` - ${a.name}` : "";
+    const country = a.country ? `, ${a.country}` : "";
+    const text = `${a.city}${iata}${name}${country}`.trim();
+    onChange(text);
+    setQ(text);
+    setOpen(false);
+  };
+
+  return (
+    <div className="airport-input relative">
+      <Input
+        placeholder="Cerca un aeroporto"
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+        onClick={() => setOpen(true)}
+        aria-live="polite"
+      />
+      {open && (
+        <div className="absolute z-50 mt-1 max-h-80 w-full overflow-auto rounded-md border border-[#072534]/15 bg-white p-1 shadow-lg">
+          {results.map((airport) => (
+            <div key={airport.iata} onClick={() => selectOption(airport)}>
+              {airport.city} ({airport.iata}) - {airport.name}, {airport.country}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default GlobalAirportInput;
+
+// components/home-start-form.tsx
+import React from 'react';
+import { Card, CardContent } from 'antd';
+import GlobalAirportInput from './global-airport-input';
+
+const HomeStartForm = () => {
+  return (
+    <Card>
+      <CardContent className="relative p-6 md:p-8">
+        <GlobalAirportInput onChange={() => {}} />
+      </CardContent>
+    </Card>
+  );
+};
+
+export default HomeStartForm;
