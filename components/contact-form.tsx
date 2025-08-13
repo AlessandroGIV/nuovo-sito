@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { Send, CheckCircle } from "lucide-react"
+import emailjs from "@emailjs/browser" // ⬅️ EmailJS SDK
 
 type State = { ok: boolean; message: string }
 type ContactFormProps = { variant?: "light" | "dark" }
@@ -22,6 +23,11 @@ export default function ContactForm({ variant = "light" }: ContactFormProps) {
   const labelClass = isDark ? "text-white" : "text-[#072534]"
   const helperTextClass = isDark ? "text-white/70" : "text-neutral-600"
   const inputClass = isDark ? "bg-[#243947] border-white/10 text-white placeholder:text-white/60" : ""
+
+  // 🔐 valori presi da .env.local (li hai già creati)
+  const SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID
+  const TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID
+  const PUBLIC_KEY = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY
 
   function validPhone10(v: string | FormDataEntryValue | null) {
     const s = (typeof v === "string" ? v : "") ?? ""
@@ -41,10 +47,15 @@ export default function ContactForm({ variant = "light" }: ContactFormProps) {
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (loading) return
+
     const form = e.currentTarget
     const formData = new FormData(form)
     const payload = Object.fromEntries(formData.entries())
 
+    // honeypot: se questo campo nascosto è pieno, blocchiamo (bot)
+    if (payload.company) return
+
+    // validazione base
     if (
       !payload.name ||
       !payload.email ||
@@ -70,17 +81,37 @@ export default function ContactForm({ variant = "light" }: ContactFormProps) {
       return
     }
 
+    // controllo variabili ambiente
+    if (!SERVICE_ID || !TEMPLATE_ID || !PUBLIC_KEY) {
+      toast({
+        title: "Configurazione mancante",
+        description: "Mancano i dati EmailJS (.env.local).",
+        variant: "destructive",
+      })
+      setState({ ok: false, message: "Configurazione EmailJS mancante." })
+      return
+    }
+
+    // mappatura campi -> placeholders del template EmailJS
+    // (assicurati che nel template esistano: name, email, phone, flight_number, flight_date, message)
+    const templateParams = {
+      name: String(payload.name),
+      email: String(payload.email),
+      phone: String(payload.phone),
+      flight_number: String(payload.flightNumber),
+      flight_date: String(payload.date),
+      message: String(payload.description ?? ""),
+    }
+
     setLoading(true)
     setState(null)
+
     try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      })
-      const data = (await res.json()) as State
-      setState(data)
-      if (data.ok) {
+      // ✉️ invio tramite EmailJS
+      const result = await emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, PUBLIC_KEY)
+
+      if (result.status >= 200 && result.status < 300) {
+        setState({ ok: true, message: "Richiesta inviata." })
         setSubmitted(true)
         toast({ title: "Richiesta inviata", description: "Ti ricontatteremo entro 24 ore." })
         try {
@@ -88,17 +119,13 @@ export default function ContactForm({ variant = "light" }: ContactFormProps) {
         } catch {}
         form.reset()
       } else {
-        toast({
-          title: "Invio non riuscito",
-          description: data.message || "Riprova più tardi.",
-          variant: "destructive",
-        })
+        throw new Error("Invio non riuscito")
       }
-    } catch {
-      setState({ ok: false, message: "Errore di rete. Riprova." })
+    } catch (err) {
+      setState({ ok: false, message: "Errore durante l'invio. Riprova più tardi." })
       toast({
-        title: "Errore di rete",
-        description: "Controlla la connessione.",
+        title: "Invio non riuscito",
+        description: "Si è verificato un errore con il servizio email.",
         variant: "destructive",
       })
     } finally {
@@ -131,6 +158,7 @@ export default function ContactForm({ variant = "light" }: ContactFormProps) {
 
   return (
     <form id="contact-form" onSubmit={onSubmit} className="space-y-4">
+      {/* honeypot anti-bot */}
       <input type="text" name="company" className="hidden" tabIndex={-1} autoComplete="off" />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
