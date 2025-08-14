@@ -16,7 +16,7 @@ export default function ContactForm({ variant = "light" }: ContactFormProps) {
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
   const [state, setState] = useState<State | null>(null)
-  const [submitted, setSubmitted] = useState(false)
+  const [submitted, setSubmitted] = useState(false) 
 
   // Inizializza EmailJS (key pubblica)
   useEffect(() => {
