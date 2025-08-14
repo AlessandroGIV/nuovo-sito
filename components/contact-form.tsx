@@ -16,7 +16,17 @@ export default function ContactForm({ variant = "light" }: ContactFormProps) {
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
   const [state, setState] = useState<State | null>(null)
-  const [submitted, setSubmitted] = useState(false) 
+  const [submitted, setSubmitted] = useState(false)
+  const [urlParams, setUrlParams] = useState({ from: '', to: '' })
+
+  // Cattura i parametri URL (aeroporti)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    setUrlParams({
+      from: params.get('from') || '',
+      to: params.get('to') || ''
+    })
+  }, [])
 
   // Inizializza EmailJS (key pubblica)
   useEffect(() => {
@@ -63,19 +73,20 @@ export default function ContactForm({ variant = "light" }: ContactFormProps) {
     // Honeypot anti-bot
     if (payload.company) return
 
-    // Campi obbligatori
+    // Campi obbligatori (aggiunto description)
     if (
       !payload.name ||
       !payload.email ||
       !payload.flightNumber ||
       !payload.date ||
       !payload.phone ||
+      !payload.description ||
       !payload.privacy ||
       !payload.terms
     ) {
       toast({
         title: "Compila i campi obbligatori",
-        description: "Nome, Email, Numero volo, Data, Telefono, Privacy e Termini sono richiesti.",
+        description: "Nome, Email, Numero volo, Data, Telefono, Descrizione, Privacy e Termini sono richiesti.",
         variant: "destructive",
       })
       return
@@ -93,7 +104,7 @@ export default function ContactForm({ variant = "light" }: ContactFormProps) {
     setLoading(true)
     setState(null)
 
-    // Mappa verso le variabili del template EmailJS
+    // Mappa verso le variabili del template EmailJS (inclusi aeroporti)
     const templateParams = {
       name: String(payload.name || ""),
       email: String(payload.email || ""),
@@ -101,6 +112,8 @@ export default function ContactForm({ variant = "light" }: ContactFormProps) {
       flight_number: String(payload.flightNumber || ""),
       flight_date: String(payload.date || ""),
       message: String(payload.description || ""),
+      from_airport: urlParams.from,
+      to_airport: urlParams.to,
     }
 
     const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID
@@ -156,7 +169,7 @@ export default function ContactForm({ variant = "light" }: ContactFormProps) {
           onClick={resetContactForm}
           className="mt-5 inline-flex items-center justify-center rounded-md bg-[#FFC300] px-5 py-2.5 font-semibold text-[#072534] hover:bg-[#FFB800]"
         >
-          Invia un’altra richiesta
+          Invia un'altra richiesta
         </button>
       </div>
     )
