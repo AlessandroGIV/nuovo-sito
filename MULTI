@@ -1,0 +1,89 @@
+// app/faq/page.tsx
+import React from 'react';
+import { Accordion, AccordionItem, AccordionContent } from '@headlessui/react';
+
+const FAQPage = () => {
+  return (
+    <div className="bg-[#072534] p-8">
+      <Accordion className="divide-y divide-white/10">
+        <AccordionItem value="q1">
+          <div className="flex items-center justify-between py-4">
+            <h3 className="text-lg font-medium text-white">Domanda 1</h3>
+          </div>
+          <AccordionContent className="text-white/85">
+            Risposta alla domanda 1.
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="q2">
+          <div className="flex items-center justify-between py-4">
+            <h3 className="text-lg font-medium text-white">Domanda 2</h3>
+          </div>
+          <AccordionContent className="text-white/85">
+            Risposta alla domanda 2.
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="q3">
+          <div className="flex items-center justify-between py-4">
+            <h3 className="text-lg font-medium text-white">Domanda 3</h3>
+          </div>
+          <AccordionContent className="text-white/85">
+            Risposta alla domanda 3.
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="q4">
+          <div className="flex items-center justify-between py-4">
+            <h3 className="text-lg font-medium text-white">Domanda 4</h3>
+          </div>
+          <AccordionContent className="text-white/85">
+            Risposta alla domanda 4.
+          </AccordionContent>
+        </AccordionItem>
+        <AccordionItem value="q5">
+          <div className="flex items-center justify-between py-4">
+            <h3 className="text-lg font-medium text-white">Domanda 5</h3>
+          </div>
+          <AccordionContent className="text-white/85">
+            Sì, puoi richiedere il risarcimento fino a 2 anni dalla data del volo.
+          </AccordionContent>
+        </AccordionItem>
+        {/* rest of code here */}
+      </Accordion>
+    </div>
+  );
+};
+
+export default FAQPage;
+
+// app/compenso/page.tsx
+import React from 'react';
+import { FileText } from 'lucide-react';
+
+const CompensoPage = () => {
+  return (
+    <div className="bg-[#072534] p-8">
+      <div className="mt-10 text-center">
+        <h4 className="text-3xl font-extrabold text-[#FFC300]">Nessun Anticipo Richiesto</h4>
+        <ul className="mt-4 space-y-2">
+          <li className="flex items-start gap-2">
+            <span className="select-none">€</span>
+            <span>Nessun costo iniziale o nascosto</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="select-none">%</span>
+            <span>Percentuale contenuta e trasparente</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <FileText className="h-4 w-4 text-current" aria-hidden="true" />
+            <span>Accordo scritto chiaro e dettagliato</span>
+          </li>
+        </ul>
+      </div>
+      <div className="mt-10 text-center">
+        <h4 className="text-3xl font-extrabold text-[#FFC300]">Trasparenza e Chiarezza</h4>
+      </div>
+      {/* rest of code here */}
+    </div>
+  );
+};
+
+export default CompensoPage;
