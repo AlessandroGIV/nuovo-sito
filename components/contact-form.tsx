@@ -88,12 +88,31 @@ export default function ContactForm({ variant = "light" }: ContactFormProps) {
     try {
       // Prepare email template parameters to match your HTML template
       const templateParams = {
-        name: payload.name,
+        // Contact & case info (for simple form)
+        full_name: payload.name,
         email: payload.email,
         phone: payload.phone,
+        description: payload.description || 'Nessuna descrizione fornita',
+        
+        // Flight info (simplified for legacy form)
         flight_number: payload.flightNumber,
         flight_date: payload.date,
-        message: payload.description || 'Nessuna descrizione fornita'
+        
+        // Trip details (set defaults for simple form)
+        is_direct: "unknown",
+        departure_airport: "Non specificato",
+        arrival_airport: "Non specificato", 
+        
+        // Flight segments (use legacy data)
+        segment1_date: payload.date,
+        segment1_time: "Non specificato",
+        segment1_airline: payload.flightNumber,
+        segment2_date: "",
+        segment2_time: "",
+        segment2_airline: "",
+        
+        // Additional context
+        submission_date: new Date().toLocaleString('it-IT'),
       }
 
       // Send email via EmailJS
