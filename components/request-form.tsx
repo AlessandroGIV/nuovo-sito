@@ -197,37 +197,35 @@ export default function RequestForm() {
 
     setSubmitting(true)
     try {
-      // Prepare comprehensive email template parameters
+      // Complete email template parameters with all required fields
       const templateParams = {
-        // Basic contact info
-        name: name,
+        // Trip details
+        is_direct: direct === "si" ? "true" : "false",
+        departure_airport: from,
+        arrival_airport: to,
+        
+        // First/only flight segment
+        segment1_date: leg1.date, // Already in YYYY-MM-DD format
+        segment1_time: leg1.schedDep, // Already in HH:MM format
+        segment1_airline: leg1.airline,
+        
+        // Second segment (only if not direct)
+        segment2_date: direct === "si" ? "" : leg2.date,
+        segment2_time: direct === "si" ? "" : leg2.schedDep,
+        segment2_airline: direct === "si" ? "" : leg2.airline,
+        
+        // Contact & case info
+        full_name: name,
         email: email,
         phone: phone,
+        description: description,
         
-        // Flight route
-        from_airport: from,
-        to_airport: to,
-        via_airport: direct === "no" ? via : "N/A",
-        direct_flight: direct === "si" ? "Sì" : "No",
-        
-        // Flight 1 details
-        flight1_date: leg1.date,
-        flight1_airline: leg1.airline,
-        flight1_departure: leg1.schedDep,
-        
-        // Flight 2 details (if applicable)
-        flight2_date: direct === "si" ? "N/A" : leg2.date,
-        flight2_airline: direct === "si" ? "N/A" : leg2.airline,
-        flight2_departure: direct === "si" ? "N/A" : leg2.schedDep,
-        
-        // Additional info
-        message: description,
+        // Additional context fields
+        via_airport: direct === "no" ? via : "",
         submission_date: new Date().toLocaleString('it-IT'),
-        
-        // For legacy template compatibility
-        flight_number: `${leg1.airline} (${leg1.date})`,
-        flight_date: leg1.date
       }
+
+      console.log('Sending email with data:', templateParams) // Debug log
 
       // Send email via EmailJS
       const result = await emailjs.send(
