@@ -299,18 +299,19 @@ export default function RequestForm() {
             {/* Scalo: mostrato solo se volo non diretto, al centro su desktop */}
             {direct === "no" && (
               <GlobalAirportInput
-                id="via"
-                name="via"
+                id="layover-airport"
+                name="layover-airport"
                 label="Aeroporto di scalo"
                 value={via}
                 onChange={setVia}
-                placeholder="Es. Amsterdam - (AMS)"
+                placeholder="Es. Amsterdam Schiphol - (AMS)"
                 required
                 inputRef={refs.via}
                 error={errors.via}
                 disableBrowserAutocomplete={true}
               />
             )}
+
 
             {/* Destinazione */}
             <GlobalAirportInput
