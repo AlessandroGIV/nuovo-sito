@@ -198,32 +198,40 @@ export default function RequestForm() {
     setSubmitting(true)
     try {
       // Complete email template parameters with all required fields
-      const templateParams = {
-        // Trip details
-        is_direct: direct === "si" ? "true" : "false",
-        departure_airport: from,
-        arrival_airport: to,
-        
-        // First/only flight segment
-        segment1_date: leg1.date, // Already in YYYY-MM-DD format
-        segment1_time: leg1.schedDep, // Already in HH:MM format
-        segment1_airline: leg1.airline,
-        
-        // Second segment (only if not direct)
-        segment2_date: direct === "si" ? "" : leg2.date,
-        segment2_time: direct === "si" ? "" : leg2.schedDep,
-        segment2_airline: direct === "si" ? "" : leg2.airline,
-        
-        // Contact & case info
-        full_name: name,
-        email: email,
-        phone: phone,
-        description: description,
-        
-        // Additional context fields
-        via_airport: direct === "no" ? via : "",
-        submission_date: new Date().toLocaleString('it-IT'),
-      }
+     const templateParams = {
+      // Trip details
+      is_direct: direct === "si" ? "true" : "false",
+      is_direct_label: direct === "si" ? "Volo Diretto" : "Volo con Scalo",
+      departure_airport: from,
+      arrival_airport: to,
+      
+      // First/only flight segment
+      segment1_date: leg1.date,
+      segment1_time: leg1.schedDep,
+      segment1_airline: leg1.airline,
+      
+      // Second segment (only if not direct)
+      segment2_date: direct === "si" ? "" : leg2.date,
+      segment2_time: direct === "si" ? "" : leg2.schedDep,
+      segment2_airline: direct === "si" ? "" : leg2.airline,
+      
+      // Contact & case info
+      full_name: name,
+      email: email,
+      phone: phone,
+      description: description,
+      
+      // Layover info - properly cleaned
+      via_airport: direct === "no" && via ? via : "Nessuno",
+      
+      // Legacy fields for compatibility
+      flight_number: leg1.airline ? `${leg1.airline} - ${leg1.date}` : "Non specificato",
+      flight_date: leg1.date || "Non specificato",
+      
+      // Additional context
+      submission_date: new Date().toLocaleString('it-IT'),
+}
+
 
       console.log('Sending email with data:', templateParams) // Debug log
 
