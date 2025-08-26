@@ -6,7 +6,7 @@ import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
+  title: 'Giustizia In Volo',
   description: 'Created with v0',
   generator: 'v0.dev',
 }
