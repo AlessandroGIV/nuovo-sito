@@ -218,16 +218,16 @@ export default function MultiStepRequestForm() {
           <div className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-green-500/20 mb-4">
             <CheckCircle className="h-8 w-8 text-green-500" />
           </div>
-          <h2 className="text-2xl md:text-3xl font-extrabold text-green-500">Richiesta Inviata!</h2>
+          <h2 className="text-2xl md:text-3xl font-extrabold text-green-500">{t('requestSentTitle')}</h2>
           <p className="mt-3 text-white/85 max-w-lg mx-auto">
-            Grazie per averci contattato. Un nostro avvocato ti risponderà al più presto per valutare il tuo caso.
+            {t('requestSentMessage')}
           </p>
           <button
             type="button"
             onClick={resetAll}
             className="mt-6 inline-flex items-center justify-center rounded-md bg-[#FFC300] px-6 py-3 font-semibold text-[#072534] hover:bg-[#FFB800] transition-colors"
           >
-            Invia un'altra richiesta
+            {t('sendAnotherRequestBtn')}
           </button>
         </div>
       </div>

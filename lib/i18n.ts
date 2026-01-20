@@ -134,6 +134,11 @@ export const translations = {
     privacyPolicyTitle: 'Privacy Policy',
     termsAndConditionsTitle: 'Termini e Condizioni',
     lastUpdated: 'Ultimo aggiornamento',
+    
+    // Success page
+    requestSentTitle: 'Richiesta Inviata!',
+    requestSentMessage: 'Grazie per averci contattato. Un nostro avvocato ti risponderà al più presto per valutare il tuo caso.',
+    sendAnotherRequestBtn: 'Invia un\'altra richiesta',
     heroAmount: 'Potresti avere diritto fino a 600 €.',
     
     // Features
@@ -380,6 +385,11 @@ export const translations = {
     privacyPolicyTitle: 'Privacy Policy',
     termsAndConditionsTitle: 'Terms and Conditions',
     lastUpdated: 'Last updated',
+    
+    // Success page
+    requestSentTitle: 'Request Sent!',
+    requestSentMessage: 'Thank you for contacting us. One of our lawyers will respond as soon as possible to evaluate your case.',
+    sendAnotherRequestBtn: 'Send another request',
     heroAmount: 'You could be entitled to up to €600.',
     
     // Features
