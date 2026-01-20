@@ -18,7 +18,7 @@ export async function POST(req: Request) {
       if (!legOk) {
         return NextResponse.json({ ok: false, message: 'Dati volo (Volo 1) incompleti' }, { status: 400 })
       }
-      if (!body.direct) {
+      if (body.direct === "no") {
         const leg2 = body.leg2 ?? {}
         const leg2Ok = leg2.date && leg2.airline && leg2.schedDep
         if (!leg2Ok) {

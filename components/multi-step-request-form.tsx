@@ -143,6 +143,7 @@ export default function MultiStepRequestForm() {
     setSubmitting(true)
 
     const payload = {
+      flow: "request",
       from,
       to,
       via: direct === "no" ? via : "",
