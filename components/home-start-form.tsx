@@ -27,13 +27,13 @@ export default function HomeStartForm() {
   }
 
   return (
-    <Card className="border-0 shadow-2xl relative z-30">
-      <CardContent className="relative p-6 md:p-8 overflow-visible">
+    <Card className="border-0 shadow-2xl relative z-30 py-0">
+      <CardContent className="relative p-6 md:p-8 overflow-visible py-6">
         <Plane
           aria-hidden="true"
           className="pointer-events-none absolute right-3 top-3 h-28 w-28 md:h-36 md:w-36 text-[#072534] opacity-10"
         />
-        <div className="relative">
+        <div className="relative py-0">
           <div className="mb-6 text-center">
             <h2 className="text-2xl md:text-3xl font-bold text-[#072534]">{t('calculateRefund')}</h2>
             <p className="text-sm text-neutral-600">{t('heroSubtitle')}</p>
