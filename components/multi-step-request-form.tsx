@@ -550,8 +550,8 @@ export default function MultiStepRequestForm() {
 
       {/* Step 4: Confirm */}
       {currentStep === 4 && (
-        <Card className="bg-white text-[#072534] border-0 shadow-2xl">
-          <CardContent className="p-6 md:p-8">
+        <Card className="bg-white text-[#072534] border-0 shadow-2xl py-0">
+          <CardContent className="p-6 md:p-8 py-0">
             <div className="text-center mb-6">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#FFC300]/20 mb-4">
                 <CheckCircle className="w-8 h-8 text-[#FFC300]" />
@@ -562,7 +562,7 @@ export default function MultiStepRequestForm() {
               <p className="text-neutral-600">{t("readAndAccept")}</p>
             </div>
 
-            <div className="space-y-4 bg-neutral-50 p-6 rounded-lg">
+            <div className="space-y-4 bg-neutral-50 p-6 rounded-lg py-0">
               <label className="flex items-start gap-3 cursor-pointer group">
                 <input
                   ref={refs.privacy}
