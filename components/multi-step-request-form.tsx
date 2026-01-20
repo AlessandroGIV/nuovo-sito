@@ -258,18 +258,6 @@ export default function MultiStepRequestForm() {
               />
 
               <GlobalAirportInput
-                id="via"
-                name="via"
-                label={t("stopoverAirport") + " (" + t("optional") + ")"}
-                value={via}
-                onChange={setVia}
-                placeholder="Amsterdam - (AMS)"
-                inputRef={refs.via}
-                error={errors.via}
-                disableBrowserAutocomplete={true}
-              />
-
-              <GlobalAirportInput
                 id="to"
                 name="to"
                 label={t("destinationAirport")}
@@ -308,12 +296,27 @@ export default function MultiStepRequestForm() {
                   </button>
                 </div>
               </div>
+
+              {direct === "no" && (
+                <GlobalAirportInput
+                  id="via"
+                  name="via"
+                  label={t("stopoverAirport")}
+                  value={via}
+                  onChange={setVia}
+                  placeholder="Es. Amsterdam - (AMS)"
+                  required
+                  inputRef={refs.via}
+                  error={errors.via}
+                  disableBrowserAutocomplete={true}
+                />
+              )}
             </div>
 
             <div className="flex gap-3 mt-6">
               <Button
                 onClick={nextStep}
-                className="flex-1 bg-[#FFC300] text-[#072534] hover:bg-[#FFB800] font-semibold h-12"
+                className="flex-1 bg-[#FF8A00] text-white hover:bg-[#ff8a00]/90 font-semibold h-12"
               >
                 {t("continue")} <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
@@ -526,7 +529,7 @@ export default function MultiStepRequestForm() {
               </Button>
               <Button
                 onClick={nextStep}
-                className="flex-1 bg-[#FFC300] text-[#072534] hover:bg-[#FFB800] font-semibold h-12"
+                className="flex-1 bg-[#FF8A00] text-white hover:bg-[#ff8a00]/90 font-semibold h-12"
               >
                 {t("continue")} <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
