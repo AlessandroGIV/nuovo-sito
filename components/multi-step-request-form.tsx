@@ -210,13 +210,11 @@ export default function MultiStepRequestForm() {
         {/* Header section */}
         <div className="mb-8">
           <h1 className="text-3xl md:text-4xl font-extrabold text-[#FFC300]">{t("requestTitle")}</h1>
-          <p className="mt-3 text-white/85 max-w-2xl">
-            {t("requestSubtitle")}
-          </p>
+          
         </div>
 
         {/* Success card */}
-        <div className="rounded-2xl bg-[#0a3344] p-8 md:p-12 text-center">
+        <div className="rounded-2xl bg-[#0a3344] p-8 md:p-12 text-center py-3">
           <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-full bg-green-500/20">
             <CheckCircle className="h-8 w-8 text-green-500" />
           </div>
