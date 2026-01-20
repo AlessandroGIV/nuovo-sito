@@ -1,9 +1,17 @@
+'use client'
+
+import { useLanguage } from '@/contexts/language-context'
+
 export default function TerminiPage() {
+  const { lang } = useLanguage()
+  
   return (
     <main className="bg-[#072534] text-white">
       <section className="container mx-auto px-4 py-10 md:py-14">
         <div className="mx-auto max-w-4xl rounded-2xl bg-white/5 p-6 md:p-8">
-          <h1 className="text-3xl md:text-4xl font-extrabold text-[#FFC300]">Termini e Condizioni</h1>
+          <h1 className="text-3xl md:text-4xl font-extrabold text-[#FFC300]">
+            {lang === 'it' ? 'Termini e Condizioni' : 'Terms and Conditions'}
+          </h1>
 
           <p className="mt-4 text-white/90">
             I presenti Termini e Condizioni regolano l{"'"}utilizzo del sito web di GiustiziaInVolo e la fornitura dei
