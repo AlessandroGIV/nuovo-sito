@@ -209,7 +209,7 @@ export default function MultiStepRequestForm() {
       <div className="w-full max-w-3xl mx-auto px-4">
         {/* Header section */}
         <div className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-extrabold text-[#FFC300]">{t("requestTitle")}</h1>
+          
           
         </div>
 
