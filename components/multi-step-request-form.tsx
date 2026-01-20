@@ -215,7 +215,7 @@ export default function MultiStepRequestForm() {
 
         {/* Success card */}
         <div className="rounded-2xl bg-[#0a3344] p-8 md:p-12 text-center py-3">
-          <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-full bg-green-500/20">
+          <div className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-green-500/20 mb-4">
             <CheckCircle className="h-8 w-8 text-green-500" />
           </div>
           <h2 className="text-2xl md:text-3xl font-extrabold text-green-500">Richiesta Inviata!</h2>
