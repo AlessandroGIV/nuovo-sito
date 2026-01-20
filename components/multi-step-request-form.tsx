@@ -205,19 +205,28 @@ export default function MultiStepRequestForm() {
 
   if (submitted) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center p-4">
-        <div className="rounded-2xl bg-white/10 p-8 text-center text-white max-w-2xl w-full">
-          <div className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-full bg-green-500/20">
-            <CheckCircle className="h-7 w-7 text-green-400" />
+      <div className="w-full max-w-3xl mx-auto px-4">
+        {/* Header section */}
+        <div className="mb-8">
+          <h1 className="text-3xl md:text-4xl font-extrabold text-[#FFC300]">{t("requestTitle")}</h1>
+          <p className="mt-3 text-white/85 max-w-2xl">
+            {t("requestSubtitle")}
+          </p>
+        </div>
+
+        {/* Success card */}
+        <div className="rounded-2xl bg-[#0a3344] p-8 md:p-12 text-center">
+          <div className="mx-auto mb-4 grid h-14 w-14 place-items-center rounded-full bg-green-500/20">
+            <CheckCircle className="h-8 w-8 text-green-500" />
           </div>
-          <h2 className="text-2xl md:text-3xl font-extrabold text-[#FFC300]">{t("requestSent")}!</h2>
-          <p className="mt-2 text-white/85">
+          <h2 className="text-2xl md:text-3xl font-extrabold text-green-500">Richiesta Inviata!</h2>
+          <p className="mt-3 text-white/85 max-w-lg mx-auto">
             Grazie per averci contattato. Un nostro avvocato ti risponderà al più presto per valutare il tuo caso.
           </p>
           <button
             type="button"
             onClick={resetAll}
-            className="mt-5 inline-flex items-center justify-center rounded-md bg-[#FFC300] px-5 py-2.5 font-semibold text-[#072534] hover:bg-[#FFB800]"
+            className="mt-6 inline-flex items-center justify-center rounded-md bg-[#FFC300] px-6 py-3 font-semibold text-[#072534] hover:bg-[#FFB800] transition-colors"
           >
             Invia un'altra richiesta
           </button>
@@ -435,7 +444,7 @@ export default function MultiStepRequestForm() {
               </Button>
               <Button
                 onClick={nextStep}
-                className="flex-1 bg-[#FFC300] text-[#072534] hover:bg-[#FFB800] font-semibold h-12"
+                className="flex-1 bg-[#FF8A00] text-white hover:bg-[#ff8a00]/90 font-semibold h-12"
               >
                 {t("continue")} <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
