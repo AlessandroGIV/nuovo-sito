@@ -26,8 +26,63 @@ export async function POST(req: Request) {
         }
       }
 
-      // Validazione completata con successo
-      return NextResponse.json({ ok: true, message: 'Richiesta validata con successo.' })
+      // Prepara parametri per EmailJS
+      const templateParams = {
+        submission_date: new Date().toLocaleDateString('it-IT', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+        full_name: body.name,
+        email: body.email,
+        phone: body.phone,
+        is_direct_label: body.direct === 'si' ? 'Volo Diretto' : 'Volo con Scalo',
+        departure_airport: body.from,
+        via_airport: body.via || 'N/A',
+        arrival_airport: body.to,
+        segment1_date: leg1.date,
+        segment1_time: leg1.schedDep,
+        segment1_airline: leg1.airline,
+        flight_number: leg1.airline,
+        flight_date: leg1.date,
+        segment2_date: body.direct === 'no' ? body.leg2.date : 'N/A',
+        segment2_time: body.direct === 'no' ? body.leg2.schedDep : 'N/A',
+        segment2_airline: body.direct === 'no' ? body.leg2.airline : 'N/A',
+        description: body.description || 'Nessuna descrizione fornita',
+      }
+
+      // Invia email con EmailJS (server-side)
+      try {
+        const emailResponse = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            service_id: process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID,
+            template_id: process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID,
+            user_id: process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY,
+            template_params: templateParams,
+          }),
+        })
+
+        if (!emailResponse.ok) {
+          const errorText = await emailResponse.text()
+          console.error('[v0] EmailJS error:', errorText)
+          return NextResponse.json({
+            ok: false,
+            message: "Errore nell'invio della richiesta. Riprova più tardi.",
+          }, { status: 500 })
+        }
+
+        return NextResponse.json({ ok: true, message: 'Richiesta inviata con successo.' })
+      } catch (emailError) {
+        console.error('[v0] EmailJS exception:', emailError)
+        return NextResponse.json({
+          ok: false,
+          message: "Errore nell'invio della richiesta. Verifica la configurazione.",
+        }, { status: 500 })
+      }
     }
 
     // Campi obbligatori aggiornati (telefono incluso)

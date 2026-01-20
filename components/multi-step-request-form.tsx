@@ -13,10 +13,10 @@ import { useSearchParams } from "next/navigation"
 import { ArrowLeft, ArrowRight, Send, CheckCircle, Plane, Calendar, User } from "lucide-react"
 import GlobalAirlineInput from "./global-airline-input"
 import GlobalAirportInput from "./global-airport-input"
-import emailjs from "@emailjs/browser"
 import { TimeInputResponsive } from "./time-input-responsive"
 import { useLanguage } from "@/contexts/language-context"
 import { StepWizard } from "./step-wizard"
+import emailjs from "@emailjs/browser"
 
 export default function MultiStepRequestForm() {
   const params = useSearchParams()
@@ -160,7 +160,6 @@ export default function MultiStepRequestForm() {
     }
 
     try {
-      // 1. Valida i dati con l'API
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -168,54 +167,17 @@ export default function MultiStepRequestForm() {
       })
       const data = await res.json()
 
-      if (!data.ok) {
+      if (data.ok) {
+        setSubmitted(true)
+        window.scrollTo({ top: 0, behavior: "smooth" })
+        toast({ title: t("requestSent"), description: t("requestSentThankYou") })
+      } else {
         toast({
           title: t("sendFailed"),
           description: data.message ?? t("tryAgainLater"),
           variant: "destructive",
         })
-        return
       }
-
-      // 2. Prepara i parametri per EmailJS
-      const templateParams = {
-        submission_date: new Date().toLocaleDateString("it-IT", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-        full_name: name,
-        email: email,
-        phone: phone,
-        is_direct_label: direct === "si" ? "Volo Diretto" : "Volo con Scalo",
-        departure_airport: from,
-        via_airport: via || "N/A",
-        arrival_airport: to,
-        segment1_date: leg1.date,
-        segment1_time: leg1.schedDep,
-        segment1_airline: leg1.airline,
-        flight_number: leg1.airline,
-        flight_date: leg1.date,
-        segment2_date: direct === "no" ? leg2.date : "N/A",
-        segment2_time: direct === "no" ? leg2.schedDep : "N/A",
-        segment2_airline: direct === "no" ? leg2.airline : "N/A",
-        description: description || "Nessuna descrizione fornita",
-      }
-
-      // 3. Invia email con EmailJS (client-side)
-      await emailjs.send(
-        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
-        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
-        templateParams,
-        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!,
-      )
-
-      // 4. Mostra successo
-      setSubmitted(true)
-      window.scrollTo({ top: 0, behavior: "smooth" })
-      toast({ title: t("requestSent"), description: t("requestSentThankYou") })
     } catch (error) {
       console.error("[v0] Error sending request:", error)
       toast({ title: t("networkError"), description: t("checkConnectionRetry"), variant: "destructive" })
@@ -364,7 +326,7 @@ export default function MultiStepRequestForm() {
             <div className="flex gap-3 mt-6">
               <Button
                 onClick={nextStep}
-                className="flex-1 bg-[#FF8A00] text-white hover:bg-[#ff8a00]/90 font-semibold h-12"
+                className="flex-1 bg-[#FF8A00] text-white hover:bg-[#ff8A00]/90 font-semibold h-12"
               >
                 {t("continue")} <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
@@ -483,7 +445,7 @@ export default function MultiStepRequestForm() {
               </Button>
               <Button
                 onClick={nextStep}
-                className="flex-1 bg-[#FF8A00] text-white hover:bg-[#ff8a00]/90 font-semibold h-12"
+                className="flex-1 bg-[#FF8A00] text-white hover:bg-[#ff8A00]/90 font-semibold h-12"
               >
                 {t("continue")} <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
@@ -577,7 +539,7 @@ export default function MultiStepRequestForm() {
               </Button>
               <Button
                 onClick={nextStep}
-                className="flex-1 bg-[#FF8A00] text-white hover:bg-[#ff8a00]/90 font-semibold h-12"
+                className="flex-1 bg-[#FF8A00] text-white hover:bg-[#ff8A00]/90 font-semibold h-12"
               >
                 {t("continue")} <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
@@ -649,7 +611,7 @@ export default function MultiStepRequestForm() {
               <Button
                 onClick={handleSubmit}
                 disabled={submitting}
-                className="flex-1 bg-[#FF8A00] text-white hover:bg-[#ff8a00]/90 font-semibold h-12"
+                className="flex-1 bg-[#FF8A00] text-white hover:bg-[#ff8A00]/90 font-semibold h-12"
               >
                 {submitting ? (
                   t("submitting")
