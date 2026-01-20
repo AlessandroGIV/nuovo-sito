@@ -6,7 +6,6 @@ import { legalTranslations } from '@/lib/legal-translations'
 export default function TerminiPage() {
   const { t, language } = useLanguage()
   const lt = legalTranslations[language]
-  const lang = language; // Declare the lang variable
 
   return (
     <main className="bg-[#072534] text-white">
