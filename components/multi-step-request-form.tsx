@@ -237,12 +237,12 @@ export default function MultiStepRequestForm() {
   }
 
   return (
-    <div className="w-full max-w-3xl mx-auto px-4">
+    <div className="w-full max-w-3xl mx-auto px-4 my-0 h-auto">
       <StepWizard currentStep={currentStep} steps={steps} />
 
       {/* Step 1: Itinerary */}
       {currentStep === 1 && (
-        <Card className="bg-white text-[#072534] border-0 shadow-2xl">
+        <Card className="bg-white text-[#072534] border-0 shadow-2xl py-0">
           <CardContent className="p-6 md:p-8">
             <div className="text-center mb-6">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#FFC300]/20 mb-4">
@@ -251,7 +251,7 @@ export default function MultiStepRequestForm() {
               <h2 className="text-2xl md:text-3xl font-extrabold text-[#072534] mb-2">
                 {t("whereFlying")}
               </h2>
-              <p className="text-neutral-600">{t("startWithItinerary")}</p>
+              
             </div>
 
             <div className="space-y-4">

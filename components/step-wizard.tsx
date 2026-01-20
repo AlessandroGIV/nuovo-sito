@@ -9,7 +9,7 @@ interface StepWizardProps {
 
 export function StepWizard({ currentStep, steps }: StepWizardProps) {
   return (
-    <div className="w-full py-8">
+    <div className="w-full py-1">
       <div className="flex items-center justify-between max-w-3xl mx-auto px-4">
         {steps.map((step, index) => {
           const stepNumber = index + 1

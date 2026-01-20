@@ -4,7 +4,7 @@ import { Suspense } from "react"
 export default function RichiestaPage() {
   return (
     <main className="bg-[#072534] text-white min-h-screen">
-      <section className="container mx-auto px-4 pt-8 pb-16">
+      <section className="container mx-auto px-4 my-0 pb-1 pt-1">
         <Suspense
           fallback={
             <div className="max-w-3xl mx-auto">
