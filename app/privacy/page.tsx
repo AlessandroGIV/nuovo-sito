@@ -3,14 +3,14 @@
 import { useLanguage } from '@/contexts/language-context'
 
 export default function PrivacyPage() {
-  const { lang } = useLanguage()
+  const { t } = useLanguage()
   
   return (
     <main className="bg-[#072534] text-white">
       <section className="container mx-auto px-4 py-10 md:py-14">
         <div className="mx-auto max-w-4xl rounded-2xl bg-white/5 p-6 md:p-8">
           <h1 className="text-3xl md:text-4xl font-extrabold text-[#FFC300]">
-            {lang === 'it' ? 'Privacy Policy' : 'Privacy Policy'}
+            {t('privacyPolicyTitle')}
           </h1>
 
           <p className="mt-4 text-white/90">
@@ -94,7 +94,7 @@ export default function PrivacyPage() {
             sito web con indicazione della data di ultima modifica.
           </p>
 
-          <p className="mt-6 text-sm text-white/70">Ultimo aggiornamento: Maggio 2025</p>
+          <p className="mt-6 text-sm text-white/70">{t('lastUpdated')}: Maggio 2025</p>
         </div>
       </section>
     </main>

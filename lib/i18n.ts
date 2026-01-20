@@ -129,6 +129,11 @@ export const translations = {
     faqQ4Answer: 'Dipende dal caso e dalla risposta della compagnia aerea. In molti casi, il rimborso può essere ottenuto a seguito di diffida senza arrivare in giudizio.',
     faqQ5Title: 'Posso farmi seguire anche se il volo è di mesi fa?',
     faqQ5Answer: 'Sì, in molti casi è possibile agire anche a distanza di mesi. Contattaci per una verifica gratuita della tua situazione.',
+    
+    // Privacy & Terms
+    privacyPolicyTitle: 'Privacy Policy',
+    termsAndConditionsTitle: 'Termini e Condizioni',
+    lastUpdated: 'Ultimo aggiornamento',
     heroAmount: 'Potresti avere diritto fino a 600 €.',
     
     // Features
@@ -370,6 +375,11 @@ export const translations = {
     faqQ4Answer: 'It depends on the case and the airline\'s response. In many cases, the refund can be obtained following a demand letter without going to court.',
     faqQ5Title: 'Can I still claim if my flight was months ago?',
     faqQ5Answer: 'Yes, in many cases it is possible to act even months later. Contact us for a free verification of your situation.',
+    
+    // Privacy & Terms
+    privacyPolicyTitle: 'Privacy Policy',
+    termsAndConditionsTitle: 'Terms and Conditions',
+    lastUpdated: 'Last updated',
     heroAmount: 'You could be entitled to up to €600.',
     
     // Features
