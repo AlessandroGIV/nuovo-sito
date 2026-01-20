@@ -425,11 +425,13 @@ function dedupe(list: SrcAirport[]): SrcAirport[] {
 async function loadAirports(): Promise<SrcAirport[]> {
   if (airportsCache) return airportsCache
   const [a1, a2] = await Promise.allSettled([
-    // Array with iata, icao, name, city, country
-    fetch("https://cdn.jsdelivr.net/npm/all-the-airports@4/airports.json", { cache: "no-store" }).then((r) =>
+    // Primary source - Array with iata, icao, name, city, country
+    fetch("https://raw.githubusercontent.com/ram-nadella/airport-codes/master/airports.json", { 
+      cache: "no-store" 
+    }).then((r) =>
       r.ok ? (r.json() as Promise<SrcAirport[]>) : [],
     ),
-    // Object keyed by ICAO: { "LIMC": {iata:"MXP", name, city, country } }
+    // Fallback source - Object keyed by ICAO: { "LIMC": {iata:"MXP", name, city, country } }
     fetch("https://cdn.jsdelivr.net/gh/mwgg/Airports@master/airports.json", { cache: "no-store" }).then(async (r) => {
       if (!r.ok) return [] as SrcAirport[]
       const obj = (await r.json()) as Record<string, any>
