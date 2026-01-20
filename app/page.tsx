@@ -10,14 +10,14 @@ export default function HomePage() {
     <main className="bg-[#072534]">
       {/* Rimosso overflow-hidden per non tagliare i dropdown */}
       <section className="relative">
-        <div className="container mx-auto grid items-start gap-8 px-4 py-10 md:py-16 lg:py-20 lg:grid-cols-2">
+        <div className="container mx-auto grid items-start gap-8 px-4 md:py-16 lg:py-20 lg:grid-cols-2 leading-4 py-3">
           {/* Testi a sinistra */}
-          <div className="max-w-2xl">
+          <div className="max-w-2xl leading-4 py-0">
             <h1 className="text-[#FFC300] text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight">
               {t('heroTitle')}
             </h1>
             <p className="mt-5 text-white text-xl md:text-2xl font-semibold">{t('heroSubtitle')}</p>
-            <p className="mt-4 text-white/90 text-lg md:text-xl">
+            <p className="mt-4 text-white/90 text-lg md:text-xl py-0">
               {t('heroAmount')}
             </p>
             <div className="mt-8 hidden flex-wrap gap-5 text-white/85 md:flex">
