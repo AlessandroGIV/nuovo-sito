@@ -4,9 +4,10 @@ import { useLanguage } from '@/contexts/language-context'
 import { legalTranslations } from '@/lib/legal-translations'
 
 export default function TerminiPage() {
-  const { t, lang } = useLanguage()
-  const lt = legalTranslations[lang]
-  
+  const { t, language } = useLanguage()
+  const lt = legalTranslations[language]
+  const lang = language; // Declare the lang variable
+
   return (
     <main className="bg-[#072534] text-white">
       <section className="container mx-auto px-4 py-10 md:py-14">
@@ -108,7 +109,7 @@ export default function TerminiPage() {
           <p className="mt-2 text-white/90">{lt.termsSection10P1}</p>
           <p className="mt-2 text-white/90">{lt.termsSection10P2}</p>
 
-          <p className="mt-6 text-sm text-white/70">{t('lastUpdated')}: {lang === 'it' ? 'maggio' : 'May'} 2025</p>
+          <p className="mt-6 text-sm text-white/70">{t('lastUpdated')}: {language === 'it' ? 'Maggio' : 'May'} 2025</p>
         </div>
       </section>
     </main>

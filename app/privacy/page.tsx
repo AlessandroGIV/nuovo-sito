@@ -4,8 +4,9 @@ import { useLanguage } from '@/contexts/language-context'
 import { legalTranslations } from '@/lib/legal-translations'
 
 export default function PrivacyPage() {
-  const { t, lang } = useLanguage()
-  const lt = legalTranslations[lang]
+  const { t, language } = useLanguage()
+  const lt = legalTranslations[language]
+  const lang = language; // Declare the lang variable
   
   return (
     <main className="bg-[#072534] text-white">
@@ -73,7 +74,7 @@ export default function PrivacyPage() {
           <h2 className="mt-8 text-2xl font-extrabold text-[#FFC300]">{lt.privacySection9Title}</h2>
           <p className="mt-2 text-white/90">{lt.privacySection9Content}</p>
 
-          <p className="mt-6 text-sm text-white/70">{t('lastUpdated')}: {lang === 'it' ? 'Maggio' : 'May'} 2025</p>
+          <p className="mt-6 text-sm text-white/70">{t('lastUpdated')}: {language === 'it' ? 'Maggio' : 'May'} 2025</p>
         </div>
       </section>
     </main>
