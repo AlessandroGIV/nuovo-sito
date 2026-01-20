@@ -160,6 +160,7 @@ export default function MultiStepRequestForm() {
     }
 
     try {
+      // 1. Valida i dati con l'API
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -167,17 +168,54 @@ export default function MultiStepRequestForm() {
       })
       const data = await res.json()
 
-      if (data.ok) {
-        setSubmitted(true)
-        window.scrollTo({ top: 0, behavior: "smooth" })
-        toast({ title: t("requestSent"), description: t("requestSentThankYou") })
-      } else {
+      if (!data.ok) {
         toast({
           title: t("sendFailed"),
           description: data.message ?? t("tryAgainLater"),
           variant: "destructive",
         })
+        return
       }
+
+      // 2. Prepara parametri per EmailJS
+      const templateParams = {
+        submission_date: new Date().toLocaleString("it-IT", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        full_name: name,
+        email: email,
+        phone: phone,
+        is_direct_label: direct === "si" ? "Volo Diretto" : "Volo con Scalo",
+        departure_airport: from,
+        via_airport: via || "N/A",
+        arrival_airport: to,
+        segment1_date: leg1.date,
+        segment1_time: leg1.schedDep,
+        segment1_airline: leg1.airline,
+        flight_number: leg1.airline,
+        flight_date: leg1.date,
+        segment2_date: direct === "no" ? leg2.date : "N/A",
+        segment2_time: direct === "no" ? leg2.schedDep : "N/A",
+        segment2_airline: direct === "no" ? leg2.airline : "N/A",
+        description: description || "Nessuna descrizione fornita",
+      }
+
+      // 3. Invia email con EmailJS (client-side)
+      await emailjs.send(
+        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
+        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
+        templateParams,
+        process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!,
+      )
+
+      // 4. Mostra successo
+      setSubmitted(true)
+      window.scrollTo({ top: 0, behavior: "smooth" })
+      toast({ title: t("requestSent"), description: t("requestSentThankYou") })
     } catch (error) {
       console.error("[v0] Error sending request:", error)
       toast({ title: t("networkError"), description: t("checkConnectionRetry"), variant: "destructive" })
