@@ -8,9 +8,12 @@ import { SiteFooter } from '@/components/site-footer'
 import { LanguageProvider } from '@/contexts/language-context'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.dev',
+  title: 'Giustizia In Volo - Risarcimento per ritardi e cancellazioni voli',
+  description: 'Servizio legale specializzato nell\'ottenere risarcimenti fino a 600€ per ritardi, cancellazioni e negato imbarco. Assistenza da veri avvocati, nessun anticipo richiesto.',
+  icons: {
+    icon: '/favicon.ico',
+  },
+    generator: 'v0.app'
 }
 
 export default function RootLayout({
