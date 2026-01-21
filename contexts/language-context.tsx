@@ -17,6 +17,18 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     setMounted(true)
+    
+    // Check URL parameter first (for QR codes)
+    const urlParams = new URLSearchParams(window.location.search)
+    const urlLang = urlParams.get('lang')
+    
+    if (urlLang === 'en' || urlLang === 'it') {
+      setLanguageState(urlLang)
+      localStorage.setItem('giustiziainvolo-lang', urlLang)
+      return
+    }
+    
+    // Otherwise check localStorage
     const stored = localStorage.getItem('giustiziainvolo-lang') as Language | null
     if (stored && (stored === 'it' || stored === 'en')) {
       setLanguageState(stored)
