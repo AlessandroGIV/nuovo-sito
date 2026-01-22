@@ -212,7 +212,14 @@ export default function MultiStepRequestForm() {
         process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!,
       )
 
-      // 4. Mostra successo
+// 4. Traccia conversione Google Ads
+      if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('event', 'conversion', {
+          'send_to': 'AW-17322484652/nuZvCKiXrbAbEKzHgMRA'
+        });
+      }
+
+      // 5. Mostra successo
       setSubmitted(true)
       window.scrollTo({ top: 0, behavior: "smooth" })
       toast({ title: t("requestSent"), description: t("requestSentThankYou") })
