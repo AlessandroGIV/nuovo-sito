@@ -1,5 +1,17 @@
 "use client"
 
+// Dichiarazione tipo per Google Analytics
+declare global {
+  interface Window {
+    dataLayer: any[];
+    gtag: (...args: any[]) => void;
+  }
+}
+
+import type React from "react"
+import { useRef, useState } from "react"
+// ... resto degli import
+
 import type React from "react"
 import { useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
