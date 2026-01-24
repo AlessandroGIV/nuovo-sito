@@ -7,7 +7,7 @@ import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { LanguageProvider } from '@/contexts/language-context'
 import Script from 'next/script'
-import { Analytics } from '@vercel/analytics/react'
+import { Analytics } from '@vercel/analytics/next'
 
 export const metadata: Metadata = {
   title: 'Giustizia In Volo - Risarcimento per ritardi e cancellazioni voli',
