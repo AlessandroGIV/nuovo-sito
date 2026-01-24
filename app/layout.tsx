@@ -7,6 +7,7 @@ import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { LanguageProvider } from '@/contexts/language-context'
 import Script from 'next/script'
+import { Analytics } from '@vercel/analytics/react'
 
 export const metadata: Metadata = {
   title: 'Giustizia In Volo - Risarcimento per ritardi e cancellazioni voli',
@@ -48,12 +49,12 @@ html {
             gtag('config', 'AW-17322484652');
           `}
         </Script>
-
         <LanguageProvider>
           <SiteHeader />
           {children}
           <SiteFooter />
         </LanguageProvider>
+        <Analytics />
       </body>
     </html>
   )
