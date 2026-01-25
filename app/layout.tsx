@@ -36,6 +36,20 @@ html {
         `}</style>
       </head>
       <body>
+        {/* Google Analytics 4 */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-N9B7Q6PYCE"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-N9B7Q6PYCE');
+          `}
+        </Script>
+
         {/* Google Ads Conversion Tracking */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=AW-17322484652"
@@ -49,6 +63,7 @@ html {
             gtag('config', 'AW-17322484652');
           `}
         </Script>
+
         <LanguageProvider>
           <SiteHeader />
           {children}
