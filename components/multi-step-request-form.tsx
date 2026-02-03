@@ -154,7 +154,7 @@ export default function MultiStepRequestForm() {
       email,
       phone,
       description,
-      privacy: refs.privacy.current?.checked ? "on" : "",
+      privacy: refs.terms.current?.checked ? "on" : "",
       terms: refs.terms.current?.checked ? "on" : "",
     }
 
