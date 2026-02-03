@@ -308,42 +308,13 @@ export default function RequestForm() {
     )
   }
 
-  // Step indicator component
-  const StepIndicator = () => (
-    <div className="mb-6 flex items-center justify-center gap-2">
-      {[1, 2, 3, 4].map((step) => (
-        <div key={step} className="flex items-center">
-          <div
-            className={`flex h-10 w-10 items-center justify-center rounded-full font-semibold ${
-              currentStep === step
-                ? "bg-[#FFC300] text-[#072534]"
-                : currentStep > step
-                ? "bg-[#FFC300]/50 text-white"
-                : "bg-white/20 text-white"
-            }`}
-          >
-            {step}
-          </div>
-          {step < 4 && (
-            <div
-              className={`h-1 w-12 ${currentStep > step ? "bg-[#FFC300]/50" : "bg-white/20"}`}
-            />
-          )}
-        </div>
-      ))}
-    </div>
-  )
-
   return (
     <form noValidate onSubmit={onSubmit} className="space-y-6">
-      <StepIndicator />
-
-      {/* Step 1: Itinerario */}
-      {currentStep === 1 && (
-        <>
-          <Card className="bg-white text-[#072534] border-0 shadow-lg">
-            <CardContent className="p-4 md:p-6">
-              <h2 className="text-xl font-extrabold">Itinerario</h2>
+      {/* Itinerario */}
+      {currentStep < 4 && (
+        <Card className="bg-white text-[#072534] border-0 shadow-lg">
+          <CardContent className="p-4 md:p-6">
+            <h2 className="text-xl font-extrabold">Itinerario</h2>
           <div className={`mt-3 grid gap-4 ${direct === "no" ? "md:grid-cols-3" : "md:grid-cols-2"}`}>
             {/* Partenza */}
             <GlobalAirportInput
@@ -405,22 +376,8 @@ export default function RequestForm() {
         </CardContent>
       </Card>
 
-      <div className="flex justify-end gap-3">
-        <Button
-          type="button"
-          onClick={nextStep}
-          className="bg-[#FF8A00] text-white hover:bg-[#ff8a00]/90 font-semibold"
-        >
-          Avanti
-        </Button>
-      </div>
-        </>
-      )}
-
-      {/* Step 2: Dettagli volo/i */}
-      {currentStep === 2 && (
-        <>
-          <Card className="bg-white text-[#072534] border-0 shadow-lg">
+      {/* Dettagli volo/i */}
+      <Card className="bg-white text-[#072534] border-0 shadow-lg">
         <CardContent className="p-4 md:p-6">
           <h2 className="text-xl font-extrabold">Dettagli volo{direct === "no" ? " (Volo 1)" : ""}</h2>
           <div className="mt-3 grid gap-4 md:grid-cols-3">
@@ -501,30 +458,8 @@ export default function RequestForm() {
         </CardContent>
       </Card>
 
-      <div className="flex justify-between gap-3">
-        <Button
-          type="button"
-          onClick={prevStep}
-          variant="outline"
-          className="border-white text-white hover:bg-white/10"
-        >
-          Indietro
-        </Button>
-        <Button
-          type="button"
-          onClick={nextStep}
-          className="bg-[#FF8A00] text-white hover:bg-[#ff8a00]/90 font-semibold"
-        >
-          Avanti
-        </Button>
-      </div>
-        </>
-      )}
-
-      {/* Step 3: Dati personali */}
-      {currentStep === 3 && (
-        <>
-          <Card className="bg-white text-[#072534] border-0 shadow-lg">
+      {/* Dati personali */}
+      <Card className="bg-white text-[#072534] border-0 shadow-lg">
         <CardContent className="p-4 md:p-6">
           <h2 className="text-xl font-extrabold">Dati personali</h2>
           <div className="mt-3 grid gap-4 md:grid-cols-2">
@@ -582,27 +517,16 @@ export default function RequestForm() {
               {errors.description ? <p className="mt-1 text-xs text-red-600">{errors.description}</p> : null}
             </div>
           </div>
+
+          <Button
+            type="button"
+            onClick={nextStep}
+            className="mt-5 w-full bg-[#FF8A00] text-white hover:bg-[#ff8a00]/90 font-semibold"
+          >
+            Rivedi e Invia
+          </Button>
         </CardContent>
       </Card>
-
-      <div className="flex justify-between gap-3">
-        <Button
-          type="button"
-          onClick={prevStep}
-          variant="outline"
-          className="border-white text-white hover:bg-white/10"
-        >
-          Indietro
-        </Button>
-        <Button
-          type="button"
-          onClick={nextStep}
-          className="bg-[#FF8A00] text-white hover:bg-[#ff8a00]/90 font-semibold"
-        >
-          Avanti
-        </Button>
-      </div>
-        </>
       )}
 
       {/* Step 4: Riepilogo e Conferma */}
