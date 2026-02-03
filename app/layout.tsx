@@ -6,8 +6,6 @@ import './globals.css'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
 import { LanguageProvider } from '@/contexts/language-context'
-import Script from 'next/script'
-import { Analytics } from '@vercel/analytics/next'
 
 export const metadata: Metadata = {
   title: 'Giustizia In Volo - Risarcimento per ritardi e cancellazioni voli',
@@ -16,7 +14,7 @@ export const metadata: Metadata = {
     icon: '/favicon.ico',
     apple: '/apple-touch-icon.png',
   },
-  generator: 'v0.app'
+    generator: 'v0.app'
 }
 
 export default function RootLayout({
@@ -25,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="it">
+    <html lang="en">
       <head>
         <style>{`
 html {
@@ -36,40 +34,11 @@ html {
         `}</style>
       </head>
       <body>
-        {/* Google Analytics 4 */}
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-N9B7Q6PYCE"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-N9B7Q6PYCE');
-          `}
-        </Script>
-
-        {/* Google Ads Conversion Tracking */}
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=AW-17322484652"
-          strategy="afterInteractive"
-        />
-        <Script id="google-ads-init" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'AW-17322484652');
-          `}
-        </Script>
-
         <LanguageProvider>
           <SiteHeader />
           {children}
           <SiteFooter />
         </LanguageProvider>
-        <Analytics />
       </body>
     </html>
   )

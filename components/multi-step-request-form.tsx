@@ -1,15 +1,6 @@
 "use client"
 
-// Dichiarazione tipo per Google Analytics
-declare global {
-  interface Window {
-    dataLayer: any[];
-    gtag: (...args: any[]) => void;
-  }
-}
-
 import type React from "react"
-// ... resto degli import
 import { useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -104,7 +95,6 @@ export default function MultiStepRequestForm() {
     }
 
     if (step === 4) {
-      if (!refs.privacy.current?.checked) errs.privacy = t("required")
       if (!refs.terms.current?.checked) errs.terms = t("required")
     }
 
@@ -221,14 +211,7 @@ export default function MultiStepRequestForm() {
         process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!,
       )
 
-// 4. Traccia conversione Google Ads
-      if (typeof window !== 'undefined' && window.gtag) {
-        window.gtag('event', 'conversion', {
-          'send_to': 'AW-17322484652/nuZvCKiXrbAbEKzHgMRA'
-        });
-      }
-
-      // 5. Mostra successo
+      // 4. Mostra successo
       setSubmitted(true)
       window.scrollTo({ top: 0, behavior: "smooth" })
       toast({ title: t("requestSent"), description: t("requestSentThankYou") })
@@ -602,7 +585,7 @@ export default function MultiStepRequestForm() {
         </Card>
       )}
 
-      {/* Step 4: Confirm */}
+      {/* Step 4: Summary and Confirm */}
       {currentStep === 4 && (
         <Card className="bg-white text-[#072534] border-0 shadow-2xl py-0">
           <CardContent className="p-6 md:p-8 py-3">
@@ -616,40 +599,93 @@ export default function MultiStepRequestForm() {
               <p className="text-neutral-600">{t("readAndAccept")}</p>
             </div>
 
-            <div className="space-y-4 bg-neutral-50 p-6 rounded-lg py-0">
+            {/* Summary sections */}
+            <div className="space-y-4 mb-6">
+              {/* Itinerary summary */}
+              <div className="bg-neutral-50 p-4 rounded-lg">
+                <h3 className="font-bold text-sm text-[#072534] mb-2 flex items-center gap-2">
+                  <Plane className="w-4 h-4 text-[#FFC300]" />
+                  {t("summaryItinerary")}
+                </h3>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div><span className="text-neutral-500">{t("summaryFrom")}:</span> <span className="font-medium">{from}</span></div>
+                  <div><span className="text-neutral-500">{t("summaryTo")}:</span> <span className="font-medium">{to}</span></div>
+                  {direct === "no" && via && (
+                    <div className="col-span-2"><span className="text-neutral-500">{t("summaryVia")}:</span> <span className="font-medium">{via}</span></div>
+                  )}
+                  <div className="col-span-2">
+                    <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${direct === "si" ? "bg-green-100 text-green-700" : "bg-orange-100 text-orange-700"}`}>
+                      {direct === "si" ? t("summaryDirectFlight") : t("summaryWithStopover")}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Flight details summary */}
+              <div className="bg-neutral-50 p-4 rounded-lg">
+                <h3 className="font-bold text-sm text-[#072534] mb-2 flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-[#FFC300]" />
+                  {t("summaryFlightDetails")}
+                </h3>
+                <div className="space-y-2 text-sm">
+                  <div className="grid grid-cols-3 gap-2">
+                    <div><span className="text-neutral-500">{t("summaryDate")}:</span> <span className="font-medium">{leg1.date}</span></div>
+                    <div><span className="text-neutral-500">{t("summaryTime")}:</span> <span className="font-medium">{leg1.schedDep}</span></div>
+                    <div><span className="text-neutral-500">{t("summaryAirline")}:</span> <span className="font-medium">{leg1.airline}</span></div>
+                  </div>
+                  {direct === "no" && (
+                    <div className="grid grid-cols-3 gap-2 pt-2 border-t border-neutral-200">
+                      <div><span className="text-neutral-500">{t("summaryDate")}:</span> <span className="font-medium">{leg2.date}</span></div>
+                      <div><span className="text-neutral-500">{t("summaryTime")}:</span> <span className="font-medium">{leg2.schedDep}</span></div>
+                      <div><span className="text-neutral-500">{t("summaryAirline")}:</span> <span className="font-medium">{leg2.airline}</span></div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Personal data summary */}
+              <div className="bg-neutral-50 p-4 rounded-lg">
+                <h3 className="font-bold text-sm text-[#072534] mb-2 flex items-center gap-2">
+                  <User className="w-4 h-4 text-[#FFC300]" />
+                  {t("summaryPersonalData")}
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm">
+                  <div><span className="text-neutral-500">{t("summaryName")}:</span> <span className="font-medium">{name}</span></div>
+                  <div><span className="text-neutral-500">{t("summaryEmail")}:</span> <span className="font-medium">{email}</span></div>
+                  <div><span className="text-neutral-500">{t("summaryPhone")}:</span> <span className="font-medium">{phone}</span></div>
+                </div>
+                {description && (
+                  <div className="mt-2 pt-2 border-t border-neutral-200 text-sm">
+                    <span className="text-neutral-500">{t("summaryProblem")}:</span>
+                    <p className="font-medium mt-1 text-neutral-700">{description}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Single checkbox for terms and privacy */}
+            <div className="bg-[#072534]/5 p-4 rounded-lg border-2 border-[#072534]/10">
               <label className="flex items-start gap-3 cursor-pointer group">
                 <input
-                  ref={refs.privacy}
-                  name="privacy"
+                  ref={refs.terms}
+                  name="terms"
                   type="checkbox"
-                  className="mt-1 w-5 h-5 rounded border-2 border-neutral-300 text-[#FFC300] focus:ring-[#FFC300]"
+                  className="mt-1 w-5 h-5 rounded border-2 border-neutral-300 text-[#FFC300] focus:ring-[#FFC300] accent-[#FFC300]"
                 />
                 <span className="text-sm text-neutral-700 group-hover:text-[#072534] transition-colors">
-                  {t("agreeToPrivacy")}{" "}
-                  <a href="/privacy" className="underline font-semibold text-[#072534]">
+                  {t("acceptTermsAndPrivacy")}{" "}
+                  <a href="/termini" target="_blank" className="underline font-semibold text-[#072534] hover:text-[#FFC300]">
+                    {t("termsOfService")}
+                  </a>{" "}
+                  {t("and")}{" "}
+                  <a href="/privacy" target="_blank" className="underline font-semibold text-[#072534] hover:text-[#FFC300]">
                     {t("privacyPolicy")}
                   </a>{" "}
                   *
                 </span>
               </label>
 
-              <label className="flex items-start gap-3 cursor-pointer group">
-                <input
-                  ref={refs.terms}
-                  name="terms"
-                  type="checkbox"
-                  className="mt-1 w-5 h-5 rounded border-2 border-neutral-300 text-[#FFC300] focus:ring-[#FFC300]"
-                />
-                <span className="text-sm text-neutral-700 group-hover:text-[#072534] transition-colors">
-                  {t("agreeToTerms")}{" "}
-                  <a href="/termini" className="underline font-semibold text-[#072534]">
-                    {t("termsAndConditions")}
-                  </a>{" "}
-                  *
-                </span>
-              </label>
-
-              {(errors.privacy || errors.terms) && (
+              {errors.terms && (
                 <p className="text-xs text-red-600 mt-2">{t("acceptPrivacyTerms")}</p>
               )}
             </div>
