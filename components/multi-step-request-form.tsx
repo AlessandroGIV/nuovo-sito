@@ -664,7 +664,7 @@ export default function MultiStepRequestForm() {
             </div>
 
             {/* Single checkbox for terms and privacy */}
-            <div className="bg-[#072534]/5 p-4 rounded-lg border-2 border-[#072534]/10">
+            <div className="bg-[#072534]/5 p-4 rounded-lg border-2 border-[#072534]/10 opacity-70">
               <label className="flex items-start gap-3 cursor-pointer group">
                 <input
                   ref={refs.terms}
