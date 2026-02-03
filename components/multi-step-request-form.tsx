@@ -44,28 +44,42 @@ export default function MultiStepRequestForm() {
   type Errors = Record<string, string>
   const [errors, setErrors] = useState<Errors>({})
 
-  const refs = {
-    from: useRef<HTMLInputElement>(null),
-    to: useRef<HTMLInputElement>(null),
-    via: useRef<HTMLInputElement>(null),
-    leg1Date: useRef<HTMLInputElement>(null),
-    leg1Airline: useRef<HTMLInputElement>(null),
-    leg1Time: useRef<HTMLInputElement>(null),
-    leg2Date: useRef<HTMLInputElement>(null),
-    leg2Airline: useRef<HTMLInputElement>(null),
-    leg2Time: useRef<HTMLInputElement>(null),
-    name: useRef<HTMLInputElement>(null),
-    email: useRef<HTMLInputElement>(null),
-    phone: useRef<HTMLInputElement>(null),
-    description: useRef<HTMLTextAreaElement>(null),
-    privacy: useRef<HTMLInputElement>(null),
-    terms: useRef<HTMLInputElement>(null),
-  }
+  const refFrom = useRef<HTMLInputElement>(null)
+  const refTo = useRef<HTMLInputElement>(null)
+  const refVia = useRef<HTMLInputElement>(null)
+  const refLeg1Date = useRef<HTMLInputElement>(null)
+  const refLeg1Airline = useRef<HTMLInputElement>(null)
+  const refLeg1Time = useRef<HTMLInputElement>(null)
+  const refLeg2Date = useRef<HTMLInputElement>(null)
+  const refLeg2Airline = useRef<HTMLInputElement>(null)
+  const refLeg2Time = useRef<HTMLInputElement>(null)
+  const refName = useRef<HTMLInputElement>(null)
+  const refEmail = useRef<HTMLInputElement>(null)
+  const refPhone = useRef<HTMLInputElement>(null)
+  const refDescription = useRef<HTMLTextAreaElement>(null)
+  const refTerms = useRef<HTMLInputElement>(null)
 
   const steps = [t("itinerary"), t("flightDetails"), t("personalData"), t("confirm")]
 
   const isValidTime = (t: string) => /^\d{2}:\d{2}$/.test(t)
   const isValidPhone10 = (p: string) => /^\d{10}$/.test(p)
+
+  const refs = {
+    from: refFrom,
+    to: refTo,
+    via: refVia,
+    leg1Date: refLeg1Date,
+    leg1Airline: refLeg1Airline,
+    leg1Time: refLeg1Time,
+    leg2Date: refLeg2Date,
+    leg2Airline: refLeg2Airline,
+    leg2Time: refLeg2Time,
+    name: refName,
+    email: refEmail,
+    phone: refPhone,
+    description: refDescription,
+    terms: refTerms,
+  }
 
   function validateStep(step: number): { ok: boolean; errs: Errors } {
     const errs: Errors = {}
@@ -95,7 +109,7 @@ export default function MultiStepRequestForm() {
     }
 
     if (step === 4) {
-      if (!refs.terms.current?.checked) errs.terms = t("required")
+      if (!refTerms.current?.checked) errs.terms = t("required")
     }
 
     return { ok: Object.keys(errs).length === 0, errs }
@@ -154,8 +168,8 @@ export default function MultiStepRequestForm() {
       email,
       phone,
       description,
-      privacy: refs.terms.current?.checked ? "on" : "",
-      terms: refs.terms.current?.checked ? "on" : "",
+      privacy: refTerms.current?.checked ? "on" : "",
+      terms: refTerms.current?.checked ? "on" : "",
     }
 
     try {
@@ -211,7 +225,14 @@ export default function MultiStepRequestForm() {
         process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!,
       )
 
-      // 4. Mostra successo
+      // 4. Track Google Ads conversion
+      if (typeof window !== "undefined" && typeof (window as any).gtag === "function") {
+        (window as any).gtag("event", "conversion", {
+          send_to: "AW-17322484652/nuZvCKiXrbAbEKzHgMRA",
+        })
+      }
+
+      // 5. Mostra successo
       setSubmitted(true)
       window.scrollTo({ top: 0, behavior: "smooth" })
       toast({ title: t("requestSent"), description: t("requestSentThankYou") })
@@ -237,8 +258,7 @@ export default function MultiStepRequestForm() {
     setPhone("")
     setDescription("")
     setErrors({})
-    if (refs.privacy.current) refs.privacy.current.checked = false
-    if (refs.terms.current) refs.terms.current.checked = false
+    if (refTerms.current) refTerms.current.checked = false
   }
 
   const errCls = (key: string) => (errors[key] ? "border-red-500" : "")
@@ -300,7 +320,7 @@ export default function MultiStepRequestForm() {
                 onChange={setFrom}
                 placeholder="Roma Fiumicino - (FCO)"
                 required
-                inputRef={refs.from}
+                inputRef={refFrom}
                 error={errors.from}
               />
 
@@ -312,7 +332,7 @@ export default function MultiStepRequestForm() {
                 onChange={setTo}
                 placeholder="Milano Linate - (LIN)"
                 required
-                inputRef={refs.to}
+                inputRef={refTo}
                 error={errors.to}
               />
 
@@ -353,7 +373,7 @@ export default function MultiStepRequestForm() {
                   onChange={setVia}
                   placeholder="Es. Amsterdam - (AMS)"
                   required
-                  inputRef={refs.via}
+                  inputRef={refVia}
                   error={errors.via}
                   disableBrowserAutocomplete={true}
                 />
@@ -396,7 +416,7 @@ export default function MultiStepRequestForm() {
                 <div>
                   <label className="mb-1.5 block text-sm font-semibold text-[#072534]">{t("flightDate")}</label>
                   <Input
-                    ref={refs.leg1Date}
+                    ref={refLeg1Date}
                     type="date"
                     name="leg1-date"
                     value={leg1.date}
@@ -413,7 +433,7 @@ export default function MultiStepRequestForm() {
                   value={leg1.airline}
                   onChange={(v) => setLeg1({ ...leg1, airline: v })}
                   required
-                  inputRef={refs.leg1Airline}
+                  inputRef={refLeg1Airline}
                   error={errors.leg1Airline}
                 />
 
@@ -423,7 +443,7 @@ export default function MultiStepRequestForm() {
                   label={t("scheduledDeparture")}
                   value={leg1.schedDep}
                   onChange={(v) => setLeg1({ ...leg1, schedDep: v })}
-                  inputRef={refs.leg1Time}
+                  inputRef={refLeg1Time}
                   error={errors.leg1Time}
                   required
                 />
@@ -437,7 +457,7 @@ export default function MultiStepRequestForm() {
                   <div>
                     <label className="mb-1.5 block text-sm font-semibold text-[#072534]">{t("flightDate")}</label>
                     <Input
-                      ref={refs.leg2Date}
+                      ref={refLeg2Date}
                       type="date"
                       name="leg2-date"
                       value={leg2.date}
@@ -454,7 +474,7 @@ export default function MultiStepRequestForm() {
                     value={leg2.airline}
                     onChange={(v) => setLeg2({ ...leg2, airline: v })}
                     required
-                    inputRef={refs.leg2Airline}
+                    inputRef={refLeg2Airline}
                     error={errors.leg2Airline}
                   />
 
@@ -464,7 +484,7 @@ export default function MultiStepRequestForm() {
                     label={t("scheduledDeparture")}
                     value={leg2.schedDep}
                     onChange={(v) => setLeg2({ ...leg2, schedDep: v })}
-                    inputRef={refs.leg2Time}
+                    inputRef={refLeg2Time}
                     error={errors.leg2Time}
                     required
                   />
@@ -509,7 +529,7 @@ export default function MultiStepRequestForm() {
               <div>
                 <label className="mb-1.5 block text-sm font-semibold text-[#072534]">{t("fullName")}</label>
                 <Input
-                  ref={refs.name}
+                  ref={refName}
                   name="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -522,7 +542,7 @@ export default function MultiStepRequestForm() {
               <div>
                 <label className="mb-1.5 block text-sm font-semibold text-[#072534]">{t("email")}</label>
                 <Input
-                  ref={refs.email}
+                  ref={refEmail}
                   type="email"
                   name="email"
                   value={email}
@@ -536,7 +556,7 @@ export default function MultiStepRequestForm() {
               <div>
                 <label className="mb-1.5 block text-sm font-semibold text-[#072534]">{t("phone")}</label>
                 <Input
-                  ref={refs.phone}
+                  ref={refPhone}
                   type="tel"
                   inputMode="numeric"
                   pattern="[0-9]{10}"
@@ -554,7 +574,7 @@ export default function MultiStepRequestForm() {
                   {t("problemDescription")}
                 </label>
                 <Textarea
-                  ref={refs.description}
+                  ref={refDescription}
                   name="description"
                   rows={4}
                   value={description}
@@ -667,7 +687,7 @@ export default function MultiStepRequestForm() {
             <div className="bg-[#072534]/5 p-4 rounded-lg border-2 border-[#072534]/10 opacity-70">
               <label className="flex items-start gap-3 cursor-pointer group">
                 <input
-                  ref={refs.terms}
+                  ref={refTerms}
                   name="terms"
                   type="checkbox"
                   className="mt-1 w-5 h-5 rounded border-2 border-neutral-300 text-[#FFC300] focus:ring-[#FFC300] accent-[#FFC300]"
