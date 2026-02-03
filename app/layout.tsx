@@ -17,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
       <head>
         {/* Google tag (gtag.js) */}
         <script
@@ -35,15 +35,8 @@ export default function RootLayout({
             `,
           }}
         />
-        <style>{`
-html {
-  font-family: ${GeistSans.style.fontFamily};
-  --font-sans: ${GeistSans.variable};
-  --font-mono: ${GeistMono.variable};
-}
-        `}</style>
       </head>
-      <body>
+      <body className={GeistSans.className}>
         <SiteHeader />
         {children}
         <SiteFooter />
