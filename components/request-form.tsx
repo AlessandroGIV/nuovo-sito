@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { useSearchParams } from "next/navigation"
-import { Send, CheckCircle } from "lucide-react"
+import { Send, CheckCircle, Pencil } from "lucide-react"
 import GlobalAirlineInput from "./global-airline-input"
 import GlobalAirportInput from "./global-airport-input"
 import { TimeInputResponsive } from "./time-input-responsive"
@@ -47,6 +47,7 @@ export default function RequestForm() {
   const [submitting, setSubmitting] = useState(false)
   const [errors, setErrors] = useState<Errors>({})
   const [submitted, setSubmitted] = useState(false)
+  const [currentStep, setCurrentStep] = useState(1)
 
   const [from, setFrom] = useState(presetFrom)
   const [to, setTo] = useState(presetTo)
@@ -82,7 +83,6 @@ export default function RequestForm() {
     phone: useRef<HTMLInputElement>(null),
     description: useRef<HTMLTextAreaElement>(null),
     privacy: useRef<HTMLInputElement>(null),
-    terms: useRef<HTMLInputElement>(null),
   }
 
   function scrollToFirstError(errs: Errors) {
@@ -101,7 +101,6 @@ export default function RequestForm() {
       "phone",
       "description",
       "privacy",
-      "terms",
     ]
     for (const k of order) {
       if (errs[k]) {
@@ -128,44 +127,22 @@ export default function RequestForm() {
     setDescription("")
     setErrors({})
     setSubmitted(false)
+    setCurrentStep(1)
     try {
       window.scrollTo({ top: 0, behavior: "smooth" })
     } catch {}
   }
 
-  function isValidTime(v: string) {
-    return /^\d{2}:\d{2}$/.test(v)
-  }
-  function isValidPhone10(v: string) {
-    const digits = v.replace(/\D/g, "")
-    return digits.length === 10
-  }
-
-  function validate(): { ok: boolean; errs: Errors } {
-    const errs: Errors = {}
-    if (!from) errs.from = "Campo obbligatorio"
-    if (!to) errs.to = "Campo obbligatorio"
-    if (!leg1.date) errs.leg1Date = "Campo obbligatorio"
-    if (!leg1.airline) errs.leg1Airline = "Campo obbligatorio"
-    if (!leg1.schedDep || !isValidTime(leg1.schedDep)) errs.leg1Time = "Inserisci un orario valido"
-    if (direct === "no") {
-      if (!via) errs.via = "Campo obbligatorio"
-      if (!leg2.date) errs.leg2Date = "Campo obbligatorio"
-      if (!leg2.airline) errs.leg2Airline = "Campo obbligatorio"
-      if (!leg2.schedDep || !isValidTime(leg2.schedDep)) errs.leg2Time = "Inserisci un orario valido"
-    }
-    if (!name) errs.name = "Campo obbligatorio"
-    if (!email) errs.email = "Campo obbligatorio"
-    if (!phone || !isValidPhone10(phone)) errs.phone = "Inserisci un numero di 10 cifre"
-    if (!description) errs.description = "Campo obbligatorio"
-    return { ok: Object.keys(errs).length === 0, errs }
+  function goToStep(step: number) {
+    setCurrentStep(step)
+    setErrors({})
+    try {
+      window.scrollTo({ top: 0, behavior: "smooth" })
+    } catch {}
   }
 
-  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    if (submitting) return
-
-    const { ok, errs } = validate()
+  function nextStep() {
+    const { ok, errs } = validateCurrentStep()
     setErrors(errs)
     if (!ok) {
       scrollToFirstError(errs)
@@ -176,20 +153,67 @@ export default function RequestForm() {
       })
       return
     }
+    setCurrentStep(currentStep + 1)
+    try {
+      window.scrollTo({ top: 0, behavior: "smooth" })
+    } catch {}
+  }
 
+  function prevStep() {
+    setCurrentStep(currentStep - 1)
+    setErrors({})
+    try {
+      window.scrollTo({ top: 0, behavior: "smooth" })
+    } catch {}
+  }
+
+  function validateCurrentStep(): { ok: boolean; errs: Errors } {
+    const errs: Errors = {}
+    
+    if (currentStep === 1) {
+      if (!from) errs.from = "Campo obbligatorio"
+      if (!to) errs.to = "Campo obbligatorio"
+      if (direct === "no" && !via) errs.via = "Campo obbligatorio"
+    } else if (currentStep === 2) {
+      if (!leg1.date) errs.leg1Date = "Campo obbligatorio"
+      if (!leg1.airline) errs.leg1Airline = "Campo obbligatorio"
+      if (!leg1.schedDep || !isValidTime(leg1.schedDep)) errs.leg1Time = "Inserisci un orario valido"
+      if (direct === "no") {
+        if (!leg2.date) errs.leg2Date = "Campo obbligatorio"
+        if (!leg2.airline) errs.leg2Airline = "Campo obbligatorio"
+        if (!leg2.schedDep || !isValidTime(leg2.schedDep)) errs.leg2Time = "Inserisci un orario valido"
+      }
+    } else if (currentStep === 3) {
+      if (!name) errs.name = "Campo obbligatorio"
+      if (!email) errs.email = "Campo obbligatorio"
+      if (!phone || !isValidPhone10(phone)) errs.phone = "Inserisci un numero di 10 cifre"
+      if (!description) errs.description = "Campo obbligatorio"
+    }
+    
+    return { ok: Object.keys(errs).length === 0, errs }
+  }
+
+  function isValidTime(v: string) {
+    return /^\d{2}:\d{2}$/.test(v)
+  }
+  function isValidPhone10(v: string) {
+    const digits = v.replace(/\D/g, "")
+    return digits.length === 10
+  }
+
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    if (submitting) return
+
+    // Check terms acceptance on step 4
     const fd = new FormData(e.currentTarget)
     const priv = fd.get("privacy")
-    const trm = fd.get("terms")
-    const consentErrs: Errors = {}
-    if (!priv) consentErrs.privacy = "Obbligatorio"
-    if (!trm) consentErrs.terms = "Obbligatorio"
-    if (Object.keys(consentErrs).length > 0) {
-      const combined = { ...errs, ...consentErrs }
-      setErrors(combined)
-      scrollToFirstError(combined)
+    if (!priv) {
+      setErrors({ privacy: "Obbligatorio" })
+      scrollToFirstError({ privacy: "Obbligatorio" })
       toast({
-        title: "Consensi obbligatori",
-        description: "Accetta Privacy e Termini per inviare la richiesta.",
+        title: "Consenso obbligatorio",
+        description: "Devi accettare i termini e la privacy policy per inviare la richiesta.",
         variant: "destructive",
       })
       return
@@ -284,12 +308,42 @@ export default function RequestForm() {
     )
   }
 
+  // Step indicator component
+  const StepIndicator = () => (
+    <div className="mb-6 flex items-center justify-center gap-2">
+      {[1, 2, 3, 4].map((step) => (
+        <div key={step} className="flex items-center">
+          <div
+            className={`flex h-10 w-10 items-center justify-center rounded-full font-semibold ${
+              currentStep === step
+                ? "bg-[#FFC300] text-[#072534]"
+                : currentStep > step
+                ? "bg-[#FFC300]/50 text-white"
+                : "bg-white/20 text-white"
+            }`}
+          >
+            {step}
+          </div>
+          {step < 4 && (
+            <div
+              className={`h-1 w-12 ${currentStep > step ? "bg-[#FFC300]/50" : "bg-white/20"}`}
+            />
+          )}
+        </div>
+      ))}
+    </div>
+  )
+
   return (
     <form noValidate onSubmit={onSubmit} className="space-y-6">
-      {/* Itinerario */}
-      <Card className="bg-white text-[#072534] border-0 shadow-lg">
-        <CardContent className="p-4 md:p-6">
-          <h2 className="text-xl font-extrabold">Itinerario</h2>
+      <StepIndicator />
+
+      {/* Step 1: Itinerario */}
+      {currentStep === 1 && (
+        <>
+          <Card className="bg-white text-[#072534] border-0 shadow-lg">
+            <CardContent className="p-4 md:p-6">
+              <h2 className="text-xl font-extrabold">Itinerario</h2>
           <div className={`mt-3 grid gap-4 ${direct === "no" ? "md:grid-cols-3" : "md:grid-cols-2"}`}>
             {/* Partenza */}
             <GlobalAirportInput
@@ -351,8 +405,22 @@ export default function RequestForm() {
         </CardContent>
       </Card>
 
-      {/* Dettagli volo/i */}
-      <Card className="bg-white text-[#072534] border-0 shadow-lg">
+      <div className="flex justify-end gap-3">
+        <Button
+          type="button"
+          onClick={nextStep}
+          className="bg-[#FF8A00] text-white hover:bg-[#ff8a00]/90 font-semibold"
+        >
+          Avanti
+        </Button>
+      </div>
+        </>
+      )}
+
+      {/* Step 2: Dettagli volo/i */}
+      {currentStep === 2 && (
+        <>
+          <Card className="bg-white text-[#072534] border-0 shadow-lg">
         <CardContent className="p-4 md:p-6">
           <h2 className="text-xl font-extrabold">Dettagli volo{direct === "no" ? " (Volo 1)" : ""}</h2>
           <div className="mt-3 grid gap-4 md:grid-cols-3">
@@ -433,8 +501,30 @@ export default function RequestForm() {
         </CardContent>
       </Card>
 
-      {/* Dati personali */}
-      <Card className="bg-white text-[#072534] border-0 shadow-lg">
+      <div className="flex justify-between gap-3">
+        <Button
+          type="button"
+          onClick={prevStep}
+          variant="outline"
+          className="border-white text-white hover:bg-white/10"
+        >
+          Indietro
+        </Button>
+        <Button
+          type="button"
+          onClick={nextStep}
+          className="bg-[#FF8A00] text-white hover:bg-[#ff8a00]/90 font-semibold"
+        >
+          Avanti
+        </Button>
+      </div>
+        </>
+      )}
+
+      {/* Step 3: Dati personali */}
+      {currentStep === 3 && (
+        <>
+          <Card className="bg-white text-[#072534] border-0 shadow-lg">
         <CardContent className="p-4 md:p-6">
           <h2 className="text-xl font-extrabold">Dati personali</h2>
           <div className="mt-3 grid gap-4 md:grid-cols-2">
@@ -492,40 +582,205 @@ export default function RequestForm() {
               {errors.description ? <p className="mt-1 text-xs text-red-600">{errors.description}</p> : null}
             </div>
           </div>
-
-          <div className="mt-4 space-y-2 text-sm">
-            <label className="flex items-start gap-2">
-              <input ref={refs.privacy} name="privacy" type="checkbox" className="mt-1" />
-              <span>
-                Acconsento al trattamento dei miei dati personali come descritto nella{" "}
-                <a href="/privacy" className="underline text-[#072534]">
-                  Privacy Policy
-                </a>{" "}
-                *
-              </span>
-            </label>
-            <label className="flex items-start gap-2">
-              <input ref={refs.terms} name="terms" type="checkbox" className="mt-1" />
-              <span>
-                Dichiaro di aver preso visione e accettato i termini e condizioni del servizio —{" "}
-                <a href="/termini" className="underline text-[#072534]">
-                  Termini e condizioni
-                </a>{" "}
-                *
-              </span>
-            </label>
-          </div>
-
-          <Button
-            type="submit"
-            disabled={submitting}
-            className="mt-5 w-full bg-[#FF8A00] text-white hover:bg-[#ff8a00]/90 font-semibold"
-          >
-            <Send className="mr-2 h-4 w-4" />
-            {submitting ? "Invio in corso..." : "Invia la richiesta"}
-          </Button>
         </CardContent>
       </Card>
+
+      <div className="flex justify-between gap-3">
+        <Button
+          type="button"
+          onClick={prevStep}
+          variant="outline"
+          className="border-white text-white hover:bg-white/10"
+        >
+          Indietro
+        </Button>
+        <Button
+          type="button"
+          onClick={nextStep}
+          className="bg-[#FF8A00] text-white hover:bg-[#ff8a00]/90 font-semibold"
+        >
+          Avanti
+        </Button>
+      </div>
+        </>
+      )}
+
+      {/* Step 4: Riepilogo e Conferma */}
+      {currentStep === 4 && (
+        <>
+          <Card className="bg-white text-[#072534] border-0 shadow-lg">
+            <CardContent className="p-4 md:p-6">
+              <h2 className="text-2xl font-extrabold mb-6">Riepilogo e Conferma</h2>
+
+              {/* Itinerario Summary */}
+              <div className="mb-6 rounded-lg bg-[#072534]/5 p-4">
+                <div className="mb-3 flex items-center justify-between">
+                  <h3 className="text-lg font-bold">Itinerario</h3>
+                  <Button
+                    type="button"
+                    onClick={() => goToStep(1)}
+                    variant="outline"
+                    size="sm"
+                    className="text-xs"
+                  >
+                    Modifica
+                  </Button>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="font-semibold">Partenza:</span>
+                    <span>{from || "Non specificato"}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-semibold">Destinazione:</span>
+                    <span>{to || "Non specificato"}</span>
+                  </div>
+                  {direct === "no" && via && (
+                    <div className="flex justify-between">
+                      <span className="font-semibold">Scalo:</span>
+                      <span>{via}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between">
+                    <span className="font-semibold">Tipo volo:</span>
+                    <span>{direct === "si" ? "Diretto" : "Con scalo"}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Dettagli Volo Summary */}
+              <div className="mb-6 rounded-lg bg-[#072534]/5 p-4">
+                <div className="mb-3 flex items-center justify-between">
+                  <h3 className="text-lg font-bold">Dettagli Volo</h3>
+                  <Button
+                    type="button"
+                    onClick={() => goToStep(2)}
+                    variant="outline"
+                    size="sm"
+                    className="text-xs"
+                  >
+                    Modifica
+                  </Button>
+                </div>
+                <div className="space-y-3">
+                  <div>
+                    <p className="font-semibold text-sm mb-1">Volo {direct === "no" ? "1" : ""}</p>
+                    <div className="space-y-1 text-sm pl-3">
+                      <div className="flex justify-between">
+                        <span className="text-[#072534]/70">Data:</span>
+                        <span>{leg1.date || "Non specificato"}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-[#072534]/70">Compagnia:</span>
+                        <span>{leg1.airline || "Non specificato"}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-[#072534]/70">Orario partenza:</span>
+                        <span>{leg1.schedDep}</span>
+                      </div>
+                    </div>
+                  </div>
+                  {direct === "no" && (
+                    <div>
+                      <p className="font-semibold text-sm mb-1">Volo 2</p>
+                      <div className="space-y-1 text-sm pl-3">
+                        <div className="flex justify-between">
+                          <span className="text-[#072534]/70">Data:</span>
+                          <span>{leg2.date || "Non specificato"}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-[#072534]/70">Compagnia:</span>
+                          <span>{leg2.airline || "Non specificato"}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-[#072534]/70">Orario partenza:</span>
+                          <span>{leg2.schedDep}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Dati Personali Summary */}
+              <div className="mb-6 rounded-lg bg-[#072534]/5 p-4">
+                <div className="mb-3 flex items-center justify-between">
+                  <h3 className="text-lg font-bold">Dati Personali</h3>
+                  <Button
+                    type="button"
+                    onClick={() => goToStep(3)}
+                    variant="outline"
+                    size="sm"
+                    className="text-xs"
+                  >
+                    Modifica
+                  </Button>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="font-semibold">Nome:</span>
+                    <span>{name || "Non specificato"}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-semibold">Email:</span>
+                    <span>{email || "Non specificato"}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="font-semibold">Telefono:</span>
+                    <span>{phone || "Non specificato"}</span>
+                  </div>
+                  {description && (
+                    <div>
+                      <p className="font-semibold mb-1">Descrizione:</p>
+                      <p className="text-[#072534]/70 text-xs whitespace-pre-wrap">{description}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Terms and Privacy - Less prominent */}
+              <div className="mt-8 space-y-3 border-t border-[#072534]/10 pt-6 text-sm">
+                <label className="flex items-start gap-2 cursor-pointer">
+                  <input ref={refs.privacy} name="privacy" type="checkbox" className="mt-1" />
+                  <span className="text-[#072534]/80">
+                    Ho preso visione e accetto i{" "}
+                    <a href="/termini" target="_blank" className="underline text-[#072534] hover:text-[#FF8A00]">
+                      Termini e condizioni
+                    </a>{" "}
+                    e la{" "}
+                    <a href="/privacy" target="_blank" className="underline text-[#072534] hover:text-[#FF8A00]">
+                      Privacy Policy
+                    </a>
+                    {" "}*
+                  </span>
+                </label>
+                {(errors.privacy || errors.terms) && (
+                  <p className="text-xs text-red-600">Devi accettare i termini e la privacy policy per continuare</p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="flex justify-between gap-3">
+            <Button
+              type="button"
+              onClick={prevStep}
+              variant="outline"
+              className="border-white text-white hover:bg-white/10"
+            >
+              Indietro
+            </Button>
+            <Button
+              type="submit"
+              disabled={submitting}
+              className="bg-[#FF8A00] text-white hover:bg-[#ff8a00]/90 font-semibold"
+            >
+              <Send className="mr-2 h-4 w-4" />
+              {submitting ? "Invio in corso..." : "Invia richiesta"}
+            </Button>
+          </div>
+        </>
+      )}
     </form>
   )
 }
