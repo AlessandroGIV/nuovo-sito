@@ -1,13 +1,13 @@
 "use client"
 
 import type React from "react"
-import { useState, useEffect } from "react"
+
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { Send, CheckCircle } from "lucide-react"
-import emailjs from '@emailjs/browser'
 
 type State = { ok: boolean; message: string }
 type ContactFormProps = { variant?: "light" | "dark" }
@@ -22,11 +22,6 @@ export default function ContactForm({ variant = "light" }: ContactFormProps) {
   const labelClass = isDark ? "text-white" : "text-[#072534]"
   const helperTextClass = isDark ? "text-white/70" : "text-neutral-600"
   const inputClass = isDark ? "bg-[#243947] border-white/10 text-white placeholder:text-white/60" : ""
-
-  // Initialize EmailJS
-  useEffect(() => {
-    emailjs.init(process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!)
-  }, [])
 
   function validPhone10(v: string | FormDataEntryValue | null) {
     const s = (typeof v === "string" ? v : "") ?? ""
@@ -75,55 +70,17 @@ export default function ContactForm({ variant = "light" }: ContactFormProps) {
       return
     }
 
-    // honeypot check
-    if (payload.company) {
-      setSubmitted(true)
-      toast({ title: "Richiesta inviata", description: "Ti ricontatteremo entro 24 ore." })
-      return
-    }
-
     setLoading(true)
     setState(null)
-    
     try {
-      // Prepare email template parameters to match your HTML template
-      const templateParams = {
-        // Contact & case info (for simple form)
-        full_name: payload.name,
-        email: payload.email,
-        phone: payload.phone,
-        description: payload.description || 'Nessuna descrizione fornita',
-        
-        // Flight info (simplified for legacy form)
-        flight_number: payload.flightNumber,
-        flight_date: payload.date,
-        
-        // Trip details (set defaults for simple form)
-        is_direct: "unknown",
-        departure_airport: "Non specificato",
-        arrival_airport: "Non specificato", 
-        
-        // Flight segments (use legacy data)
-        segment1_date: payload.date,
-        segment1_time: "Non specificato",
-        segment1_airline: payload.flightNumber,
-        segment2_date: "",
-        segment2_time: "",
-        segment2_airline: "",
-        
-        // Additional context
-        submission_date: new Date().toLocaleString('it-IT'),
-      }
-
-      // Send email via EmailJS
-      const result = await emailjs.send(
-        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
-        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
-        templateParams
-      )
-
-      if (result.status === 200) {
-        setState({ ok: true, message: "Email inviata con successo!" })
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      })
+      const data = (await res.json()) as State
+      setState(data)
+      if (data.ok) {
         setSubmitted(true)
         toast({ title: "Richiesta inviata", description: "Ti ricontatteremo entro 24 ore." })
         try {
@@ -131,15 +88,17 @@ export default function ContactForm({ variant = "light" }: ContactFormProps) {
         } catch {}
         form.reset()
       } else {
-        throw new Error('EmailJS failed')
+        toast({
+          title: "Invio non riuscito",
+          description: data.message || "Riprova più tardi.",
+          variant: "destructive",
+        })
       }
-
-    } catch (error) {
-      console.error('EmailJS error:', error)
-      setState({ ok: false, message: "Errore durante l'invio email. Riprova più tardi." })
+    } catch {
+      setState({ ok: false, message: "Errore di rete. Riprova." })
       toast({
-        title: "Invio non riuscito",
-        description: "Errore durante l'invio. Riprova più tardi.",
+        title: "Errore di rete",
+        description: "Controlla la connessione.",
         variant: "destructive",
       })
     } finally {
@@ -164,7 +123,7 @@ export default function ContactForm({ variant = "light" }: ContactFormProps) {
           onClick={resetContactForm}
           className="mt-5 inline-flex items-center justify-center rounded-md bg-[#FFC300] px-5 py-2.5 font-semibold text-[#072534] hover:bg-[#FFB800]"
         >
-          Invia un'altra richiesta
+          Invia un’altra richiesta
         </button>
       </div>
     )

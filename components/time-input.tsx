@@ -13,7 +13,7 @@ type Props = {
   onChange: (v: string) => void
   required?: boolean
   error?: string
-  inputRef?: React.RefObject<HTMLSelectElement | null> // Fixed type
+  inputRef?: React.RefObject<HTMLSelectElement> // focus hour select
   className?: string
 }
 
@@ -39,8 +39,8 @@ export function TimeInput({ id, name, label, value, onChange, required, error, i
 
   // expose ref for scroll/focus
   useEffect(() => {
-    if (inputRef && hourRef.current) {
-      // @ts-expect-error - This is fine, we're forwarding the ref
+    if (inputRef) {
+      // @ts-expect-error assign select ref
       inputRef.current = hourRef.current
     }
   }, [inputRef])

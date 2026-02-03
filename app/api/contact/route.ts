@@ -18,7 +18,7 @@ export async function POST(req: Request) {
       if (!legOk) {
         return NextResponse.json({ ok: false, message: 'Dati volo (Volo 1) incompleti' }, { status: 400 })
       }
-      if (!body.direct) {
+      if (body.direct === "no") {
         const leg2 = body.leg2 ?? {}
         const leg2Ok = leg2.date && leg2.airline && leg2.schedDep
         if (!leg2Ok) {
@@ -26,8 +26,8 @@ export async function POST(req: Request) {
         }
       }
 
-      // TODO: integrazione email/DB
-      return NextResponse.json({ ok: true, message: 'Richiesta inviata con successo.' })
+      // Validazione completata - il client invierà l'email con EmailJS
+      return NextResponse.json({ ok: true, message: 'Validazione completata.' })
     }
 
     // Campi obbligatori aggiornati (telefono incluso)
