@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useRef, useState, useEffect } from "react"
+import { useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -14,9 +14,24 @@ import { Send, CheckCircle } from "lucide-react"
 import GlobalAirlineInput from "./global-airline-input"
 import GlobalAirportInput from "./global-airport-input"
 import { TimeInputResponsive } from "./time-input-responsive"
-import emailjs from '@emailjs/browser'
+import { useLanguage } from "@/contexts/language-context"
 
 type Leg = { date: string; airline: string; schedDep: string }
+type Payload = {
+  flow: "request"
+  from: string
+  to: string
+  direct: boolean
+  via?: string
+  leg1: Leg
+  leg2?: Leg | null
+  name: string
+  email: string
+  phone: string
+  description: string
+  privacy: "on"
+  terms: "on"
+}
 type Errors = Partial<
   Record<
     | "from"
@@ -43,6 +58,7 @@ export default function RequestForm() {
   const presetFrom = params.get("from") ?? ""
   const presetTo = params.get("to") ?? ""
   const { toast } = useToast()
+  const { t } = useLanguage()
 
   const [submitting, setSubmitting] = useState(false)
   const [errors, setErrors] = useState<Errors>({})
@@ -60,11 +76,6 @@ export default function RequestForm() {
   const [email, setEmail] = useState("")
   const [phone, setPhone] = useState("")
   const [description, setDescription] = useState("")
-
-  // Initialize EmailJS
-  useEffect(() => {
-    emailjs.init(process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!)
-  }, [])
 
   // Refs for scroll/focus
   const refs = {
@@ -143,21 +154,21 @@ export default function RequestForm() {
 
   function validate(): { ok: boolean; errs: Errors } {
     const errs: Errors = {}
-    if (!from) errs.from = "Campo obbligatorio"
-    if (!to) errs.to = "Campo obbligatorio"
-    if (!leg1.date) errs.leg1Date = "Campo obbligatorio"
-    if (!leg1.airline) errs.leg1Airline = "Campo obbligatorio"
-    if (!leg1.schedDep || !isValidTime(leg1.schedDep)) errs.leg1Time = "Inserisci un orario valido"
+    if (!from) errs.from = t('requiredField')
+    if (!to) errs.to = t('requiredField')
+    if (!leg1.date) errs.leg1Date = t('requiredField')
+    if (!leg1.airline) errs.leg1Airline = t('requiredField')
+    if (!leg1.schedDep || !isValidTime(leg1.schedDep)) errs.leg1Time = t('validTimeRequired')
     if (direct === "no") {
-      if (!via) errs.via = "Campo obbligatorio"
-      if (!leg2.date) errs.leg2Date = "Campo obbligatorio"
-      if (!leg2.airline) errs.leg2Airline = "Campo obbligatorio"
-      if (!leg2.schedDep || !isValidTime(leg2.schedDep)) errs.leg2Time = "Inserisci un orario valido"
+      if (!via) errs.via = t('requiredField')
+      if (!leg2.date) errs.leg2Date = t('requiredField')
+      if (!leg2.airline) errs.leg2Airline = t('requiredField')
+      if (!leg2.schedDep || !isValidTime(leg2.schedDep)) errs.leg2Time = t('validTimeRequired')
     }
-    if (!name) errs.name = "Campo obbligatorio"
-    if (!email) errs.email = "Campo obbligatorio"
-    if (!phone || !isValidPhone10(phone)) errs.phone = "Inserisci un numero di 10 cifre"
-    if (!description) errs.description = "Campo obbligatorio"
+    if (!name) errs.name = t('requiredField')
+    if (!email) errs.email = t('requiredField')
+    if (!phone || !isValidPhone10(phone)) errs.phone = t('enter10DigitPhone')
+    if (!description) errs.description = t('requiredField')
     return { ok: Object.keys(errs).length === 0, errs }
   }
 
@@ -170,8 +181,8 @@ export default function RequestForm() {
     if (!ok) {
       scrollToFirstError(errs)
       toast({
-        title: "Compila i campi obbligatori",
-        description: "Alcuni campi sono mancanti o non validi.",
+        title: t('completeRequiredFields'),
+        description: t('someMissingInvalid'),
         variant: "destructive",
       })
       return
@@ -181,81 +192,60 @@ export default function RequestForm() {
     const priv = fd.get("privacy")
     const trm = fd.get("terms")
     const consentErrs: Errors = {}
-    if (!priv) consentErrs.privacy = "Obbligatorio"
-    if (!trm) consentErrs.terms = "Obbligatorio"
+    if (!priv) consentErrs.privacy = t('required')
+    if (!trm) consentErrs.terms = t('required')
     if (Object.keys(consentErrs).length > 0) {
       const combined = { ...errs, ...consentErrs }
       setErrors(combined)
       scrollToFirstError(combined)
       toast({
-        title: "Consensi obbligatori",
-        description: "Accetta Privacy e Termini per inviare la richiesta.",
+        title: t('consentRequired'),
+        description: t('acceptPrivacyTerms'),
         variant: "destructive",
       })
       return
     }
 
+    const payload: Payload = {
+      flow: "request",
+      from,
+      to,
+      direct: direct === "si",
+      via: direct === "no" ? via : undefined,
+      leg1,
+      leg2: direct === "si" ? null : leg2,
+      name,
+      email,
+      phone,
+      description,
+      privacy: "on",
+      terms: "on",
+    }
+
     setSubmitting(true)
     try {
-      // Complete email template parameters with all required fields
-     const templateParams = {
-      // Trip details
-      is_direct: direct === "si" ? "true" : "false",
-      is_direct_label: direct === "si" ? "Volo Diretto" : "Volo con Scalo",
-      departure_airport: from,
-      arrival_airport: to,
-      
-      // First/only flight segment
-      segment1_date: leg1.date,
-      segment1_time: leg1.schedDep,
-      segment1_airline: leg1.airline,
-      
-      // Second segment (only if not direct)
-      segment2_date: direct === "si" ? "" : leg2.date,
-      segment2_time: direct === "si" ? "" : leg2.schedDep,
-      segment2_airline: direct === "si" ? "" : leg2.airline,
-      
-      // Contact & case info
-      full_name: name,
-      email: email,
-      phone: phone,
-      description: description,
-      
-      // Layover info - properly cleaned
-      via_airport: direct === "no" && via ? via : "Nessuno",
-      
-      // Legacy fields for compatibility
-      flight_number: leg1.airline ? `${leg1.airline} - ${leg1.date}` : "Non specificato",
-      flight_date: leg1.date || "Non specificato",
-      
-      // Additional context
-      submission_date: new Date().toLocaleString('it-IT'),
-}
-
-
-      console.log('Sending email with data:', templateParams) // Debug log
-
-      // Send email via EmailJS
-      const result = await emailjs.send(
-        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
-        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
-        templateParams
-      )
-
-      if (result.status === 200) {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      })
+      const data = (await res.json()) as { ok: boolean; message: string }
+      if (data.ok) {
         setSubmitted(true)
         try {
           window.scrollTo({ top: 0, behavior: "smooth" })
         } catch {}
-        toast({ title: "Richiesta inviata", description: "Ti ricontatteremo entro 24 ore." })
+        toast({ title: t('requestSent'), description: t('requestSentThankYou') })
         return
       } else {
-        throw new Error('EmailJS failed')
+        toast({
+          title: t('sendFailed'),
+          description: data.message ?? t('tryAgainLater'),
+          variant: "destructive",
+        })
       }
-
-    } catch (error) {
-      console.error('EmailJS error:', error)
-      toast({ title: "Errore di rete", description: "Controlla la connessione e riprova.", variant: "destructive" })
+    } catch {
+      toast({ title: t('networkError'), description: t('checkConnectionRetry'), variant: "destructive" })
     } finally {
       setSubmitting(false)
     }
@@ -269,16 +259,16 @@ export default function RequestForm() {
         <div className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-full bg-green-500/20">
           <CheckCircle className="h-7 w-7 text-green-400" />
         </div>
-        <h2 className="text-2xl md:text-3xl font-extrabold text-[#FFC300]">Richiesta Inviata!</h2>
+        <h2 className="text-2xl md:text-3xl font-extrabold text-[#FFC300]">{t('requestSent')}</h2>
         <p className="mt-2 text-white/85">
-          Grazie per averci contattato. Un nostro avvocato ti risponderà al più presto per valutare il tuo caso.
+          {t('requestSentMessage')}
         </p>
         <button
           type="button"
           onClick={resetAll}
           className="mt-5 inline-flex items-center justify-center rounded-md bg-[#FFC300] px-5 py-2.5 font-semibold text-[#072534] hover:bg-[#FFB800]"
         >
-          Invia un'altra richiesta
+          {t('sendAnotherRequest')}
         </button>
       </div>
     )
@@ -289,13 +279,13 @@ export default function RequestForm() {
       {/* Itinerario */}
       <Card className="bg-white text-[#072534] border-0 shadow-lg">
         <CardContent className="p-4 md:p-6">
-          <h2 className="text-xl font-extrabold">Itinerario</h2>
+          <h2 className="text-xl font-extrabold">{t('itinerary')}</h2>
           <div className={`mt-3 grid gap-4 ${direct === "no" ? "md:grid-cols-3" : "md:grid-cols-2"}`}>
             {/* Partenza */}
             <GlobalAirportInput
               id="from"
               name="from"
-              label="Aeroporto di partenza"
+              label={t('departureAirport')}
               value={from}
               onChange={setFrom}
               placeholder="Roma Fiumicino - (FCO)"
@@ -307,12 +297,12 @@ export default function RequestForm() {
             {/* Scalo: mostrato solo se volo non diretto, al centro su desktop */}
             {direct === "no" && (
               <GlobalAirportInput
-                id="layover-airport"
-                name="layover-airport"
-                label="Aeroporto di scalo"
+                id="via"
+                name="via"
+                label={t('stopoverAirport')}
                 value={via}
                 onChange={setVia}
-                placeholder="Es. Amsterdam Schiphol - (AMS)"
+                placeholder="Es. Amsterdam - (AMS)"
                 required
                 inputRef={refs.via}
                 error={errors.via}
@@ -320,12 +310,11 @@ export default function RequestForm() {
               />
             )}
 
-
             {/* Destinazione */}
             <GlobalAirportInput
               id="to"
               name="to"
-              label="Aeroporto di destinazione"
+              label={t('destinationAirport')}
               value={to}
               onChange={setTo}
               placeholder="Milano Linate - (LIN)"
@@ -336,15 +325,15 @@ export default function RequestForm() {
           </div>
 
           <div className="mt-4">
-            <p className="mb-2 font-semibold">Il tuo volo era diretto?</p>
+            <p className="mb-2 font-semibold">{t('directFlight')}</p>
             <RadioGroup defaultValue="si" onValueChange={(v) => setDirect(v as "si" | "no")} className="flex gap-6">
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="si" id="diretto-si" />
-                <Label htmlFor="diretto-si">Sì</Label>
+                <Label htmlFor="diretto-si">{t('yes')}</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="no" id="diretto-no" />
-                <Label htmlFor="diretto-no">No</Label>
+                <Label htmlFor="diretto-no">{t('no')}</Label>
               </div>
             </RadioGroup>
           </div>
@@ -354,10 +343,10 @@ export default function RequestForm() {
       {/* Dettagli volo/i */}
       <Card className="bg-white text-[#072534] border-0 shadow-lg">
         <CardContent className="p-4 md:p-6">
-          <h2 className="text-xl font-extrabold">Dettagli volo{direct === "no" ? " (Volo 1)" : ""}</h2>
+          <h2 className="text-xl font-extrabold">{direct === "no" ? t('flightDetailsWithNumber', {number: '1'}) : t('flightDetails')}</h2>
           <div className="mt-3 grid gap-4 md:grid-cols-3">
             <div>
-              <label className="mb-1 block text-sm font-semibold text-[#072534]">Data del volo</label>
+              <label className="mb-1 block text-sm font-semibold text-[#072534]">{t('flightDate')}</label>
               <Input
                 ref={refs.leg1Date}
                 type="date"
@@ -371,7 +360,7 @@ export default function RequestForm() {
             <GlobalAirlineInput
               id="leg1-airline"
               name="leg1-airline"
-              label="Compagnia aerea"
+              label={t('airline')}
               value={leg1.airline}
               onChange={(v) => setLeg1({ ...leg1, airline: v })}
               required
@@ -381,7 +370,7 @@ export default function RequestForm() {
             <TimeInputResponsive
               id="leg1-time"
               name="leg1-time"
-              label="Orario di partenza previsto"
+              label={t('scheduledDeparture')}
               value={leg1.schedDep}
               onChange={(v) => setLeg1({ ...leg1, schedDep: v })}
               inputRef={refs.leg1Time}
@@ -393,10 +382,10 @@ export default function RequestForm() {
           {direct === "no" && (
             <>
               <hr className="my-6 border-[#072534]/10" />
-              <h2 className="text-xl font-extrabold">Dettagli volo (Volo 2)</h2>
+              <h2 className="text-xl font-extrabold">{t('flightDetailsWithNumber', {number: '2'})}</h2>
               <div className="mt-3 grid gap-4 md:grid-cols-3">
                 <div>
-                  <label className="mb-1 block text-sm font-semibold text-[#072534]">Data del volo</label>
+                  <label className="mb-1 block text-sm font-semibold text-[#072534]">{t('flightDate')}</label>
                   <Input
                     ref={refs.leg2Date}
                     type="date"
@@ -410,7 +399,7 @@ export default function RequestForm() {
                 <GlobalAirlineInput
                   id="leg2-airline"
                   name="leg2-airline"
-                  label="Compagnia aerea"
+                  label={t('airline')}
                   value={leg2.airline}
                   onChange={(v) => setLeg2({ ...leg2, airline: v })}
                   required
@@ -420,7 +409,7 @@ export default function RequestForm() {
                 <TimeInputResponsive
                   id="leg2-time"
                   name="leg2-time"
-                  label="Orario di partenza previsto"
+                  label={t('scheduledDeparture')}
                   value={leg2.schedDep}
                   onChange={(v) => setLeg2({ ...leg2, schedDep: v })}
                   inputRef={refs.leg2Time}
@@ -436,35 +425,35 @@ export default function RequestForm() {
       {/* Dati personali */}
       <Card className="bg-white text-[#072534] border-0 shadow-lg">
         <CardContent className="p-4 md:p-6">
-          <h2 className="text-xl font-extrabold">Dati personali</h2>
+          <h2 className="text-xl font-extrabold">{t('personalData')}</h2>
           <div className="mt-3 grid gap-4 md:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm font-semibold text-[#072534]">Nome e Cognome</label>
+              <label className="mb-1 block text-sm font-semibold text-[#072534]">{t('fullName')}</label>
               <Input
                 ref={refs.name}
                 name="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Il tuo nome completo"
+                placeholder={t('yourFullName')}
                 className={errCls("name")}
               />
               {errors.name ? <p className="mt-1 text-xs text-red-600">{errors.name}</p> : null}
             </div>
             <div>
-              <label className="mb-1 block text-sm font-semibold text-[#072534]">Email</label>
+              <label className="mb-1 block text-sm font-semibold text-[#072534]">{t('email')}</label>
               <Input
                 ref={refs.email}
                 type="email"
                 name="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="La tua email"
+                placeholder={t('yourEmail')}
                 className={errCls("email")}
               />
               {errors.email ? <p className="mt-1 text-xs text-red-600">{errors.email}</p> : null}
             </div>
             <div>
-              <label className="mb-1 block text-sm font-semibold text-[#072534]">Telefono</label>
+              <label className="mb-1 block text-sm font-semibold text-[#072534]">{t('phone')}</label>
               <Input
                 ref={refs.phone}
                 type="tel"
@@ -473,20 +462,20 @@ export default function RequestForm() {
                 name="phone"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                placeholder="Il tuo numero di telefono"
+                placeholder={t('yourPhone')}
                 className={errCls("phone")}
               />
               {errors.phone ? <p className="mt-1 text-xs text-red-600">{errors.phone}</p> : null}
             </div>
             <div className="md:col-span-2">
-              <label className="mb-1 block text-sm font-semibold text-[#072534]">Breve descrizione del problema</label>
+              <label className="mb-1 block text-sm font-semibold text-[#072534]">{t('problemDescription')}</label>
               <Textarea
                 ref={refs.description}
                 name="description"
                 rows={4}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Es. ritardo di 4 ore sul primo volo, perdita connessione..."
+                placeholder={t('problemDescriptionPlaceholder')}
                 className={errCls("description")}
               />
               {errors.description ? <p className="mt-1 text-xs text-red-600">{errors.description}</p> : null}
@@ -497,9 +486,9 @@ export default function RequestForm() {
             <label className="flex items-start gap-2">
               <input ref={refs.privacy} name="privacy" type="checkbox" className="mt-1" />
               <span>
-                Acconsento al trattamento dei miei dati personali come descritto nella{" "}
+                {t('agreeToPrivacy')}{" "}
                 <a href="/privacy" className="underline text-[#072534]">
-                  Privacy Policy
+                  {t('privacyPolicy')}
                 </a>{" "}
                 *
               </span>
@@ -507,9 +496,9 @@ export default function RequestForm() {
             <label className="flex items-start gap-2">
               <input ref={refs.terms} name="terms" type="checkbox" className="mt-1" />
               <span>
-                Dichiaro di aver preso visione e accettato i termini e condizioni del servizio —{" "}
+                {t('agreeToTerms')}{" "}
                 <a href="/termini" className="underline text-[#072534]">
-                  Termini e condizioni
+                  {t('termsAndConditions')}
                 </a>{" "}
                 *
               </span>
@@ -522,7 +511,7 @@ export default function RequestForm() {
             className="mt-5 w-full bg-[#FF8A00] text-white hover:bg-[#ff8a00]/90 font-semibold"
           >
             <Send className="mr-2 h-4 w-4" />
-            {submitting ? "Invio in corso..." : "Invia la richiesta"}
+            {submitting ? t('submitting') : t('submit')}
           </Button>
         </CardContent>
       </Card>

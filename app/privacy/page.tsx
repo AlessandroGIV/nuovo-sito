@@ -1,92 +1,79 @@
+'use client'
+
+import { useLanguage } from '@/contexts/language-context'
+import { legalTranslations } from '@/lib/legal-translations'
+
 export default function PrivacyPage() {
+  const { t, language } = useLanguage()
+  const lt = legalTranslations[language]
+  
   return (
     <main className="bg-[#072534] text-white">
       <section className="container mx-auto px-4 py-10 md:py-14">
         <div className="mx-auto max-w-4xl rounded-2xl bg-white/5 p-6 md:p-8">
-          <h1 className="text-3xl md:text-4xl font-extrabold text-[#FFC300]">Privacy Policy</h1>
+          <h1 className="text-3xl md:text-4xl font-extrabold text-[#FFC300]">
+            {t('privacyPolicyTitle')}
+          </h1>
 
-          <p className="mt-4 text-white/90">
-            La presente Privacy Policy descrive le modalità di raccolta e trattamento dei dati personali degli utenti
-            che visitano il sito web di GiustiziaInVolo e che utilizzano i nostri servizi.
-          </p>
+          <p className="mt-4 text-white/90">{lt.privacyIntro}</p>
 
           {/* 1 */}
-          <h2 className="mt-8 text-2xl font-extrabold text-[#FFC300]">1. Titolare del Trattamento</h2>
-          <p className="mt-2 text-white/90">Il titolare del trattamento dei dati personali è GiustiziaInVolo</p>
+          <h2 className="mt-8 text-2xl font-extrabold text-[#FFC300]">{lt.privacySection1Title}</h2>
+          <p className="mt-2 text-white/90">{lt.privacySection1Content}</p>
 
           {/* 2 */}
-          <h2 className="mt-8 text-2xl font-extrabold text-[#FFC300]">2. Dati Raccolti</h2>
-          <p className="mt-2 text-white/90">Raccogliamo i seguenti tipi di dati personali:</p>
+          <h2 className="mt-8 text-2xl font-extrabold text-[#FFC300]">{lt.privacySection2Title}</h2>
+          <p className="mt-2 text-white/90">{lt.privacySection2Intro}</p>
           <ul className="mt-2 list-disc pl-6 text-white/90 space-y-1">
-            <li>Dati di contatto (nome, cognome, email, telefono)</li>
-            <li>Informazioni sul volo (numero di volo, data, compagnia aerea)</li>
-            <li>Dettagli del disservizio subito</li>
-            <li>Documenti di viaggio e identificativi</li>
-            <li>Dati di navigazione sul sito web</li>
+            {lt.privacySection2Items.map((item, i) => (
+              <li key={i}>{item}</li>
+            ))}
           </ul>
 
           {/* 3 */}
-          <h2 className="mt-8 text-2xl font-extrabold text-[#FFC300]">3. Finalità del Trattamento</h2>
-          <p className="mt-2 text-white/90">I dati personali sono raccolti e trattati per le seguenti finalità:</p>
+          <h2 className="mt-8 text-2xl font-extrabold text-[#FFC300]">{lt.privacySection3Title}</h2>
+          <p className="mt-2 text-white/90">{lt.privacySection3Intro}</p>
           <ul className="mt-2 list-disc pl-6 text-white/90 space-y-1">
-            <li>Fornire assistenza legale per il recupero del risarcimento</li>
-            <li>Comunicare con l{"'"}utente riguardo alla sua pratica</li>
-            <li>Adempiere agli obblighi legali e contrattuali</li>
-            <li>Migliorare i nostri servizi</li>
-            <li>Inviare comunicazioni informative (previo consenso)</li>
+            {lt.privacySection3Items.map((item, i) => (
+              <li key={i}>{item}</li>
+            ))}
           </ul>
 
           {/* 4 */}
-          <h2 className="mt-8 text-2xl font-extrabold text-[#FFC300]">4. Base Giuridica del Trattamento</h2>
-          <p className="mt-2 text-white/90">Il trattamento dei dati personali si basa su:</p>
+          <h2 className="mt-8 text-2xl font-extrabold text-[#FFC300]">{lt.privacySection4Title}</h2>
+          <p className="mt-2 text-white/90">{lt.privacySection4Intro}</p>
           <ul className="mt-2 list-disc pl-6 text-white/90 space-y-1">
-            <li>Esecuzione di un contratto di cui l{"'"}interessato è parte</li>
-            <li>Adempimento di obblighi legali</li>
-            <li>Consenso dell{"'"}interessato (per finalità di marketing)</li>
-            <li>Legittimo interesse del titolare</li>
+            {lt.privacySection4Items.map((item, i) => (
+              <li key={i}>{item}</li>
+            ))}
           </ul>
 
           {/* 5 */}
-          <h2 className="mt-8 text-2xl font-extrabold text-[#FFC300]">5. Modalità di Trattamento</h2>
-          <p className="mt-2 text-white/90">
-            I dati personali sono trattati con strumenti informatici e manuali, con logiche strettamente correlate alle
-            finalità indicate e in modo da garantire la sicurezza e la riservatezza dei dati stessi.
-          </p>
+          <h2 className="mt-8 text-2xl font-extrabold text-[#FFC300]">{lt.privacySection5Title}</h2>
+          <p className="mt-2 text-white/90">{lt.privacySection5Content}</p>
 
           {/* 6 */}
-          <h2 className="mt-8 text-2xl font-extrabold text-[#FFC300]">6. Conservazione dei Dati</h2>
-          <p className="mt-2 text-white/90">
-            I dati personali sono conservati per il tempo necessario al conseguimento delle finalità per cui sono
-            raccolti e trattati, e comunque non oltre i termini previsti dalla legge.
-          </p>
+          <h2 className="mt-8 text-2xl font-extrabold text-[#FFC300]">{lt.privacySection6Title}</h2>
+          <p className="mt-2 text-white/90">{lt.privacySection6Content}</p>
 
           {/* 7 */}
-          <h2 className="mt-8 text-2xl font-extrabold text-[#FFC300]">7. Diritti dell{"'"}Interessato</h2>
-          <p className="mt-2 text-white/90">L{"'"}interessato ha il diritto di:</p>
+          <h2 className="mt-8 text-2xl font-extrabold text-[#FFC300]">{lt.privacySection7Title}</h2>
+          <p className="mt-2 text-white/90">{lt.privacySection7Intro}</p>
           <ul className="mt-2 list-disc pl-6 text-white/90 space-y-1">
-            <li>Accedere ai propri dati personali</li>
-            <li>Chiederne la rettifica o la cancellazione</li>
-            <li>Limitare o opporsi al trattamento</li>
-            <li>Richiedere la portabilità dei dati</li>
-            <li>Revocare il consenso in qualsiasi momento</li>
-            <li>Proporre reclamo all{"'"}autorità di controllo</li>
+            {lt.privacySection7Items.map((item, i) => (
+              <li key={i}>{item}</li>
+            ))}
           </ul>
 
           {/* 8 */}
-          <h2 className="mt-8 text-2xl font-extrabold text-[#FFC300]">8. Contatti</h2>
-          <p className="mt-2 text-white/90">
-            Per esercitare i propri diritti o per qualsiasi informazione riguardante il trattamento dei dati personali,
-            l{"'"}interessato può contattare il titolare all{"'"}indirizzo email: info@giustiziainvolo.it
-          </p>
+          <h2 className="mt-8 text-2xl font-extrabold text-[#FFC300]">{lt.privacySection8Title}</h2>
+          <p className="mt-2 text-white/90">{lt.privacySection8Content}</p>
 
           {/* 9 */}
-          <h2 className="mt-8 text-2xl font-extrabold text-[#FFC300]">9. Modifiche alla Privacy Policy</h2>
-          <p className="mt-2 text-white/90">
-            La presente Privacy Policy può essere soggetta a modifiche. Eventuali aggiornamenti saranno pubblicati sul
-            sito web con indicazione della data di ultima modifica.
-          </p>
+          <h2 className="mt-8 text-2xl font-extrabold text-[#FFC300]">{lt.privacySection9Title}</h2>
+          <p className="mt-2 text-white/90">{lt.privacySection9Content}</p>
 
-          <p className="mt-6 text-sm text-white/70">Ultimo aggiornamento: Maggio 2025</p>
+          <p className="mt-6 text-sm text-white/70">{t('lastUpdated')}: {language === 'it' ? 'Maggio' : 'May'} 2025</p>
         </div>
       </section>
     </main>
