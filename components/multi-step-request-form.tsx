@@ -40,6 +40,7 @@ export default function MultiStepRequestForm() {
   const [email, setEmail] = useState("")
   const [phone, setPhone] = useState("")
   const [description, setDescription] = useState("")
+  const [termsAccepted, setTermsAccepted] = useState(false)
 
   type Errors = Record<string, string>
   const [errors, setErrors] = useState<Errors>({})
@@ -109,7 +110,7 @@ export default function MultiStepRequestForm() {
     }
 
     if (step === 4) {
-      if (!refTerms.current?.checked) errs.terms = t("required")
+      if (!termsAccepted) errs.terms = t("required")
     }
 
     return { ok: Object.keys(errs).length === 0, errs }
@@ -142,10 +143,13 @@ export default function MultiStepRequestForm() {
   }
 
   async function handleSubmit() {
+    console.log("[v0] handleSubmit called")
     const { ok, errs } = validateStep(4)
+    console.log("[v0] Validation result:", { ok, errs })
     setErrors(errs)
 
     if (!ok) {
+      console.log("[v0] Validation failed, showing toast")
       toast({
         title: t("consentRequired"),
         description: t("acceptPrivacyTerms"),
@@ -154,6 +158,7 @@ export default function MultiStepRequestForm() {
       return
     }
 
+    console.log("[v0] Starting submission...")
     setSubmitting(true)
 
     const payload = {
@@ -168,8 +173,8 @@ export default function MultiStepRequestForm() {
       email,
       phone,
       description,
-      privacy: refTerms.current?.checked ? "on" : "",
-      terms: refTerms.current?.checked ? "on" : "",
+      privacy: termsAccepted ? "on" : "",
+      terms: termsAccepted ? "on" : "",
     }
 
     try {
@@ -258,7 +263,7 @@ export default function MultiStepRequestForm() {
     setPhone("")
     setDescription("")
     setErrors({})
-    if (refTerms.current) refTerms.current.checked = false
+    setTermsAccepted(false)
   }
 
   const errCls = (key: string) => (errors[key] ? "border-red-500" : "")
@@ -684,13 +689,18 @@ export default function MultiStepRequestForm() {
             </div>
 
             {/* Single checkbox for terms and privacy */}
-            <div className="bg-[#072534]/5 p-4 rounded-lg border-2 border-[#072534]/10 opacity-70">
+            <div className="bg-[#072534]/5 p-4 rounded-lg border-2 border-[#072534]/10">
               <label className="flex items-start gap-3 cursor-pointer group">
                 <input
-                  ref={refTerms}
                   name="terms"
                   type="checkbox"
+                  checked={termsAccepted}
+                  onChange={(e) => {
+                    console.log("[v0] Checkbox changed:", e.target.checked)
+                    setTermsAccepted(e.target.checked)
+                  }}
                   className="mt-1 w-5 h-5 rounded border-2 border-neutral-300 text-[#FFC300] focus:ring-[#FFC300] accent-[#FFC300]"
+                  ref={refTerms}
                 />
                 <span className="text-sm text-neutral-700 group-hover:text-[#072534] transition-colors">
                   {t("acceptTermsAndPrivacy")}{" "}
@@ -719,7 +729,10 @@ export default function MultiStepRequestForm() {
                 <ArrowLeft className="mr-2 h-5 w-5" /> {t("back")}
               </Button>
               <Button
-                onClick={handleSubmit}
+                onClick={(e) => {
+                  console.log("[v0] Submit button clicked")
+                  handleSubmit()
+                }}
                 disabled={submitting}
                 className="flex-1 bg-[#FF8A00] text-white hover:bg-[#ff8A00]/90 font-semibold h-12"
               >
