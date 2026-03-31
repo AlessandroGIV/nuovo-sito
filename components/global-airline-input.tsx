@@ -15,7 +15,7 @@ type Props = {
   placeholder?: string
   className?: string
   required?: boolean
-  inputRef?: React.RefObject<HTMLInputElement>
+  inputRef?: React.RefObject<HTMLInputElement | null>
   error?: string
 }
 
@@ -48,7 +48,6 @@ export default function GlobalAirlineInput({
 
   useEffect(() => {
     if (inputRef && localInputRef.current) {
-      // @ts-expect-error forward
       inputRef.current = localInputRef.current
     }
   }, [inputRef])

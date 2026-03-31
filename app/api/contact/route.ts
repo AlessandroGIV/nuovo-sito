@@ -1,16 +1,37 @@
 import { NextResponse } from 'next/server'
+import { getClientIP, rateLimit } from '@/lib/rate-limit'
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+const PHONE_RE = /^\+?[\d\s\-().]{7,20}$/
 
 export async function POST(req: Request) {
+  const ip = getClientIP(req)
+  if (!rateLimit(`contact:${ip}`, 5, 60_000)) {
+    return NextResponse.json({ ok: false, message: 'Troppe richieste. Riprova tra un minuto.' }, { status: 429 })
+  }
+
   try {
     const body = await req.json()
 
     // Se proviene dal nuovo flusso "richiesta"
     if (body?.flow === 'request') {
+      // honeypot
+      if (body.company) {
+        return NextResponse.json({ ok: true, message: 'Grazie! Ti contatteremo a breve.' })
+      }
+
       const requiredTop = ['from', 'to', 'direct', 'name', 'email', 'phone', 'privacy', 'terms']
       for (const k of requiredTop) {
         if (body[k] === undefined || body[k] === '') {
           return NextResponse.json({ ok: false, message: `Campo mancante: ${k}` }, { status: 400 })
         }
+      }
+
+      if (!EMAIL_RE.test(body.email)) {
+        return NextResponse.json({ ok: false, message: 'Email non valida.' }, { status: 400 })
+      }
+      if (!PHONE_RE.test(body.phone)) {
+        return NextResponse.json({ ok: false, message: 'Numero di telefono non valido.' }, { status: 400 })
       }
       // leg1 required sempre, leg2 se non diretto
       const leg1 = body.leg1 ?? {}
@@ -41,6 +62,13 @@ export async function POST(req: Request) {
     // honeypot
     if (body.company) {
       return NextResponse.json({ ok: true, message: 'Grazie! Ti contatteremo a breve.' })
+    }
+
+    if (!EMAIL_RE.test(body.email)) {
+      return NextResponse.json({ ok: false, message: 'Email non valida.' }, { status: 400 })
+    }
+    if (!PHONE_RE.test(body.phone)) {
+      return NextResponse.json({ ok: false, message: 'Numero di telefono non valido.' }, { status: 400 })
     }
 
     // Qui si può integrare un provider email/DB

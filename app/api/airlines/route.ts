@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { getClientIP, rateLimit } from "@/lib/rate-limit"
 
 type Airline = { code?: string; name?: string; country?: string; iata?: string }
 
@@ -40,18 +41,19 @@ function dedupe(list: Airline[]): Airline[] {
 
 async function loadAirlines(): Promise<Airline[]> {
   if (airlinesCache) return airlinesCache
-  // Sorgente principale globale
-  const res = await fetch("https://cdn.jsdelivr.net/gh/mwgg/Airlines@master/airlines.json", { cache: "no-store" })
   let list: Airline[] = []
-  if (res.ok) {
-    const raw = (await res.json()) as Record<string, { name?: string; country?: string; iata?: string }>
-    list = Object.entries(raw).map(([code, a]) => ({
-      code,
-      name: a?.name ?? code,
-      country: a?.country,
-      iata: a?.iata,
-    }))
-  }
+  try {
+    const res = await fetch("https://cdn.jsdelivr.net/gh/mwgg/Airlines@master/airlines.json", { next: { revalidate: 86400 } })
+    if (res.ok) {
+      const raw = (await res.json()) as Record<string, { name?: string; country?: string; iata?: string }>
+      list = Object.entries(raw).map(([code, a]) => ({
+        code,
+        name: a?.name ?? code,
+        country: a?.country,
+        iata: a?.iata,
+      }))
+    }
+  } catch {}
   // Fallback minimo (in caso di rete)
   if (!list.length) {
     list = [
@@ -68,6 +70,11 @@ async function loadAirlines(): Promise<Airline[]> {
 }
 
 export async function GET(req: Request) {
+  const ip = getClientIP(req)
+  if (!rateLimit(`airlines:${ip}`, 60, 60_000)) {
+    return NextResponse.json({ error: "Troppe richieste. Riprova tra un minuto." }, { status: 429 })
+  }
+
   const { searchParams } = new URL(req.url)
   const q = (searchParams.get("q") ?? "").trim()
   if (q.length < 1) {

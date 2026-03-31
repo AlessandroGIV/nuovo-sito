@@ -16,7 +16,7 @@ type Props = {
   placeholder?: string
   className?: string
   required?: boolean
-  inputRef?: React.RefObject<HTMLInputElement>
+  inputRef?: React.RefObject<HTMLInputElement | null>
   error?: string
   disableBrowserAutocomplete?: boolean
 }
@@ -50,7 +50,7 @@ function highlight(text: string, query: string) {
 
 // Check if the value looks like a selected airport (contains IATA code in parentheses)
 function isSelectedAirport(value: string): boolean {
-  return /$$[A-Z]{3}$$/.test(value)
+  return /\([A-Z]{3}\)/.test(value)
 }
 
 // Generate a random name to confuse browsers
@@ -88,7 +88,6 @@ export default function GlobalAirportInput({
   // forward ref out
   useEffect(() => {
     if (inputRef && localInputRef.current) {
-      // @ts-expect-error forward
       inputRef.current = localInputRef.current
     }
   }, [inputRef])
@@ -115,7 +114,7 @@ export default function GlobalAirportInput({
       return
     }
 
-    if (v.length < 2) {
+    if (v.length < 3) {
       setItems([])
       setActive(-1)
       setOpen(false)
@@ -231,7 +230,7 @@ export default function GlobalAirportInput({
           onChange(v)
         }}
         onFocus={() => {
-          if (!isSelectedAirport(q) && q.trim().length >= 2 && items.length > 0) {
+          if (!isSelectedAirport(q) && q.trim().length >= 3 && items.length > 0) {
             setOpen(true)
           }
         }}

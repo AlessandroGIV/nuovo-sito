@@ -39,7 +39,9 @@ export default function MultiStepRequestForm() {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [phone, setPhone] = useState("")
+  const [passengers, setPassengers] = useState(1)
   const [description, setDescription] = useState("")
+  const [privacyAccepted, setPrivacyAccepted] = useState(false)
   const [termsAccepted, setTermsAccepted] = useState(false)
 
   type Errors = Record<string, string>
@@ -61,6 +63,8 @@ export default function MultiStepRequestForm() {
   const refTerms = useRef<HTMLInputElement>(null)
 
   const steps = [t("itinerary"), t("flightDetails"), t("personalData"), t("confirm")]
+
+  const today = new Date().toISOString().split("T")[0]
 
   const isValidTime = (t: string) => /^\d{2}:\d{2}$/.test(t)
   const isValidPhone10 = (p: string) => /^\d{10}$/.test(p)
@@ -110,6 +114,7 @@ export default function MultiStepRequestForm() {
     }
 
     if (step === 4) {
+      if (!privacyAccepted) errs.privacy = t("required")
       if (!termsAccepted) errs.terms = t("required")
     }
 
@@ -143,13 +148,10 @@ export default function MultiStepRequestForm() {
   }
 
   async function handleSubmit() {
-    console.log("[v0] handleSubmit called")
     const { ok, errs } = validateStep(4)
-    console.log("[v0] Validation result:", { ok, errs })
     setErrors(errs)
 
     if (!ok) {
-      console.log("[v0] Validation failed, showing toast")
       toast({
         title: t("consentRequired"),
         description: t("acceptPrivacyTerms"),
@@ -158,7 +160,6 @@ export default function MultiStepRequestForm() {
       return
     }
 
-    console.log("[v0] Starting submission...")
     setSubmitting(true)
 
     const payload = {
@@ -172,8 +173,9 @@ export default function MultiStepRequestForm() {
       name,
       email,
       phone,
+      passengers,
       description,
-      privacy: termsAccepted ? "on" : "",
+      privacy: privacyAccepted ? "on" : "",
       terms: termsAccepted ? "on" : "",
     }
 
@@ -207,6 +209,7 @@ export default function MultiStepRequestForm() {
         full_name: name,
         email: email,
         phone: phone,
+        passengers: passengers,
         is_direct_label: direct === "si" ? "Volo Diretto" : "Volo con Scalo",
         departure_airport: from,
         via_airport: via || "N/A",
@@ -241,8 +244,7 @@ export default function MultiStepRequestForm() {
       setSubmitted(true)
       window.scrollTo({ top: 0, behavior: "smooth" })
       toast({ title: t("requestSent"), description: t("requestSentThankYou") })
-    } catch (error) {
-      console.error("[v0] Error sending request:", error)
+    } catch {
       toast({ title: t("networkError"), description: t("checkConnectionRetry"), variant: "destructive" })
     } finally {
       setSubmitting(false)
@@ -261,8 +263,10 @@ export default function MultiStepRequestForm() {
     setName("")
     setEmail("")
     setPhone("")
+    setPassengers(1)
     setDescription("")
     setErrors({})
+    setPrivacyAccepted(false)
     setTermsAccepted(false)
   }
 
@@ -343,30 +347,28 @@ export default function MultiStepRequestForm() {
 
               <div className="pt-4">
                 <p className="mb-3 font-semibold text-[#072534]">{t("directFlight")}</p>
-                <div className="grid grid-cols-2 gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setDirect("si")}
-                    className={`p-4 rounded-lg border-2 transition-all font-semibold ${
-                      direct === "si"
-                        ? "border-[#FFC300] bg-[#FFC300]/10 text-[#072534]"
-                        : "border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300"
-                    }`}
-                  >
-                    {t("yes")}, {t("direct").toLowerCase()}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setDirect("no")}
-                    className={`p-4 rounded-lg border-2 transition-all font-semibold ${
-                      direct === "no"
-                        ? "border-[#FFC300] bg-[#FFC300]/10 text-[#072534]"
-                        : "border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300"
-                    }`}
-                  >
-                    {t("no")}, {t("withStopover").toLowerCase()}
-                  </button>
-                </div>
+                <RadioGroup
+                  value={direct}
+                  onValueChange={(v) => setDirect(v as "si" | "no")}
+                  className="grid grid-cols-2 gap-3"
+                >
+                  {(["si", "no"] as const).map((val) => (
+                    <label
+                      key={val}
+                      htmlFor={`direct-${val}`}
+                      className={`flex cursor-pointer items-center justify-center rounded-lg border-2 p-4 font-semibold transition-all ${
+                        direct === val
+                          ? "border-[#FFC300] bg-[#FFC300]/10 text-[#072534]"
+                          : "border-neutral-200 bg-white text-neutral-600 hover:border-neutral-300"
+                      }`}
+                    >
+                      <RadioGroupItem id={`direct-${val}`} value={val} className="sr-only" />
+                      {val === "si"
+                        ? `${t("yes")}, ${t("direct").toLowerCase()}`
+                        : `${t("no")}, ${t("withStopover").toLowerCase()}`}
+                    </label>
+                  ))}
+                </RadioGroup>
               </div>
 
               {direct === "no" && (
@@ -419,11 +421,13 @@ export default function MultiStepRequestForm() {
                 )}
                 
                 <div>
-                  <label className="mb-1.5 block text-sm font-semibold text-[#072534]">{t("flightDate")}</label>
+                  <label htmlFor="leg1-date" className="mb-1.5 block text-sm font-semibold text-[#072534]">{t("flightDate")}</label>
                   <Input
                     ref={refLeg1Date}
+                    id="leg1-date"
                     type="date"
                     name="leg1-date"
+                    max={today}
                     value={leg1.date}
                     onChange={(e) => setLeg1({ ...leg1, date: e.target.value })}
                     className={errCls("leg1Date")}
@@ -460,11 +464,13 @@ export default function MultiStepRequestForm() {
                   <h3 className="font-bold text-lg text-[#072534]">{t("flight")} 2</h3>
                   
                   <div>
-                    <label className="mb-1.5 block text-sm font-semibold text-[#072534]">{t("flightDate")}</label>
+                    <label htmlFor="leg2-date" className="mb-1.5 block text-sm font-semibold text-[#072534]">{t("flightDate")}</label>
                     <Input
                       ref={refLeg2Date}
+                      id="leg2-date"
                       type="date"
                       name="leg2-date"
+                      max={today}
                       value={leg2.date}
                       onChange={(e) => setLeg2({ ...leg2, date: e.target.value })}
                       className={errCls("leg2Date")}
@@ -575,6 +581,30 @@ export default function MultiStepRequestForm() {
               </div>
 
               <div>
+                <label className="mb-1.5 block text-sm font-semibold text-[#072534]">{t("passengers")}</label>
+                <p className="mb-2 text-xs text-neutral-500">{t("passengersHelp")}</p>
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setPassengers((n) => Math.max(1, n - 1))}
+                    disabled={passengers <= 1}
+                    className="flex h-10 w-10 items-center justify-center rounded-lg border-2 border-neutral-200 text-lg font-bold text-[#072534] hover:border-[#FFC300] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  >
+                    −
+                  </button>
+                  <span className="w-8 text-center text-xl font-bold text-[#072534]">{passengers}</span>
+                  <button
+                    type="button"
+                    onClick={() => setPassengers((n) => Math.min(9, n + 1))}
+                    disabled={passengers >= 9}
+                    className="flex h-10 w-10 items-center justify-center rounded-lg border-2 border-neutral-200 text-lg font-bold text-[#072534] hover:border-[#FFC300] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              <div>
                 <label className="mb-1.5 block text-sm font-semibold text-[#072534]">
                   {t("problemDescription")}
                 </label>
@@ -678,6 +708,7 @@ export default function MultiStepRequestForm() {
                   <div><span className="text-neutral-500">{t("summaryName")}:</span> <span className="font-medium">{name}</span></div>
                   <div><span className="text-neutral-500">{t("summaryEmail")}:</span> <span className="font-medium">{email}</span></div>
                   <div><span className="text-neutral-500">{t("summaryPhone")}:</span> <span className="font-medium">{phone}</span></div>
+                  <div><span className="text-neutral-500">{t("summaryPassengers")}:</span> <span className="font-medium">{passengers}</span></div>
                 </div>
                 {description && (
                   <div className="mt-2 pt-2 border-t border-neutral-200 text-sm">
@@ -688,36 +719,52 @@ export default function MultiStepRequestForm() {
               </div>
             </div>
 
-            {/* Single checkbox for terms and privacy */}
-            <div className="bg-[#072534]/5 p-4 rounded-lg border-2 border-[#072534]/10">
-              <label className="flex items-start gap-3 cursor-pointer group">
-                <input
-                  name="terms"
-                  type="checkbox"
-                  checked={termsAccepted}
-                  onChange={(e) => {
-                    console.log("[v0] Checkbox changed:", e.target.checked)
-                    setTermsAccepted(e.target.checked)
-                  }}
-                  className="mt-1 w-5 h-5 rounded border-2 border-neutral-300 text-[#FFC300] focus:ring-[#FFC300] accent-[#FFC300]"
-                  ref={refTerms}
-                />
-                <span className="text-sm text-neutral-700 group-hover:text-[#072534] transition-colors">
-                  {t("acceptTermsAndPrivacy")}{" "}
-                  <a href="/termini" target="_blank" className="underline font-semibold text-[#072534] hover:text-[#FFC300]">
-                    {t("termsOfService")}
-                  </a>{" "}
-                  {t("and")}{" "}
-                  <a href="/privacy" target="_blank" className="underline font-semibold text-[#072534] hover:text-[#FFC300]">
-                    {t("privacyPolicy")}
-                  </a>{" "}
-                  *
-                </span>
-              </label>
+            {/* Consensi separati: privacy policy e termini di servizio (GDPR art. 7) */}
+            <div className="space-y-3">
+              <div className="bg-[#072534]/5 p-4 rounded-lg border-2 border-[#072534]/10">
+                <label className="flex items-start gap-3 cursor-pointer group">
+                  <input
+                    name="privacy"
+                    type="checkbox"
+                    checked={privacyAccepted}
+                    onChange={(e) => setPrivacyAccepted(e.target.checked)}
+                    className="mt-1 w-5 h-5 rounded border-2 border-neutral-300 text-[#FFC300] focus:ring-[#FFC300] accent-[#FFC300]"
+                  />
+                  <span className="text-sm text-neutral-700 group-hover:text-[#072534] transition-colors">
+                    {t("acceptPrivacyLabel")}{" "}
+                    <a href="/privacy" target="_blank" className="underline font-semibold text-[#072534] hover:text-[#FFC300]">
+                      {t("privacyPolicy")}
+                    </a>{" "}
+                    *
+                  </span>
+                </label>
+                {errors.privacy && (
+                  <p className="text-xs text-red-600 mt-2">{t("required")}</p>
+                )}
+              </div>
 
-              {errors.terms && (
-                <p className="text-xs text-red-600 mt-2">{t("acceptPrivacyTerms")}</p>
-              )}
+              <div className="bg-[#072534]/5 p-4 rounded-lg border-2 border-[#072534]/10">
+                <label className="flex items-start gap-3 cursor-pointer group">
+                  <input
+                    name="terms"
+                    type="checkbox"
+                    checked={termsAccepted}
+                    onChange={(e) => setTermsAccepted(e.target.checked)}
+                    className="mt-1 w-5 h-5 rounded border-2 border-neutral-300 text-[#FFC300] focus:ring-[#FFC300] accent-[#FFC300]"
+                    ref={refTerms}
+                  />
+                  <span className="text-sm text-neutral-700 group-hover:text-[#072534] transition-colors">
+                    {t("acceptTermsLabel")}{" "}
+                    <a href="/termini" target="_blank" className="underline font-semibold text-[#072534] hover:text-[#FFC300]">
+                      {t("termsOfService")}
+                    </a>{" "}
+                    *
+                  </span>
+                </label>
+                {errors.terms && (
+                  <p className="text-xs text-red-600 mt-2">{t("required")}</p>
+                )}
+              </div>
             </div>
 
             <div className="flex gap-3 mt-6">
@@ -729,10 +776,7 @@ export default function MultiStepRequestForm() {
                 <ArrowLeft className="mr-2 h-5 w-5" /> {t("back")}
               </Button>
               <Button
-                onClick={(e) => {
-                  console.log("[v0] Submit button clicked")
-                  handleSubmit()
-                }}
+                onClick={handleSubmit}
                 disabled={submitting}
                 className="flex-1 bg-[#FF8A00] text-white hover:bg-[#ff8A00]/90 font-semibold h-12"
               >

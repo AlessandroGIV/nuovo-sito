@@ -137,7 +137,6 @@ export const translations = {
     
     // Success page
     requestSentTitle: 'Richiesta Inviata!',
-    requestSentMessage: 'Grazie per averci contattato. Un nostro avvocato ti risponderà al più presto per valutare il tuo caso.',
     sendAnotherRequestBtn: 'Invia un\'altra richiesta',
     heroAmount: 'Potresti avere diritto fino a 600 €.',
     
@@ -186,8 +185,11 @@ export const translations = {
     summaryName: 'Nome',
     summaryEmail: 'Email',
     summaryPhone: 'Telefono',
+    summaryPassengers: 'Passeggeri',
     summaryProblem: 'Problema',
     acceptTermsAndPrivacy: 'Dichiaro di aver preso visione e di accettare i',
+    acceptPrivacyLabel: 'Ho letto e accetto la',
+    acceptTermsLabel: 'Ho letto e accetto i',
     termsOfService: 'Termini di Servizio',
     and: 'e la',
     
@@ -204,6 +206,8 @@ export const translations = {
     email: 'Email',
     phone: 'Telefono',
     yourPhone: 'Il tuo numero di telefono',
+    passengers: 'Numero di passeggeri',
+    passengersHelp: 'Includi tutti i passeggeri sullo stesso volo che vogliono richiedere il risarcimento.',
     problemDescription: 'Descrizione del problema',
     describeProblem: 'Descrivi brevemente cosa è successo (ritardo, cancellazione, ecc.)',
     
@@ -216,7 +220,6 @@ export const translations = {
     
     // Buttons
     submit: 'Invia la richiesta',
-    submitRequest: 'INVIA RICHIESTA!',
     requestFreeClaim: 'Richiedi assistenza gratuita',
     readFAQ: 'Leggi le FAQ',
     sendAnotherRequest: 'Invia un\'altra richiesta',
@@ -406,7 +409,6 @@ export const translations = {
     
     // Success page
     requestSentTitle: 'Request Sent!',
-    requestSentMessage: 'Thank you for contacting us. One of our lawyers will respond as soon as possible to evaluate your case.',
     sendAnotherRequestBtn: 'Send another request',
     heroAmount: 'You could be entitled to up to €600.',
     
@@ -455,8 +457,11 @@ export const translations = {
     summaryName: 'Name',
     summaryEmail: 'Email',
     summaryPhone: 'Phone',
+    summaryPassengers: 'Passengers',
     summaryProblem: 'Problem',
     acceptTermsAndPrivacy: 'I have read and accept the',
+    acceptPrivacyLabel: 'I have read and accept the',
+    acceptTermsLabel: 'I have read and accept the',
     termsOfService: 'Terms of Service',
     and: 'and the',
     
@@ -473,6 +478,8 @@ export const translations = {
     email: 'Email',
     phone: 'Phone',
     yourPhone: 'Your phone number',
+    passengers: 'Number of passengers',
+    passengersHelp: 'Include all passengers on the same flight who wish to claim compensation.',
     problemDescription: 'Problem description',
     describeProblem: 'Briefly describe what happened (delay, cancellation, etc.)',
     
@@ -485,7 +492,6 @@ export const translations = {
     
     // Buttons
     submit: 'Submit request',
-    submitRequest: 'SUBMIT REQUEST!',
     requestFreeClaim: 'Request free assistance',
     readFAQ: 'Read FAQ',
     sendAnotherRequest: 'Send another request',
@@ -543,7 +549,7 @@ export const translations = {
 export type TranslationKey = keyof typeof translations.it
 
 export function getTranslation(lang: Language, key: TranslationKey, vars?: Record<string, string | number>): string {
-  let text = translations[lang][key] || translations.it[key] || key
+  let text: string = translations[lang][key] || translations.it[key] || key
   
   if (vars) {
     Object.entries(vars).forEach(([k, v]) => {

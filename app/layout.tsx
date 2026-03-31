@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
 import Script from 'next/script'
+import { cookies } from 'next/headers'
 import './globals.css'
 import { SiteHeader } from '@/components/site-header'
 import { SiteFooter } from '@/components/site-footer'
@@ -15,40 +16,31 @@ export const metadata: Metadata = {
     icon: '/favicon.ico',
     apple: '/apple-touch-icon.png',
   },
-    generator: 'v0.app'
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const cookieStore = await cookies()
+  const langCookie = cookieStore.get('giustiziainvolo-lang')
+  const lang = langCookie?.value === 'en' ? 'en' : 'it'
+
   return (
-    <html lang="en">
+    <html lang={lang}>
       <head>
-        {/* Google Analytics */}
+        {/* Google Analytics + Google Ads — singolo caricamento gtag.js */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-N9B7Q6PYCE"
           strategy="afterInteractive"
         />
-        <Script id="google-analytics" strategy="afterInteractive">
+        <Script id="google-gtag" strategy="afterInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
             gtag('config', 'G-N9B7Q6PYCE');
-          `}
-        </Script>
-        {/* Google Ads */}
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=AW-17322484652"
-          strategy="afterInteractive"
-        />
-        <Script id="google-ads" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
             gtag('config', 'AW-17322484652');
           `}
         </Script>

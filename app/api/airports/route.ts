@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { getClientIP, rateLimit } from "@/lib/rate-limit"
 
 type SrcAirport = { iata?: string; icao?: string; name?: string; city?: string; country?: string }
 
@@ -427,8 +428,8 @@ async function loadAirports(): Promise<SrcAirport[]> {
   
   // Primary source - mwgg/Airports - comprehensive database
   try {
-    const res = await fetch("https://raw.githubusercontent.com/mwgg/Airports/master/airports.json", { 
-      cache: "no-store" 
+    const res = await fetch("https://raw.githubusercontent.com/mwgg/Airports/master/airports.json", {
+      next: { revalidate: 86400 },
     })
     if (res.ok) {
       const obj = (await res.json()) as Record<string, any>
@@ -446,7 +447,7 @@ async function loadAirports(): Promise<SrcAirport[]> {
   
   // Fallback source via jsdelivr CDN
   const [a1, a2] = await Promise.allSettled([
-    fetch("https://cdn.jsdelivr.net/gh/mwgg/Airports@master/airports.json", { cache: "no-store" }).then(async (r) => {
+    fetch("https://cdn.jsdelivr.net/gh/mwgg/Airports@master/airports.json", { next: { revalidate: 86400 } }).then(async (r) => {
       if (!r.ok) return [] as SrcAirport[]
       const obj = (await r.json()) as Record<string, any>
       const arr: SrcAirport[] = Object.entries(obj).map(([icao, v]) => ({
@@ -493,9 +494,14 @@ function searchInTranslations(query: string, city?: string, country?: string): n
 }
 
 export async function GET(req: Request) {
+  const ip = getClientIP(req)
+  if (!rateLimit(`airports:${ip}`, 60, 60_000)) {
+    return NextResponse.json({ error: "Troppe richieste. Riprova tra un minuto." }, { status: 429 })
+  }
+
   const { searchParams } = new URL(req.url)
   const q = (searchParams.get("q") ?? "").trim()
-  if (q.length < 2) {
+  if (q.length < 3) {
     return NextResponse.json([], { headers: { "Cache-Control": "public, s-maxage=300" } })
   }
 
