@@ -55,7 +55,7 @@ function isSelectedAirport(value: string): boolean {
 
 // Generate a random name to confuse browsers
 function generateRandomName(): string {
-  return `airport_field_${Math.random().toString(36).substring(2, 15)}_${Date.now()}`
+  return `field_${Math.random().toString(36).substring(2, 15)}_${Date.now()}`
 }
 
 export default function GlobalAirportInput({
@@ -76,8 +76,7 @@ export default function GlobalAirportInput({
   const [loading, setLoading] = useState(false)
   const [items, setItems] = useState<Airport[]>([])
   const [active, setActive] = useState(-1)
-  const [randomName] = useState(() => generateRandomName())
-  const [randomId] = useState(() => `input_${Math.random().toString(36).substring(2, 8)}`)
+  const [randomName] = useState(() => generateRandomName()) // Nome randomizzato per anti-autofill
   const wrapRef = useRef<HTMLDivElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
   const localInputRef = useRef<HTMLInputElement>(null)
@@ -89,7 +88,6 @@ export default function GlobalAirportInput({
   // forward ref out
   useEffect(() => {
     if (inputRef && localInputRef.current) {
-      // @ts-expect-error - This is fine, we're forwarding the ref
       inputRef.current = localInputRef.current
     }
   }, [inputRef])
@@ -116,7 +114,7 @@ export default function GlobalAirportInput({
       return
     }
 
-    if (v.length < 2) {
+    if (v.length < 3) {
       setItems([])
       setActive(-1)
       setOpen(false)
@@ -131,11 +129,11 @@ export default function GlobalAirportInput({
         const data = ((await res.json()) as Airport[]) || []
         // keep at most 10 in UI
         setItems(data.slice(0, 10))
-        setOpen(data.length > 0)
+        setOpen(data.length > 0) // Only open if we have results
         setActive(data.length > 0 ? 0 : -1)
       } catch {
         setItems([])
-        setOpen(false)
+        setOpen(false) // Don't open on error
         setActive(-1)
       } finally {
         setLoading(false)
@@ -165,7 +163,7 @@ export default function GlobalAirportInput({
     setQ(text)
     onChange(text)
     setOpen(false)
-    setItems([])
+    setItems([]) // Clear items completely
     setActive(-1)
   }
 
@@ -200,46 +198,30 @@ export default function GlobalAirportInput({
 
   return (
     <div ref={wrapRef} className={cn("relative", className)}>
-      <label htmlFor={disableBrowserAutocomplete ? randomId : id} className="mb-1 block text-sm font-semibold text-[#072534]">
+      <label htmlFor={id} className="mb-1 block text-sm font-semibold text-[#072534]">
         {label}
       </label>
 
-      {/* Multiple decoy inputs to confuse autofill when anti-autofill is active */}
+      {/* Input esca multipli per confondere il browser quando anti-autofill è attivo */}
       {disableBrowserAutocomplete && (
-        <>
-          {/* Invisible decoy fields */}
-          <div style={{ position: "absolute", left: "-9999px", top: "auto", width: "1px", height: "1px", opacity: 0 }}>
-            <input type="text" name="username" autoComplete="username" tabIndex={-1} aria-hidden="true" />
-            <input type="text" name="email" autoComplete="email" tabIndex={-1} aria-hidden="true" />
-            <input type="text" name="name" autoComplete="name" tabIndex={-1} aria-hidden="true" />
-            <input type="text" name="address-line1" autoComplete="address-line1" tabIndex={-1} aria-hidden="true" />
-            <input type="text" name="address-line2" autoComplete="address-line2" tabIndex={-1} aria-hidden="true" />
-            <input type="text" name="street-address" autoComplete="street-address" tabIndex={-1} aria-hidden="true" />
-            <input type="text" name="city" autoComplete="address-level2" tabIndex={-1} aria-hidden="true" />
-            <input type="text" name="state" autoComplete="address-level1" tabIndex={-1} aria-hidden="true" />
-            <input type="text" name="zip" autoComplete="postal-code" tabIndex={-1} aria-hidden="true" />
-            <input type="text" name="country" autoComplete="country" tabIndex={-1} aria-hidden="true" />
-            <input type="text" name="phone" autoComplete="tel" tabIndex={-1} aria-hidden="true" />
-            <input type="text" name="organization" autoComplete="organization" tabIndex={-1} aria-hidden="true" />
-          </div>
-          
-          {/* Visible decoy field that confuses autofill */}
-          <input
-            type="text"
-            style={{ position: "absolute", left: "-9999px", opacity: 0 }}
-            name="fake-address"
-            autoComplete="street-address"
-            tabIndex={-1}
-            aria-hidden="true"
-          />
-        </>
+        <div style={{ position: "absolute", left: "-9999px", top: "auto", width: "1px", height: "1px", opacity: 0 }}>
+          {/* Input esca con nomi comuni che il browser potrebbe cercare */}
+          <input type="text" name="username" autoComplete="off" tabIndex={-1} aria-hidden="true" />
+          <input type="text" name="email" autoComplete="off" tabIndex={-1} aria-hidden="true" />
+          <input type="text" name="name" autoComplete="off" tabIndex={-1} aria-hidden="true" />
+          <input type="text" name="address" autoComplete="off" tabIndex={-1} aria-hidden="true" />
+          <input type="text" name="phone" autoComplete="off" tabIndex={-1} aria-hidden="true" />
+          <input type="text" name="city" autoComplete="off" tabIndex={-1} aria-hidden="true" />
+          <input type="text" name="search" autoComplete="off" tabIndex={-1} aria-hidden="true" />
+          <input type="text" name="fake-field" autoComplete="off" tabIndex={-1} aria-hidden="true" />
+        </div>
       )}
 
-      {/* Main input */}
+      {/* Input principale */}
       <Input
         ref={localInputRef}
-        id={disableBrowserAutocomplete ? randomId : id}
-        name={disableBrowserAutocomplete ? randomName : name}
+        id={id}
+        name={disableBrowserAutocomplete ? randomName : name} // Nome randomizzato per anti-autofill
         value={q}
         required={required}
         onChange={(e) => {
@@ -248,43 +230,41 @@ export default function GlobalAirportInput({
           onChange(v)
         }}
         onFocus={() => {
-          if (!isSelectedAirport(q) && q.trim().length >= 2 && items.length > 0) {
+          if (!isSelectedAirport(q) && q.trim().length >= 3 && items.length > 0) {
             setOpen(true)
           }
         }}
         onKeyDown={onKeyDown}
         placeholder={placeholder ?? "Es. Roma Fiumicino - (FCO)"}
-        // Enhanced anti-autofill attributes
-        autoComplete={disableBrowserAutocomplete ? "new-password" : "off"}
-        data-form-type={disableBrowserAutocomplete ? "search" : undefined}
+        // Attributi anti-autofill potenziati
+        autoComplete={disableBrowserAutocomplete ? "new-password" : "on"} // "new-password" confonde molti browser
+        data-form-type={disableBrowserAutocomplete ? "other" : undefined}
         data-lpignore={disableBrowserAutocomplete ? "true" : undefined}
         data-1p-ignore={disableBrowserAutocomplete ? "true" : undefined}
         data-bwignore={disableBrowserAutocomplete ? "true" : undefined}
-        data-dashlane-rid={disableBrowserAutocomplete ? Math.random().toString() : undefined}
-        data-lastpass-ignore={disableBrowserAutocomplete ? "true" : undefined}
+        data-dashlane-rid={disableBrowserAutocomplete ? "" : undefined}
         spellCheck={disableBrowserAutocomplete ? false : undefined}
-        // Additional attributes for maximum protection
+        // Attributi aggiuntivi per confondere i browser
         {...(disableBrowserAutocomplete && {
           "data-no-autofill": "true",
           "data-disable-autofill": "true",
-          "data-airport-search": "true",
           autoCapitalize: "off",
           autoCorrect: "off",
-          role: "combobox",
         })}
         aria-autocomplete="list"
         aria-expanded={show}
-        aria-controls={`${randomId}-listbox`}
+        aria-controls={`${id}-listbox`}
+        role="combobox"
         className={cn(error ? "ring-2 ring-red-500 focus-visible:ring-red-500" : undefined)}
         aria-invalid={Boolean(error)}
-        aria-describedby={error ? `${randomId}-error` : undefined}
+        aria-describedby={error ? `${id}-error` : undefined}
       />
 
-      {/* Hidden input for form submission with original name */}
+      {/* Input nascosto per mantenere il valore nel form con il nome originale */}
       {disableBrowserAutocomplete && <input type="hidden" name={name} value={q} />}
 
       {error ? (
-        <p id={`${randomId}-error`} className="mt-1 text-xs text-red-600">
+        <p id={`${id}-error`} className="mt-1 text-xs text-red-600">
           {error}
         </p>
       ) : null}
@@ -292,14 +272,14 @@ export default function GlobalAirportInput({
       {show && (
         <div
           ref={listRef}
-          id={`${randomId}-listbox`}
+          id={`${id}-listbox`}
           role="listbox"
           className={cn(
             "absolute z-50 mt-1 w-full overflow-y-auto rounded-md border border-[#072534]/15 bg-white shadow-lg",
             "max-h-40",
           )}
         >
-          {loading && <div className="px-3 py-2 text-sm text-[#072534]/60">Caricamento aeroporti…</div>}
+          {loading && <div className="px-3 py-2 text-sm text-[#072534]/60">Caricamento…</div>}
           {!loading &&
             rendered.map(({ a, line1, line2 }, i) => {
               const isActive = i === active

@@ -5,17 +5,20 @@ import { useState } from "react"
 import { Menu, Plane } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetClose } from "@/components/ui/sheet"
-
-const nav = [
-  { href: "/", label: "Home" },
-  { href: "/come-funziona", label: "Come Funziona" },
-  { href: "/chi-siamo", label: "Chi Siamo" },
-  { href: "/compenso", label: "Compenso" },
-  { href: "/faq", label: "FAQ" },
-]
+import { LanguageSwitcher } from "@/components/language-switcher"
+import { useLanguage } from "@/contexts/language-context"
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false)
+  const { t } = useLanguage()
+  
+  const nav = [
+    { href: "/", label: t('home') },
+    { href: "/come-funziona", label: t('howItWorks') },
+    { href: "/chi-siamo", label: t('whoWeAre') },
+    { href: "/compenso", label: t('compensation') },
+    { href: "/faq", label: t('faq') },
+  ]
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#072534]/95 backdrop-blur">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
@@ -31,6 +34,7 @@ export function SiteHeader() {
               {item.label}
             </Link>
           ))}
+          <LanguageSwitcher />
         </nav>
 
         {/* Mobile */}
@@ -57,6 +61,9 @@ export function SiteHeader() {
                     </Link>
                   </SheetClose>
                 ))}
+                <div className="pt-4 border-t border-white/10">
+                  <LanguageSwitcher />
+                </div>
               </nav>
             </SheetContent>
           </Sheet>

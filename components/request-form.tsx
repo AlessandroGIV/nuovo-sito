@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useRef, useState, useEffect } from "react"
+import { useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -10,13 +10,28 @@ import { useToast } from "@/hooks/use-toast"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { useSearchParams } from "next/navigation"
-import { Send, CheckCircle, Pencil } from "lucide-react"
+import { Send, CheckCircle } from "lucide-react"
 import GlobalAirlineInput from "./global-airline-input"
 import GlobalAirportInput from "./global-airport-input"
 import { TimeInputResponsive } from "./time-input-responsive"
-import emailjs from '@emailjs/browser'
+import { useLanguage } from "@/contexts/language-context"
 
 type Leg = { date: string; airline: string; schedDep: string }
+type Payload = {
+  flow: "request"
+  from: string
+  to: string
+  direct: boolean
+  via?: string
+  leg1: Leg
+  leg2?: Leg | null
+  name: string
+  email: string
+  phone: string
+  description: string
+  privacy: "on"
+  terms: "on"
+}
 type Errors = Partial<
   Record<
     | "from"
@@ -43,11 +58,11 @@ export default function RequestForm() {
   const presetFrom = params.get("from") ?? ""
   const presetTo = params.get("to") ?? ""
   const { toast } = useToast()
+  const { t } = useLanguage()
 
   const [submitting, setSubmitting] = useState(false)
   const [errors, setErrors] = useState<Errors>({})
   const [submitted, setSubmitted] = useState(false)
-  const [currentStep, setCurrentStep] = useState(1)
 
   const [from, setFrom] = useState(presetFrom)
   const [to, setTo] = useState(presetTo)
@@ -61,11 +76,6 @@ export default function RequestForm() {
   const [email, setEmail] = useState("")
   const [phone, setPhone] = useState("")
   const [description, setDescription] = useState("")
-
-  // Initialize EmailJS
-  useEffect(() => {
-    emailjs.init(process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!)
-  }, [])
 
   // Refs for scroll/focus
   const refs = {
@@ -83,6 +93,7 @@ export default function RequestForm() {
     phone: useRef<HTMLInputElement>(null),
     description: useRef<HTMLTextAreaElement>(null),
     privacy: useRef<HTMLInputElement>(null),
+    terms: useRef<HTMLInputElement>(null),
   }
 
   function scrollToFirstError(errs: Errors) {
@@ -101,6 +112,7 @@ export default function RequestForm() {
       "phone",
       "description",
       "privacy",
+      "terms",
     ]
     for (const k of order) {
       if (errs[k]) {
@@ -127,70 +139,9 @@ export default function RequestForm() {
     setDescription("")
     setErrors({})
     setSubmitted(false)
-    setCurrentStep(1)
     try {
       window.scrollTo({ top: 0, behavior: "smooth" })
     } catch {}
-  }
-
-  function goToStep(step: number) {
-    setCurrentStep(step)
-    setErrors({})
-    try {
-      window.scrollTo({ top: 0, behavior: "smooth" })
-    } catch {}
-  }
-
-  function nextStep() {
-    const { ok, errs } = validateCurrentStep()
-    setErrors(errs)
-    if (!ok) {
-      scrollToFirstError(errs)
-      toast({
-        title: "Compila i campi obbligatori",
-        description: "Alcuni campi sono mancanti o non validi.",
-        variant: "destructive",
-      })
-      return
-    }
-    setCurrentStep(currentStep + 1)
-    try {
-      window.scrollTo({ top: 0, behavior: "smooth" })
-    } catch {}
-  }
-
-  function prevStep() {
-    setCurrentStep(currentStep - 1)
-    setErrors({})
-    try {
-      window.scrollTo({ top: 0, behavior: "smooth" })
-    } catch {}
-  }
-
-  function validateCurrentStep(): { ok: boolean; errs: Errors } {
-    const errs: Errors = {}
-    
-    if (currentStep === 1) {
-      if (!from) errs.from = "Campo obbligatorio"
-      if (!to) errs.to = "Campo obbligatorio"
-      if (direct === "no" && !via) errs.via = "Campo obbligatorio"
-    } else if (currentStep === 2) {
-      if (!leg1.date) errs.leg1Date = "Campo obbligatorio"
-      if (!leg1.airline) errs.leg1Airline = "Campo obbligatorio"
-      if (!leg1.schedDep || !isValidTime(leg1.schedDep)) errs.leg1Time = "Inserisci un orario valido"
-      if (direct === "no") {
-        if (!leg2.date) errs.leg2Date = "Campo obbligatorio"
-        if (!leg2.airline) errs.leg2Airline = "Campo obbligatorio"
-        if (!leg2.schedDep || !isValidTime(leg2.schedDep)) errs.leg2Time = "Inserisci un orario valido"
-      }
-    } else if (currentStep === 3) {
-      if (!name) errs.name = "Campo obbligatorio"
-      if (!email) errs.email = "Campo obbligatorio"
-      if (!phone || !isValidPhone10(phone)) errs.phone = "Inserisci un numero di 10 cifre"
-      if (!description) errs.description = "Campo obbligatorio"
-    }
-    
-    return { ok: Object.keys(errs).length === 0, errs }
   }
 
   function isValidTime(v: string) {
@@ -201,85 +152,100 @@ export default function RequestForm() {
     return digits.length === 10
   }
 
+  function validate(): { ok: boolean; errs: Errors } {
+    const errs: Errors = {}
+    if (!from) errs.from = t('requiredField')
+    if (!to) errs.to = t('requiredField')
+    if (!leg1.date) errs.leg1Date = t('requiredField')
+    if (!leg1.airline) errs.leg1Airline = t('requiredField')
+    if (!leg1.schedDep || !isValidTime(leg1.schedDep)) errs.leg1Time = t('validTimeRequired')
+    if (direct === "no") {
+      if (!via) errs.via = t('requiredField')
+      if (!leg2.date) errs.leg2Date = t('requiredField')
+      if (!leg2.airline) errs.leg2Airline = t('requiredField')
+      if (!leg2.schedDep || !isValidTime(leg2.schedDep)) errs.leg2Time = t('validTimeRequired')
+    }
+    if (!name) errs.name = t('requiredField')
+    if (!email) errs.email = t('requiredField')
+    if (!phone || !isValidPhone10(phone)) errs.phone = t('enter10DigitPhone')
+    if (!description) errs.description = t('requiredField')
+    return { ok: Object.keys(errs).length === 0, errs }
+  }
+
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (submitting) return
 
-    // Check terms acceptance on step 4
-    const fd = new FormData(e.currentTarget)
-    const priv = fd.get("privacy")
-    if (!priv) {
-      setErrors({ privacy: "Obbligatorio" })
-      scrollToFirstError({ privacy: "Obbligatorio" })
+    const { ok, errs } = validate()
+    setErrors(errs)
+    if (!ok) {
+      scrollToFirstError(errs)
       toast({
-        title: "Consenso obbligatorio",
-        description: "Devi accettare i termini e la privacy policy per inviare la richiesta.",
+        title: t('completeRequiredFields'),
+        description: t('someMissingInvalid'),
         variant: "destructive",
       })
       return
     }
 
+    const fd = new FormData(e.currentTarget)
+    const priv = fd.get("privacy")
+    const trm = fd.get("terms")
+    const consentErrs: Errors = {}
+    if (!priv) consentErrs.privacy = t('required')
+    if (!trm) consentErrs.terms = t('required')
+    if (Object.keys(consentErrs).length > 0) {
+      const combined = { ...errs, ...consentErrs }
+      setErrors(combined)
+      scrollToFirstError(combined)
+      toast({
+        title: t('consentRequired'),
+        description: t('acceptPrivacyTerms'),
+        variant: "destructive",
+      })
+      return
+    }
+
+    const payload: Payload = {
+      flow: "request",
+      from,
+      to,
+      direct: direct === "si",
+      via: direct === "no" ? via : undefined,
+      leg1,
+      leg2: direct === "si" ? null : leg2,
+      name,
+      email,
+      phone,
+      description,
+      privacy: "on",
+      terms: "on",
+    }
+
     setSubmitting(true)
     try {
-      // Complete email template parameters with all required fields
-     const templateParams = {
-      // Trip details
-      is_direct: direct === "si" ? "true" : "false",
-      is_direct_label: direct === "si" ? "Volo Diretto" : "Volo con Scalo",
-      departure_airport: from,
-      arrival_airport: to,
-      
-      // First/only flight segment
-      segment1_date: leg1.date,
-      segment1_time: leg1.schedDep,
-      segment1_airline: leg1.airline,
-      
-      // Second segment (only if not direct)
-      segment2_date: direct === "si" ? "" : leg2.date,
-      segment2_time: direct === "si" ? "" : leg2.schedDep,
-      segment2_airline: direct === "si" ? "" : leg2.airline,
-      
-      // Contact & case info
-      full_name: name,
-      email: email,
-      phone: phone,
-      description: description,
-      
-      // Layover info - properly cleaned
-      via_airport: direct === "no" && via ? via : "Nessuno",
-      
-      // Legacy fields for compatibility
-      flight_number: leg1.airline ? `${leg1.airline} - ${leg1.date}` : "Non specificato",
-      flight_date: leg1.date || "Non specificato",
-      
-      // Additional context
-      submission_date: new Date().toLocaleString('it-IT'),
-}
-
-
-      console.log('Sending email with data:', templateParams) // Debug log
-
-      // Send email via EmailJS
-      const result = await emailjs.send(
-        process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
-        process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID!,
-        templateParams
-      )
-
-      if (result.status === 200) {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      })
+      const data = (await res.json()) as { ok: boolean; message: string }
+      if (data.ok) {
         setSubmitted(true)
         try {
           window.scrollTo({ top: 0, behavior: "smooth" })
         } catch {}
-        toast({ title: "Richiesta inviata", description: "Ti ricontatteremo entro 24 ore." })
+        toast({ title: t('requestSent'), description: t('requestSentThankYou') })
         return
       } else {
-        throw new Error('EmailJS failed')
+        toast({
+          title: t('sendFailed'),
+          description: data.message ?? t('tryAgainLater'),
+          variant: "destructive",
+        })
       }
-
-    } catch (error) {
-      console.error('EmailJS error:', error)
-      toast({ title: "Errore di rete", description: "Controlla la connessione e riprova.", variant: "destructive" })
+    } catch {
+      toast({ title: t('networkError'), description: t('checkConnectionRetry'), variant: "destructive" })
     } finally {
       setSubmitting(false)
     }
@@ -293,63 +259,33 @@ export default function RequestForm() {
         <div className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-full bg-green-500/20">
           <CheckCircle className="h-7 w-7 text-green-400" />
         </div>
-        <h2 className="text-2xl md:text-3xl font-extrabold text-[#FFC300]">Richiesta Inviata!</h2>
+        <h2 className="text-2xl md:text-3xl font-extrabold text-[#FFC300]">{t('requestSent')}</h2>
         <p className="mt-2 text-white/85">
-          Grazie per averci contattato. Un nostro avvocato ti risponderà al più presto per valutare il tuo caso.
+          {t('requestSentMessage')}
         </p>
         <button
           type="button"
           onClick={resetAll}
           className="mt-5 inline-flex items-center justify-center rounded-md bg-[#FFC300] px-5 py-2.5 font-semibold text-[#072534] hover:bg-[#FFB800]"
         >
-          Invia un'altra richiesta
+          {t('sendAnotherRequest')}
         </button>
       </div>
     )
   }
 
-  // Step indicator component
-  const StepIndicator = () => (
-    <div className="mb-6 flex items-center justify-center gap-2">
-      {[1, 2, 3, 4].map((step) => (
-        <div key={step} className="flex items-center">
-          <div
-            className={`flex h-10 w-10 items-center justify-center rounded-full font-semibold ${
-              currentStep === step
-                ? "bg-[#FFC300] text-[#072534]"
-                : currentStep > step
-                ? "bg-[#FFC300]/50 text-white"
-                : "bg-white/20 text-white"
-            }`}
-          >
-            {step}
-          </div>
-          {step < 4 && (
-            <div
-              className={`h-1 w-12 ${currentStep > step ? "bg-[#FFC300]/50" : "bg-white/20"}`}
-            />
-          )}
-        </div>
-      ))}
-    </div>
-  )
-
   return (
     <form noValidate onSubmit={onSubmit} className="space-y-6">
-      <StepIndicator />
-
-      {/* Step 1: Itinerario */}
-      {currentStep === 1 && (
-        <>
-          <Card className="bg-white text-[#072534] border-0 shadow-lg">
-            <CardContent className="p-4 md:p-6">
-              <h2 className="text-xl font-extrabold">Itinerario</h2>
+      {/* Itinerario */}
+      <Card className="bg-white text-[#072534] border-0 shadow-lg">
+        <CardContent className="p-4 md:p-6">
+          <h2 className="text-xl font-extrabold">{t('itinerary')}</h2>
           <div className={`mt-3 grid gap-4 ${direct === "no" ? "md:grid-cols-3" : "md:grid-cols-2"}`}>
             {/* Partenza */}
             <GlobalAirportInput
               id="from"
               name="from"
-              label="Aeroporto di partenza"
+              label={t('departureAirport')}
               value={from}
               onChange={setFrom}
               placeholder="Roma Fiumicino - (FCO)"
@@ -361,12 +297,12 @@ export default function RequestForm() {
             {/* Scalo: mostrato solo se volo non diretto, al centro su desktop */}
             {direct === "no" && (
               <GlobalAirportInput
-                id="layover-airport"
-                name="layover-airport"
-                label="Aeroporto di scalo"
+                id="via"
+                name="via"
+                label={t('stopoverAirport')}
                 value={via}
                 onChange={setVia}
-                placeholder="Es. Amsterdam Schiphol - (AMS)"
+                placeholder="Es. Amsterdam - (AMS)"
                 required
                 inputRef={refs.via}
                 error={errors.via}
@@ -374,12 +310,11 @@ export default function RequestForm() {
               />
             )}
 
-
             {/* Destinazione */}
             <GlobalAirportInput
               id="to"
               name="to"
-              label="Aeroporto di destinazione"
+              label={t('destinationAirport')}
               value={to}
               onChange={setTo}
               placeholder="Milano Linate - (LIN)"
@@ -390,42 +325,28 @@ export default function RequestForm() {
           </div>
 
           <div className="mt-4">
-            <p className="mb-2 font-semibold">Il tuo volo era diretto?</p>
+            <p className="mb-2 font-semibold">{t('directFlight')}</p>
             <RadioGroup defaultValue="si" onValueChange={(v) => setDirect(v as "si" | "no")} className="flex gap-6">
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="si" id="diretto-si" />
-                <Label htmlFor="diretto-si">Sì</Label>
+                <Label htmlFor="diretto-si">{t('yes')}</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="no" id="diretto-no" />
-                <Label htmlFor="diretto-no">No</Label>
+                <Label htmlFor="diretto-no">{t('no')}</Label>
               </div>
             </RadioGroup>
           </div>
         </CardContent>
       </Card>
 
-      <div className="flex justify-end gap-3">
-        <Button
-          type="button"
-          onClick={nextStep}
-          className="bg-[#FF8A00] text-white hover:bg-[#ff8a00]/90 font-semibold"
-        >
-          Avanti
-        </Button>
-      </div>
-        </>
-      )}
-
-      {/* Step 2: Dettagli volo/i */}
-      {currentStep === 2 && (
-        <>
-          <Card className="bg-white text-[#072534] border-0 shadow-lg">
+      {/* Dettagli volo/i */}
+      <Card className="bg-white text-[#072534] border-0 shadow-lg">
         <CardContent className="p-4 md:p-6">
-          <h2 className="text-xl font-extrabold">Dettagli volo{direct === "no" ? " (Volo 1)" : ""}</h2>
+          <h2 className="text-xl font-extrabold">{direct === "no" ? t('flightDetailsWithNumber', {number: '1'}) : t('flightDetails')}</h2>
           <div className="mt-3 grid gap-4 md:grid-cols-3">
             <div>
-              <label className="mb-1 block text-sm font-semibold text-[#072534]">Data del volo</label>
+              <label className="mb-1 block text-sm font-semibold text-[#072534]">{t('flightDate')}</label>
               <Input
                 ref={refs.leg1Date}
                 type="date"
@@ -439,7 +360,7 @@ export default function RequestForm() {
             <GlobalAirlineInput
               id="leg1-airline"
               name="leg1-airline"
-              label="Compagnia aerea"
+              label={t('airline')}
               value={leg1.airline}
               onChange={(v) => setLeg1({ ...leg1, airline: v })}
               required
@@ -449,7 +370,7 @@ export default function RequestForm() {
             <TimeInputResponsive
               id="leg1-time"
               name="leg1-time"
-              label="Orario di partenza previsto"
+              label={t('scheduledDeparture')}
               value={leg1.schedDep}
               onChange={(v) => setLeg1({ ...leg1, schedDep: v })}
               inputRef={refs.leg1Time}
@@ -461,10 +382,10 @@ export default function RequestForm() {
           {direct === "no" && (
             <>
               <hr className="my-6 border-[#072534]/10" />
-              <h2 className="text-xl font-extrabold">Dettagli volo (Volo 2)</h2>
+              <h2 className="text-xl font-extrabold">{t('flightDetailsWithNumber', {number: '2'})}</h2>
               <div className="mt-3 grid gap-4 md:grid-cols-3">
                 <div>
-                  <label className="mb-1 block text-sm font-semibold text-[#072534]">Data del volo</label>
+                  <label className="mb-1 block text-sm font-semibold text-[#072534]">{t('flightDate')}</label>
                   <Input
                     ref={refs.leg2Date}
                     type="date"
@@ -478,7 +399,7 @@ export default function RequestForm() {
                 <GlobalAirlineInput
                   id="leg2-airline"
                   name="leg2-airline"
-                  label="Compagnia aerea"
+                  label={t('airline')}
                   value={leg2.airline}
                   onChange={(v) => setLeg2({ ...leg2, airline: v })}
                   required
@@ -488,7 +409,7 @@ export default function RequestForm() {
                 <TimeInputResponsive
                   id="leg2-time"
                   name="leg2-time"
-                  label="Orario di partenza previsto"
+                  label={t('scheduledDeparture')}
                   value={leg2.schedDep}
                   onChange={(v) => setLeg2({ ...leg2, schedDep: v })}
                   inputRef={refs.leg2Time}
@@ -501,60 +422,38 @@ export default function RequestForm() {
         </CardContent>
       </Card>
 
-      <div className="flex justify-between gap-3">
-        <Button
-          type="button"
-          onClick={prevStep}
-          variant="outline"
-          className="border-white text-white hover:bg-white/10"
-        >
-          Indietro
-        </Button>
-        <Button
-          type="button"
-          onClick={nextStep}
-          className="bg-[#FF8A00] text-white hover:bg-[#ff8a00]/90 font-semibold"
-        >
-          Avanti
-        </Button>
-      </div>
-        </>
-      )}
-
-      {/* Step 3: Dati personali */}
-      {currentStep === 3 && (
-        <>
-          <Card className="bg-white text-[#072534] border-0 shadow-lg">
+      {/* Dati personali */}
+      <Card className="bg-white text-[#072534] border-0 shadow-lg">
         <CardContent className="p-4 md:p-6">
-          <h2 className="text-xl font-extrabold">Dati personali</h2>
+          <h2 className="text-xl font-extrabold">{t('personalData')}</h2>
           <div className="mt-3 grid gap-4 md:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm font-semibold text-[#072534]">Nome e Cognome</label>
+              <label className="mb-1 block text-sm font-semibold text-[#072534]">{t('fullName')}</label>
               <Input
                 ref={refs.name}
                 name="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Il tuo nome completo"
+                placeholder={t('yourFullName')}
                 className={errCls("name")}
               />
               {errors.name ? <p className="mt-1 text-xs text-red-600">{errors.name}</p> : null}
             </div>
             <div>
-              <label className="mb-1 block text-sm font-semibold text-[#072534]">Email</label>
+              <label className="mb-1 block text-sm font-semibold text-[#072534]">{t('email')}</label>
               <Input
                 ref={refs.email}
                 type="email"
                 name="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="La tua email"
+                placeholder={t('yourEmail')}
                 className={errCls("email")}
               />
               {errors.email ? <p className="mt-1 text-xs text-red-600">{errors.email}</p> : null}
             </div>
             <div>
-              <label className="mb-1 block text-sm font-semibold text-[#072534]">Telefono</label>
+              <label className="mb-1 block text-sm font-semibold text-[#072534]">{t('phone')}</label>
               <Input
                 ref={refs.phone}
                 type="tel"
@@ -563,224 +462,59 @@ export default function RequestForm() {
                 name="phone"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                placeholder="Il tuo numero di telefono"
+                placeholder={t('yourPhone')}
                 className={errCls("phone")}
               />
               {errors.phone ? <p className="mt-1 text-xs text-red-600">{errors.phone}</p> : null}
             </div>
             <div className="md:col-span-2">
-              <label className="mb-1 block text-sm font-semibold text-[#072534]">Breve descrizione del problema</label>
+              <label className="mb-1 block text-sm font-semibold text-[#072534]">{t('problemDescription')}</label>
               <Textarea
                 ref={refs.description}
                 name="description"
                 rows={4}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Es. ritardo di 4 ore sul primo volo, perdita connessione..."
+                placeholder={t('problemDescriptionPlaceholder')}
                 className={errCls("description")}
               />
               {errors.description ? <p className="mt-1 text-xs text-red-600">{errors.description}</p> : null}
             </div>
           </div>
+
+          <div className="mt-4 space-y-2 text-sm">
+            <label className="flex items-start gap-2">
+              <input ref={refs.privacy} name="privacy" type="checkbox" className="mt-1" />
+              <span>
+                {t('agreeToPrivacy')}{" "}
+                <a href="/privacy" className="underline text-[#072534]">
+                  {t('privacyPolicy')}
+                </a>{" "}
+                *
+              </span>
+            </label>
+            <label className="flex items-start gap-2">
+              <input ref={refs.terms} name="terms" type="checkbox" className="mt-1" />
+              <span>
+                {t('agreeToTerms')}{" "}
+                <a href="/termini" className="underline text-[#072534]">
+                  {t('termsAndConditions')}
+                </a>{" "}
+                *
+              </span>
+            </label>
+          </div>
+
+          <Button
+            type="submit"
+            disabled={submitting}
+            className="mt-5 w-full bg-[#FF8A00] text-white hover:bg-[#ff8a00]/90 font-semibold"
+          >
+            <Send className="mr-2 h-4 w-4" />
+            {submitting ? t('submitting') : t('submit')}
+          </Button>
         </CardContent>
       </Card>
-
-      <div className="flex justify-between gap-3">
-        <Button
-          type="button"
-          onClick={prevStep}
-          variant="outline"
-          className="border-white text-white hover:bg-white/10"
-        >
-          Indietro
-        </Button>
-        <Button
-          type="button"
-          onClick={nextStep}
-          className="bg-[#FF8A00] text-white hover:bg-[#ff8a00]/90 font-semibold"
-        >
-          Avanti
-        </Button>
-      </div>
-        </>
-      )}
-
-      {/* Step 4: Riepilogo e Conferma */}
-      {currentStep === 4 && (
-        <>
-          <Card className="bg-white text-[#072534] border-0 shadow-lg">
-            <CardContent className="p-4 md:p-6">
-              <h2 className="text-2xl font-extrabold mb-6">Riepilogo e Conferma</h2>
-
-              {/* Itinerario Summary */}
-              <div className="mb-6 rounded-lg bg-[#072534]/5 p-4">
-                <div className="mb-3 flex items-center justify-between">
-                  <h3 className="text-lg font-bold">Itinerario</h3>
-                  <Button
-                    type="button"
-                    onClick={() => goToStep(1)}
-                    variant="outline"
-                    size="sm"
-                    className="text-xs"
-                  >
-                    Modifica
-                  </Button>
-                </div>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="font-semibold">Partenza:</span>
-                    <span>{from || "Non specificato"}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-semibold">Destinazione:</span>
-                    <span>{to || "Non specificato"}</span>
-                  </div>
-                  {direct === "no" && via && (
-                    <div className="flex justify-between">
-                      <span className="font-semibold">Scalo:</span>
-                      <span>{via}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between">
-                    <span className="font-semibold">Tipo volo:</span>
-                    <span>{direct === "si" ? "Diretto" : "Con scalo"}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Dettagli Volo Summary */}
-              <div className="mb-6 rounded-lg bg-[#072534]/5 p-4">
-                <div className="mb-3 flex items-center justify-between">
-                  <h3 className="text-lg font-bold">Dettagli Volo</h3>
-                  <Button
-                    type="button"
-                    onClick={() => goToStep(2)}
-                    variant="outline"
-                    size="sm"
-                    className="text-xs"
-                  >
-                    Modifica
-                  </Button>
-                </div>
-                <div className="space-y-3">
-                  <div>
-                    <p className="font-semibold text-sm mb-1">Volo {direct === "no" ? "1" : ""}</p>
-                    <div className="space-y-1 text-sm pl-3">
-                      <div className="flex justify-between">
-                        <span className="text-[#072534]/70">Data:</span>
-                        <span>{leg1.date || "Non specificato"}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-[#072534]/70">Compagnia:</span>
-                        <span>{leg1.airline || "Non specificato"}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-[#072534]/70">Orario partenza:</span>
-                        <span>{leg1.schedDep}</span>
-                      </div>
-                    </div>
-                  </div>
-                  {direct === "no" && (
-                    <div>
-                      <p className="font-semibold text-sm mb-1">Volo 2</p>
-                      <div className="space-y-1 text-sm pl-3">
-                        <div className="flex justify-between">
-                          <span className="text-[#072534]/70">Data:</span>
-                          <span>{leg2.date || "Non specificato"}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-[#072534]/70">Compagnia:</span>
-                          <span>{leg2.airline || "Non specificato"}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-[#072534]/70">Orario partenza:</span>
-                          <span>{leg2.schedDep}</span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Dati Personali Summary */}
-              <div className="mb-6 rounded-lg bg-[#072534]/5 p-4">
-                <div className="mb-3 flex items-center justify-between">
-                  <h3 className="text-lg font-bold">Dati Personali</h3>
-                  <Button
-                    type="button"
-                    onClick={() => goToStep(3)}
-                    variant="outline"
-                    size="sm"
-                    className="text-xs"
-                  >
-                    Modifica
-                  </Button>
-                </div>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="font-semibold">Nome:</span>
-                    <span>{name || "Non specificato"}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-semibold">Email:</span>
-                    <span>{email || "Non specificato"}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="font-semibold">Telefono:</span>
-                    <span>{phone || "Non specificato"}</span>
-                  </div>
-                  {description && (
-                    <div>
-                      <p className="font-semibold mb-1">Descrizione:</p>
-                      <p className="text-[#072534]/70 text-xs whitespace-pre-wrap">{description}</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Terms and Privacy - Less prominent */}
-              <div className="mt-8 space-y-3 border-t border-[#072534]/10 pt-6 text-sm">
-                <label className="flex items-start gap-2 cursor-pointer">
-                  <input ref={refs.privacy} name="privacy" type="checkbox" className="mt-1" />
-                  <span className="text-[#072534]/80">
-                    Ho preso visione e accetto i{" "}
-                    <a href="/termini" target="_blank" className="underline text-[#072534] hover:text-[#FF8A00]">
-                      Termini e condizioni
-                    </a>{" "}
-                    e la{" "}
-                    <a href="/privacy" target="_blank" className="underline text-[#072534] hover:text-[#FF8A00]">
-                      Privacy Policy
-                    </a>
-                    {" "}*
-                  </span>
-                </label>
-                {(errors.privacy || errors.terms) && (
-                  <p className="text-xs text-red-600">Devi accettare i termini e la privacy policy per continuare</p>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          <div className="flex justify-between gap-3">
-            <Button
-              type="button"
-              onClick={prevStep}
-              variant="outline"
-              className="border-white text-white hover:bg-white/10"
-            >
-              Indietro
-            </Button>
-            <Button
-              type="submit"
-              disabled={submitting}
-              className="bg-[#FF8A00] text-white hover:bg-[#ff8a00]/90 font-semibold"
-            >
-              <Send className="mr-2 h-4 w-4" />
-              {submitting ? "Invio in corso..." : "Invia richiesta"}
-            </Button>
-          </div>
-        </>
-      )}
     </form>
   )
 }
