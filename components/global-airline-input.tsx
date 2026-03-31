@@ -64,8 +64,9 @@ export default function GlobalAirlineInput({
   const results = useMemo(() => {
     const n = normalize(q)
     if (n.length < 1) return []
-    const filtered = AIRLINES_MANUAL.filter((name) => normalize(name).startsWith(n))
-    return filtered.slice(0, 60)
+    const starts = AIRLINES_MANUAL.filter((a) => normalize(a).startsWith(n))
+    const contains = AIRLINES_MANUAL.filter((a) => !normalize(a).startsWith(n) && normalize(a).includes(n))
+    return [...starts, ...contains].slice(0, 60)
   }, [q])
 
   const show = open && q.trim().length >= 1
