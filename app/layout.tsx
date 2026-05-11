@@ -10,8 +10,9 @@ import { SiteFooter } from '@/components/site-footer'
 import { LanguageProvider } from '@/contexts/language-context'
 
 export const metadata: Metadata = {
-  title: 'Giustizia In Volo - Risarcimento per ritardi e cancellazioni voli',
-  description: 'Servizio legale specializzato nell\'ottenere risarcimenti fino a 600€ per ritardi, cancellazioni e negato imbarco. Assistenza da veri avvocati, nessun anticipo richiesto.',
+  title: 'Rimborso Volo Cancellato o in Ritardo | Fino a €600 – Giustizia In Volo',
+  description:
+    'Volo cancellato o in ritardo di oltre 3 ore? Hai diritto fino a €600. Nessun anticipo, paghiamo solo se vinciamo. Reg. CE 261/2004.',
   icons: {
     icon: '/favicon.ico',
     apple: '/apple-touch-icon.png',
