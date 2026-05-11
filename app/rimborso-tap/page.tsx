@@ -2,9 +2,9 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Rimborso Volo British Airways Cancellato | Fino a €600 – Giustizia In Volo',
+  title: 'Rimborso Volo TAP Air Portugal Cancellato | Fino a €600 – Giustizia In Volo',
   description:
-    'British Airways ha cancellato o ritardato il tuo volo? Hai diritto fino a €600. Gestiamo tutto noi, zero costi anticipati.',
+    'TAP Air Portugal ha cancellato o ritardato il tuo volo? Hai diritto fino a €600. Nessun costo anticipato, paghiamo solo se vinciamo.',
 }
 
 const steps = [
@@ -18,7 +18,7 @@ const steps = [
     n: '2',
     title: 'Un avvocato segue il tuo caso',
     description:
-      'Un nostro legale analizza la situazione e contatta British Airways per tuo conto. Zero costi anticipati.',
+      'Un nostro legale analizza la situazione e contatta TAP Air Portugal per tuo conto. Nessun costo anticipato.',
   },
   {
     n: '3',
@@ -28,17 +28,17 @@ const steps = [
   },
 ]
 
-export default function RimborsoBritishAirwaysPage() {
+export default function RimborsoTapPage() {
   return (
     <main className="bg-[#072534] text-white">
       {/* Hero */}
       <section className="container mx-auto px-4 py-16 text-center">
         <h1 className="text-[#FFC300] text-3xl md:text-5xl font-extrabold leading-tight max-w-3xl mx-auto">
-          Il tuo volo British Airways è stato cancellato o in ritardo? Hai diritto fino a €600.
+          Il tuo volo TAP Air Portugal è stato cancellato o in ritardo? Hai diritto fino a €600.
         </h1>
         <p className="mt-5 text-white/85 max-w-2xl mx-auto text-lg">
-          Il Regolamento CE 261/2004 obbliga British Airways a risarcirti. Gestiamo tutto noi:
-          nessun anticipo, nessuna burocrazia. Zero costi se non otteniamo nulla.
+          Il Regolamento CE 261/2004 obbliga TAP Air Portugal a risarcirti. Noi ci occupiamo di
+          tutto: nessun costo anticipato, nessuna burocrazia. Paghiamo solo se vinciamo.
         </p>
         <Link
           href="/richiesta"
