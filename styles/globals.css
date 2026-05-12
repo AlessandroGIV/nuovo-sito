@@ -123,3 +123,39 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Blog cover placeholders */
+.cover-stripes {
+  background-color: #0d3a52;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 10px,
+    rgba(255, 195, 0, 0.06) 10px,
+    rgba(255, 195, 0, 0.06) 20px
+  );
+}
+.cover-orange {
+  background-color: #3a1d0a;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 10px,
+    rgba(255, 138, 0, 0.08) 10px,
+    rgba(255, 138, 0, 0.08) 20px
+  );
+}
+.cover-deep {
+  background-color: #061d2a;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 16px,
+    rgba(255, 255, 255, 0.03) 16px,
+    rgba(255, 255, 255, 0.03) 24px
+  );
+}
+
+/* Hide scrollbar for category pills row */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

@@ -18,6 +18,7 @@ export function SiteHeader() {
     { href: "/chi-siamo", label: t('whoWeAre') },
     { href: "/compenso", label: t('compensation') },
     { href: "/faq", label: t('faq') },
+    { href: "/blog", label: t('blog') },
   ]
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#072534]/95 backdrop-blur">

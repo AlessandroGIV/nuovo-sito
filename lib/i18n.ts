@@ -8,6 +8,7 @@ export const translations = {
     whoWeAre: 'Chi Siamo',
     compensation: 'Compenso',
     faq: 'FAQ',
+    blog: 'Blog',
     
     // Hero
     heroTitle: 'Volo in ritardo o cancellato?',
@@ -280,6 +281,7 @@ export const translations = {
     whoWeAre: 'Who We Are',
     compensation: 'Compensation',
     faq: 'FAQ',
+    blog: 'Blog',
     
     // Hero
     heroTitle: 'Flight delayed or cancelled?',
