@@ -156,6 +156,7 @@
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 /* ── Prose on paper (article body on white card) ────────────── */
+.prose-on-paper { color: #0F2A3C; }
 .prose-on-paper h2 {
   font-family: var(--font-display, 'Geist', system-ui, sans-serif);
   font-weight: 800;

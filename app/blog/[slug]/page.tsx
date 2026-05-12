@@ -52,24 +52,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-/** Extract h2 headings and their anchor IDs from MDX source */
+/** Extract h2 headings from MDX source and generate anchor IDs from heading text */
 function extractToc(content: string): TocItem[] {
   const items: TocItem[] = []
-  const re = /^## (.+?)(?:\s*\{#([^}]+)\})?$/gm
+  const re = /^## (.+?)(?:\s*\{#[^}]+\})?$/gm
   let m
   while ((m = re.exec(content)) !== null) {
     const rawLabel = m[1].replace(/\{#[^}]+\}/g, '').trim()
-    const id =
-      m[2] ??
-      rawLabel
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[̀-ͯ]/g, '')
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-|-$/g, '')
+    const id = rawLabel
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[̀-ͯ]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '')
     items.push({ id, label: rawLabel })
   }
   return items
+}
+
+/** Strip {#anchor} syntax from MDX so next-mdx-remote doesn't choke on it as JSX */
+function stripAnchorSyntax(content: string): string {
+  return content.replace(/^(#{1,6}\s[^\n]*?)\s*\{#[^}]+\}/gm, '$1')
 }
 
 /** Estimate reading time from word count */
@@ -170,6 +173,7 @@ export default async function BlogPostPage({ params }: Props) {
   const allPosts = getAllPosts()
   const related = allPosts.filter((p) => p.slug !== slug).slice(0, 3)
   const toc = extractToc(post.content)
+  const safeContent = stripAnchorSyntax(post.content)
   const min = readMin(post.content)
   const cover = COVER[post.category] ?? 'cover-deep'
   const catLabel = CAT_LABEL[post.category] ?? post.category
@@ -301,7 +305,7 @@ export default async function BlogPostPage({ params }: Props) {
               {/* MDX body */}
               <div className="prose-on-paper">
                 {/* @ts-expect-error next-mdx-remote RSC async component incompatible with React 19 JSX types */}
-                <MDXRemote source={post.content} components={mdxComponents} />
+                <MDXRemote source={safeContent} components={mdxComponents} />
               </div>
 
               {/* CTA box inside article card */}
