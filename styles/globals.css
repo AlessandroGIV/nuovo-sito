@@ -261,5 +261,5 @@
 
 /* ── TOC scroll spy ─────────────────────────────────────────── */
 .toc-link { color: rgba(7,37,52,0.72); transition: color 0.15s; }
-.toc-link.active { color: #072534 !important; font-weight: 600; }
-.toc-link.active::before { background: #072534 !important; }
+.toc-link.active { color: #FFC300 !important; font-weight: 600; }
+.toc-link.active::before { background: #FFC300 !important; }

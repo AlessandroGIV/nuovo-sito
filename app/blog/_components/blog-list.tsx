@@ -78,14 +78,15 @@ function PostCover({ variant, slug, ratio = '16/10' }: { variant: string; slug: 
 
 // ── Author avatar ─────────────────────────────────────────────
 
-function AuthorAvatar({ initial, size = 36 }: { initial: string; size?: number }) {
+function AuthorAvatar({ initial, size = 36, onPaper = false }: { initial: string; size?: number; onPaper?: boolean }) {
   return (
     <div
       className="rounded-full flex items-center justify-center font-bold text-sm shrink-0"
-      style={{
-        width: size, height: size,
-        background: '#FFF4CC', border: '1px solid #F0CE5C', color: '#8A6A00',
-      }}
+      style={
+        onPaper
+          ? { width: size, height: size, background: '#FFF4CC', border: '1px solid #F0CE5C', color: '#8A6A00' }
+          : { width: size, height: size, background: 'rgba(255,195,0,0.15)', border: '1px solid rgba(255,195,0,0.35)', color: '#FFC300' }
+      }
     >
       {initial}
     </div>
@@ -138,7 +139,7 @@ function PostCard({ post, featured = false }: { post: PostFrontmatter; featured?
 
         {/* Author + date */}
         <div className="mt-5 flex items-center gap-3">
-          <AuthorAvatar initial={initial} />
+          <AuthorAvatar initial={initial} onPaper />
           <div className="text-xs min-w-0">
             <div className="font-medium" style={{ color: 'rgba(7,37,52,0.9)' }}>Studio Legale GIV</div>
             <div className="font-mono" style={{ color: 'rgba(15,42,60,0.55)' }}>{dateStr}</div>
@@ -230,11 +231,97 @@ export function BlogList({ posts }: Props) {
   const rest = filtered.slice(1)
 
   return (
-    <>
-      {/* ── Featured ──────────────────────────────────── */}
+    <main className="bg-[#072534] text-white min-h-screen">
+
+      {/* ── Hero ──────────────────────────────────────── */}
+      <section className="relative border-b border-white/5 overflow-hidden">
+        {/* Decorative flight path */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden" style={{ zIndex: 0 }}>
+          <svg
+            viewBox="0 0 1000 500"
+            preserveAspectRatio="xMaxYMid slice"
+            className="absolute inset-0 w-full h-full"
+          >
+            <path
+              d="M 60 420 Q 360 50 880 200"
+              fill="none"
+              stroke="rgba(255,195,0,0.22)"
+              strokeWidth="1.25"
+              strokeDasharray="2 8"
+              strokeLinecap="round"
+            />
+            <circle cx="60" cy="420" r="4" fill="#FFC300" opacity="0.5" />
+            <circle cx="880" cy="200" r="4" fill="#FFC300" opacity="0.5" />
+          </svg>
+        </div>
+
+        <div className="container mx-auto px-4 pt-16 pb-12 md:pt-20 md:pb-16 relative" style={{ zIndex: 2 }}>
+          {/* Breadcrumb */}
+          <div className="flex items-center gap-2 text-xs font-mono uppercase tracking-[0.18em] text-white/45 mb-5">
+            <Link href="/" className="hover:text-[#FFC300] transition-colors">GIV</Link>
+            <span>/</span>
+            <span style={{ color: '#FFC300' }}>blog</span>
+          </div>
+
+          {/* H1 + subtitle */}
+          <div className="grid gap-10 md:grid-cols-[1.5fr_1fr] md:items-end">
+            <h1
+              className="font-extrabold leading-[0.96]"
+              style={{
+                color: '#FFC300',
+                fontFamily: "var(--font-display, 'Geist', system-ui, sans-serif)",
+                fontSize: 'clamp(44px, 5.8vw, 80px)',
+                letterSpacing: '-0.035em',
+              }}
+            >
+              Diritti dei passeggeri,<br />spiegati con chiarezza.
+            </h1>
+            <p className="text-white/80 text-lg md:text-xl leading-relaxed">
+              Guide pratiche, casi reali e aggiornamenti sul regolamento CE&nbsp;261/2004. Scritti dai nostri avvocati — senza giri di parole.
+            </p>
+          </div>
+
+          {/* Search + stats row */}
+          <div className="mt-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div className="relative w-full md:max-w-md">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/45 pointer-events-none" />
+              <input
+                type="search"
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                placeholder="Cerca un articolo, una compagnia, un argomento…"
+                className="w-full rounded-xl border py-2.5 pl-10 pr-3 text-[15px] text-white placeholder:text-white/40 focus:outline-none transition-all"
+                style={{ borderColor: 'rgba(255,255,255,0.10)', background: 'rgba(255,255,255,0.04)' }}
+                onFocus={(e) => { e.currentTarget.style.borderColor = 'rgba(255,195,0,0.5)'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(255,195,0,0.15)' }}
+                onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.10)'; e.currentTarget.style.boxShadow = 'none' }}
+              />
+            </div>
+            <div className="flex items-center gap-5 text-sm font-mono text-white/45">
+              <span><span className="text-white/85">{posts.length}</span> articoli</span>
+            </div>
+          </div>
+
+          {/* Category pills */}
+          <div className="mt-6 -mx-4 px-4 overflow-x-auto no-scrollbar">
+            <div className="flex gap-2 min-w-max">
+              {visibleCats.map((c) => (
+                <CategoryPill
+                  key={c.id}
+                  label={c.label}
+                  count={c.id !== 'tutti' ? counts[c.id] : undefined}
+                  active={cat === c.id}
+                  onClick={() => setCat(c.id as PostCategory | 'tutti')}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Featured (paper band) ─────────────────────── */}
       {featured && (
-        <section className="band-paper -mx-4 px-4">
-          <div className="container mx-auto px-0 py-14">
+        <section className="band-paper">
+          <div className="container mx-auto px-4 py-14">
             <div className="mb-5 flex items-baseline justify-between">
               <h2 className="text-xs font-mono uppercase tracking-[0.2em]" style={{ color: 'rgba(7,37,52,0.55)' }}>
                 <span style={{ color: '#B07D00' }}>★</span>&nbsp; in evidenza
@@ -249,46 +336,9 @@ export function BlogList({ posts }: Props) {
       )}
 
       {/* ── Grid ──────────────────────────────────────── */}
-      <section className="py-16">
-        {/* Search */}
-        <div className="relative w-full md:max-w-md mb-6">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/45 pointer-events-none" />
-          <input
-            type="search"
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Cerca un articolo, una compagnia, un argomento…"
-            className="w-full rounded-xl border py-2.5 pl-10 pr-3 text-[15px] text-white placeholder:text-white/40 focus:outline-none transition-all"
-            style={{ borderColor: 'rgba(255,255,255,0.10)', background: 'rgba(255,255,255,0.04)' }}
-            onFocus={(e) => { e.currentTarget.style.borderColor = 'rgba(255,195,0,0.5)'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(255,195,0,0.15)' }}
-            onBlur={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.10)'; e.currentTarget.style.boxShadow = 'none' }}
-          />
-        </div>
-
-        {/* Stats row */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-5 text-sm font-mono text-white/45">
-            <span><span className="text-white/85">{posts.length}</span> articoli</span>
-          </div>
-        </div>
-
-        {/* Category pills */}
-        <div className="-mx-4 px-4 overflow-x-auto no-scrollbar mb-10">
-          <div className="flex gap-2 min-w-max">
-            {visibleCats.map((c) => (
-              <CategoryPill
-                key={c.id}
-                label={c.label}
-                count={c.id !== 'tutti' ? counts[c.id] : undefined}
-                active={cat === c.id}
-                onClick={() => setCat(c.id as PostCategory | 'tutti')}
-              />
-            ))}
-          </div>
-        </div>
-
+      <section className="container mx-auto px-4 py-16">
         {/* Section header */}
-        <div className="flex items-baseline justify-between border-b pb-3 mb-8" style={{ borderColor: 'rgba(255,255,255,0.10)' }}>
+        <div className="mb-6 flex items-baseline justify-between border-b pb-3" style={{ borderColor: 'rgba(255,255,255,0.10)' }}>
           <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-white/50">
             {cat === 'tutti' ? 'tutti gli articoli' : CATEGORIES.find((c) => c.id === cat)?.label}
           </h2>
@@ -355,6 +405,6 @@ export function BlogList({ posts }: Props) {
           </form>
         </div>
       </section>
-    </>
+    </main>
   )
 }
