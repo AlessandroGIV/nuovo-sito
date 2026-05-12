@@ -157,6 +157,7 @@ export default async function BlogPostPage({ params }: Props) {
 
         {/* Article body */}
         <article className="prose-invert">
+          {/* @ts-expect-error next-mdx-remote RSC async component incompatible with React 19 JSX types */}
           <MDXRemote source={post.content} components={mdxComponents} />
         </article>
 
