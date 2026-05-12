@@ -1,28 +1,26 @@
-import MultiStepRequestForm from "@/components/multi-step-request-form"
+import RequestForm from "@/components/request-form"
 import { Suspense } from "react"
 
 export default function RichiestaPage() {
   return (
-    <main className="bg-[#072534] text-white min-h-screen">
-      <section className="container mx-auto px-4 my-0 pb-1 pt-1">
-        <Suspense
-          fallback={
-            <div className="max-w-3xl mx-auto">
-              <div className="h-20 bg-white/10 rounded animate-pulse mb-8" />
-              <div className="rounded-2xl bg-white/10 p-6">
-                <div className="h-6 w-48 bg-white/20 rounded animate-pulse mb-4" />
-                <div className="space-y-3">
-                  <div className="h-10 bg-white/10 rounded animate-pulse" />
-                  <div className="h-10 bg-white/10 rounded animate-pulse" />
-                  <div className="h-24 bg-white/10 rounded animate-pulse" />
-                </div>
+    <main>
+      <Suspense
+        fallback={
+          <div className="flex min-h-[calc(100vh-4rem)] bg-gradient-to-b from-[#0E2032] to-[#0A1826] items-center justify-center">
+            <div className="w-full max-w-[680px] bg-white rounded-2xl p-10 space-y-4 mx-6">
+              <div className="h-4 w-24 bg-gray-100 rounded-full animate-pulse" />
+              <div className="h-8 w-64 bg-gray-100 rounded-lg animate-pulse" />
+              <div className="h-4 w-96 bg-gray-100 rounded-full animate-pulse" />
+              <div className="space-y-3 mt-6">
+                <div className="h-12 bg-gray-100 rounded-xl animate-pulse" />
+                <div className="h-12 bg-gray-100 rounded-xl animate-pulse" />
               </div>
             </div>
-          }
-        >
-          <MultiStepRequestForm />
-        </Suspense>
-      </section>
+          </div>
+        }
+      >
+        <RequestForm />
+      </Suspense>
     </main>
   )
 }
