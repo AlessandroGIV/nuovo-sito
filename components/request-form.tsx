@@ -3,7 +3,6 @@
 import type React from "react"
 import { useRef, useState, useEffect } from "react"
 import { useToast } from "@/hooks/use-toast"
-import { Toaster } from "@/components/ui/toaster"
 import { useSearchParams } from "next/navigation"
 import {
   ArrowRight, ArrowLeft, Send, CheckCircle, Check,
@@ -1192,7 +1191,7 @@ export default function RequestForm() {
         </div>
       </div>
 
-      <Toaster />
+
     </div>
   )
 }
