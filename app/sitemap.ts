@@ -1,5 +1,8 @@
 import type { MetadataRoute } from 'next'
 import { getAllPosts } from '@/lib/posts'
+import { airlines, airlineSubpages } from '@/lib/airlines-data'
+import { airports } from '@/lib/airports-data'
+import { ec261Pages } from '@/lib/ec261-data'
 
 const BASE_URL = 'https://giustiziainvolo.it'
 
@@ -13,7 +16,43 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: post.category === 'guide' || post.category === 'legale' ? 0.8 : 0.6,
   }))
 
+  // Pagine compagnie aeree (principale + sotto-pagine)
+  const airlineEntries: MetadataRoute.Sitemap = []
+  for (const airline of airlines) {
+    airlineEntries.push({
+      url: `${BASE_URL}/compagnie-aeree/${airline.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.85,
+    })
+    for (const sub of airlineSubpages) {
+      airlineEntries.push({
+        url: `${BASE_URL}/compagnie-aeree/${airline.slug}/${sub.slug}`,
+        lastModified: new Date(),
+        changeFrequency: 'monthly',
+        priority: 0.75,
+      })
+    }
+  }
+
+  // Pagine aeroporti
+  const airportEntries: MetadataRoute.Sitemap = airports.map((airport) => ({
+    url: `${BASE_URL}/aeroporti/${airport.slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly',
+    priority: 0.7,
+  }))
+
+  // Pagine EC261 keyword
+  const ec261Entries: MetadataRoute.Sitemap = ec261Pages.map((p) => ({
+    url: `${BASE_URL}/ec261/${p.slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly',
+    priority: 0.8,
+  }))
+
   return [
+    // Pagine principali
     {
       url: BASE_URL,
       lastModified: new Date(),
@@ -135,5 +174,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'yearly',
       priority: 0.3,
     },
+    // Nuove pagine programmatiche
+    ...airlineEntries,
+    ...airportEntries,
+    ...ec261Entries,
   ]
 }
