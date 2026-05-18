@@ -63,6 +63,21 @@ export const AIRLINES_MANUAL: string[] = [
   "Wizz Air",
   "Wizz Air Malta",
   "Wizz Air UK",
+  // Aggiunta vettori mancanti
+  "Aeroitalia",
+  "Air Albania",
+  "Air Malta",
+  "CityJet",
+  "Edelweiss Air",
+  "easyJet Europe",
+  "easyJet Switzerland",
+  "Flyr",
+  "HOP!",
+  "KM Malta Airlines",
+  "Ryanair UK",
+  "SkyAlps",
+  "Transavia France",
+  "TUI fly Nordic",
 
   // ── Medio Oriente ───────────────────────────────────────────────────────────
   "Air Arabia",

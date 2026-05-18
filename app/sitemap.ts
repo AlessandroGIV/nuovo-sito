@@ -133,12 +133,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     ...blogEntries,
     {
-      url: `${BASE_URL}/come-funziona`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.8,
-    },
-    {
       url: `${BASE_URL}/faq`,
       lastModified: new Date(),
       changeFrequency: 'monthly',

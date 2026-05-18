@@ -14,7 +14,6 @@ export function SiteHeader() {
   
   const nav = [
     { href: "/", label: t('home') },
-    { href: "/come-funziona", label: t('howItWorks') },
     { href: "/chi-siamo", label: t('whoWeAre') },
     { href: "/compenso", label: t('compensation') },
     { href: "/faq", label: t('faq') },
@@ -47,17 +46,16 @@ export function SiteHeader() {
                 <span className="sr-only">Apri menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="bg-[#072534] text-white border-white/10 w-[220px]">
-              <SheetHeader>
-                <SheetTitle className="flex items-center gap-2 text-[#FFC300]">
-                  <Plane className="h-5 w-5" />
+            <SheetContent side="right" className="bg-[#0A1E2E] text-white border-l border-white/[0.08] w-[270px] flex flex-col p-0">
+              <SheetHeader className="px-6 pt-7 pb-5 border-b border-white/[0.08] flex-shrink-0">
+                <SheetTitle className="flex items-center gap-2 text-[#FFC300] font-extrabold text-[15px]">
+                  <Plane className="h-4 w-4" />
                   GiustiziaInVolo
                 </SheetTitle>
               </SheetHeader>
-              <nav className="mt-8 flex flex-col gap-1">
+              <nav className="flex flex-col gap-0.5 px-3 py-4">
                 {[
                   { href: "/", label: "Home" },
-                  { href: "/come-funziona", label: "Come funziona" },
                   { href: "/chi-siamo", label: "Chi siamo" },
                   { href: "/compenso", label: "Compenso" },
                   { href: "/blog", label: "Blog" },
@@ -65,7 +63,7 @@ export function SiteHeader() {
                   <SheetClose asChild key={item.href}>
                     <Link
                       href={item.href}
-                      className="py-2.5 text-[15px] text-white/90 hover:text-[#FFC300] transition-colors"
+                      className="flex items-center px-3 py-3 rounded-xl text-[15px] font-medium text-white/75 hover:text-[#FFC300] hover:bg-white/[0.06] transition-all"
                     >
                       {item.label}
                     </Link>

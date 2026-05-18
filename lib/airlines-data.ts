@@ -33,6 +33,26 @@ export const airlines: Airline[] = [
   { slug: 'emirates', name: 'Emirates', iata: 'EK', paese: 'Emirati Arabi', tipo: 'tradizionale' },
   { slug: 'qatar-airways', name: 'Qatar Airways', iata: 'QR', paese: 'Qatar', tipo: 'tradizionale' },
   { slug: 'condor', name: 'Condor', iata: 'DE', paese: 'Germania', tipo: 'low-cost' },
+  // Aggiunta compagnie mancanti
+  { slug: 'aer-lingus', name: 'Aer Lingus', iata: 'EI', paese: 'Irlanda', tipo: 'tradizionale' },
+  { slug: 'air-europa', name: 'Air Europa', iata: 'UX', paese: 'Spagna', tipo: 'tradizionale' },
+  { slug: 'sas', name: 'SAS Scandinavian Airlines', iata: 'SK', paese: 'Svezia', tipo: 'tradizionale' },
+  { slug: 'etihad', name: 'Etihad Airways', iata: 'EY', paese: 'Emirati Arabi', tipo: 'tradizionale' },
+  { slug: 'air-dolomiti', name: 'Air Dolomiti', iata: 'EN', paese: 'Italia', tipo: 'tradizionale' },
+  { slug: 'neos', name: 'Neos', iata: 'NO', paese: 'Italia', tipo: 'tradizionale' },
+  { slug: 'icelandair', name: 'Icelandair', iata: 'FI', paese: 'Islanda', tipo: 'tradizionale' },
+  { slug: 'pegasus', name: 'Pegasus Airlines', iata: 'PC', paese: 'Turchia', tipo: 'low-cost' },
+  { slug: 'flydubai', name: 'flydubai', iata: 'FZ', paese: 'Emirati Arabi', tipo: 'low-cost' },
+  { slug: 'air-arabia', name: 'Air Arabia', iata: 'G9', paese: 'Emirati Arabi', tipo: 'low-cost' },
+  { slug: 'air-canada', name: 'Air Canada', iata: 'AC', paese: 'Canada', tipo: 'tradizionale' },
+  { slug: 'american-airlines', name: 'American Airlines', iata: 'AA', paese: 'USA', tipo: 'tradizionale' },
+  { slug: 'united-airlines', name: 'United Airlines', iata: 'UA', paese: 'USA', tipo: 'tradizionale' },
+  { slug: 'delta', name: 'Delta Air Lines', iata: 'DL', paese: 'USA', tipo: 'tradizionale' },
+  { slug: 'royal-air-maroc', name: 'Royal Air Maroc', iata: 'AT', paese: 'Marocco', tipo: 'tradizionale' },
+  { slug: 'tunisair', name: 'Tunisair', iata: 'TU', paese: 'Tunisia', tipo: 'tradizionale' },
+  { slug: 'egyptair', name: 'EgyptAir', iata: 'MS', paese: 'Egitto', tipo: 'tradizionale' },
+  { slug: 'ethiopian', name: 'Ethiopian Airlines', iata: 'ET', paese: 'Etiopia', tipo: 'tradizionale' },
+  { slug: 'aeroflot', name: 'Aeroflot', iata: 'SU', paese: 'Russia', tipo: 'tradizionale' },
 ]
 
 export function getAirline(slug: string): Airline | undefined {
