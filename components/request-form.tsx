@@ -132,7 +132,7 @@ function LeftRail({
 function MobileProgress({ step }: { step: number }) {
   const labels = ["Itinerario", "Dettagli volo", "Dati personali", "Riepilogo"]
   return (
-    <div className="md:hidden px-4 py-3 border-b border-white/10 bg-black/10">
+    <div className="md:hidden px-4 py-2.5 border-b border-white/10 bg-black/10">
       <div className="flex items-center justify-between text-xs mb-2">
         <span className="font-bold text-[#FFC300]">Passo {step} di 4</span>
         <span className="text-white/50">{labels[step - 1]}</span>
@@ -165,25 +165,25 @@ function CardShell({
   return (
     <div className="bg-white rounded-2xl w-full max-w-[680px] flex flex-col shadow-[0_40px_80px_-20px_rgba(0,0,0,0.5),0_16px_36px_-14px_rgba(0,0,0,0.3)]">
       {/* Header */}
-      <div className="px-7 md:px-10 pt-8 pb-0 flex-shrink-0">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFF5CC] text-[#7A4A12] text-[10px] font-extrabold uppercase tracking-[0.15em] mb-5">
+      <div className="px-5 md:px-10 pt-5 md:pt-8 pb-0 flex-shrink-0">
+        <div className="hidden md:inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFF5CC] text-[#7A4A12] text-[10px] font-extrabold uppercase tracking-[0.15em] mb-5">
           {kicker}
         </div>
-        <h1 className="text-[26px] md:text-3xl font-extrabold text-[#13283D] tracking-tight leading-tight">
+        <h1 className="text-[22px] md:text-3xl font-extrabold text-[#13283D] tracking-tight leading-tight">
           {title}
         </h1>
         {subtitle ? (
-          <p className="mt-2 mb-6 text-[#5A7088] text-[14.5px] leading-relaxed">{subtitle}</p>
+          <p className="mt-1.5 md:mt-2 mb-4 md:mb-6 text-[#5A7088] text-[13.5px] md:text-[14.5px] leading-relaxed">{subtitle}</p>
         ) : (
-          <div className="mb-6" />
+          <div className="mb-4 md:mb-6" />
         )}
       </div>
 
       {/* Scrollable content */}
-      <div className="px-7 md:px-10 pb-2 flex-1 overflow-y-auto">{children}</div>
+      <div className="px-5 md:px-10 pb-2 flex-1 overflow-y-auto">{children}</div>
 
       {/* Footer nav */}
-      <div className="px-7 md:px-10 py-5 border-t border-[#EEF2F6] flex-shrink-0">{footer}</div>
+      <div className="px-5 md:px-10 py-3.5 md:py-5 border-t border-[#EEF2F6] flex-shrink-0">{footer}</div>
     </div>
   )
 }
@@ -231,7 +231,7 @@ function ChoiceCard({
       type="button"
       onClick={onClick}
       className={cn(
-        "flex-1 flex items-center gap-3 p-4 rounded-2xl border-[1.5px] cursor-pointer text-left transition-all duration-150",
+        "flex-1 flex items-center gap-2.5 md:gap-3 p-3 md:p-4 min-w-0 rounded-2xl border-[1.5px] cursor-pointer text-left transition-all duration-150",
         selected
           ? "bg-[#FFFBEB] border-[#FFC300] shadow-[0_0_0_3px_rgba(255,195,0,0.18)]"
           : "bg-white border-[#DCE3EB] hover:border-[#FFC300]/60 hover:bg-[#FFFDF0]",
@@ -239,15 +239,15 @@ function ChoiceCard({
     >
       <span
         className={cn(
-          "w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors",
+          "w-9 h-9 md:w-10 md:h-10 rounded-full flex items-center justify-center flex-shrink-0 transition-colors",
           selected ? "bg-[#FFC300] text-[#0B1B27]" : "bg-[#FFF5CC] text-[#B8860B]",
         )}
       >
-        <IC className="w-5 h-5" />
+        <IC className="w-4 h-4 md:w-5 md:h-5" />
       </span>
-      <span>
-        <span className="block font-bold text-[15px] text-[#13283D]">{title}</span>
-        <span className="block text-xs text-[#5A7088] mt-0.5">{sub}</span>
+      <span className="min-w-0">
+        <span className="block font-bold text-[14px] md:text-[15px] text-[#13283D]">{title}</span>
+        <span className="block text-[11.5px] md:text-xs text-[#5A7088] mt-0.5">{sub}</span>
       </span>
     </button>
   )
@@ -454,7 +454,7 @@ function Step1Content({
         </div>
       }
     >
-      <div className="space-y-5 pb-2">
+      <div className="space-y-3.5 md:space-y-5 pb-2">
         <GlobalAirportInput
           id="from" name="from" label="Aeroporto di partenza"
           value={from} onChange={setFrom}
@@ -486,14 +486,14 @@ function Step1Content({
               onClick={() => setDirect("si")}
               icon={ArrowRight}
               title="Sì, diretto"
-              sub="Un solo volo, senza scali"
+              sub="Un solo volo"
             />
             <ChoiceCard
               selected={direct === "no"}
               onClick={() => setDirect("no")}
               icon={ArrowLeftRight}
               title="No, con scalo"
-              sub="Due voli con coincidenza"
+              sub="Con coincidenza"
             />
           </div>
         </div>
@@ -591,7 +591,7 @@ function Step2Content({
         </div>
       }
     >
-      <div className="space-y-5 pb-2">
+      <div className="space-y-3.5 md:space-y-5 pb-2">
         {hasConnection ? (
           <>
             <LegSection tag="Volo 1" title="Primo volo">
@@ -673,7 +673,7 @@ function Step3Content({
         </div>
       }
     >
-      <div className="space-y-5 pb-2">
+      <div className="space-y-3.5 md:space-y-5 pb-2">
         <Field label="Nome e Cognome" error={errors.name}>
           <input
             ref={refs.name} name="name" value={name}
@@ -1136,7 +1136,7 @@ export default function RequestForm() {
         {!submitted && <MobileProgress step={step} />}
 
         {/* Main content */}
-        <div className="flex-1 flex items-center justify-center p-4 md:p-8 xl:p-12">
+        <div className="flex-1 flex items-start md:items-center justify-center p-3 md:p-8 xl:p-12">
           {submitted ? (
             <SuccessState reset={resetAll} />
           ) : (

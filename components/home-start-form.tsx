@@ -2,19 +2,17 @@
 
 import { useRouter } from "next/navigation"
 import { useRef, useState } from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import GlobalAirportInput from "./global-airport-input"
-import { Plane } from "lucide-react"
-import { useLanguage } from "@/contexts/language-context"
+import { Plane, ArrowRight, Shield } from "lucide-react"
 
 export default function HomeStartForm() {
   const router = useRouter()
-  const { t } = useLanguage()
   const [from, setFrom] = useState("")
   const [to, setTo] = useState("")
   const fromRef = useRef<HTMLInputElement>(null)
   const toRef = useRef<HTMLInputElement>(null)
+
+  const ready = from.trim().length > 1 && to.trim().length > 1
 
   function goToRequest() {
     if (!from || !to) {
@@ -27,51 +25,82 @@ export default function HomeStartForm() {
   }
 
   return (
-    <Card className="border-0 shadow-2xl relative z-30 py-0">
-      <CardContent className="relative p-6 md:p-8 overflow-visible py-6">
-        <Plane
-          aria-hidden="true"
-          className="pointer-events-none absolute right-3 top-3 h-28 w-28 md:h-36 md:w-36 text-[#072534] opacity-10"
-        />
-        <div className="relative py-0">
-          <div className="mb-6 text-center">
-            <h2 className="text-2xl md:text-3xl font-bold text-[#072534]">{t('calculateRefund')}</h2>
-            <p className="text-sm text-neutral-600">{t('heroSubtitle')}</p>
-          </div>
+    <div className="relative overflow-hidden rounded-[20px] bg-white p-5 md:p-7 shadow-[0_24px_60px_rgba(7,37,52,0.40)]">
+      <Plane
+        aria-hidden="true"
+        className="pointer-events-none absolute right-3 top-3 h-28 w-28 text-[#072534] opacity-[0.06]"
+      />
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <GlobalAirportInput
-              id="from"
-              name="from"
-              label={t('departureAirport')}
-              value={from}
-              onChange={setFrom}
-              placeholder="Roma Fiumicino - (FCO)"
-              required
-              inputRef={fromRef}
-            />
-            <GlobalAirportInput
-              id="to"
-              name="to"
-              label={t('destinationAirport')}
-              value={to}
-              onChange={setTo}
-              placeholder="Milano Linate - (LIN)"
-              required
-              inputRef={toRef}
-            />
-          </div>
-
-          <Button
-            onClick={goToRequest}
-            disabled={!from || !to}
-            className="mt-5 w-full bg-[#FF8A00] text-white hover:bg-[#ff8a00]/90 font-semibold"
-            aria-label={t('calculateRefund')}
-          >
-            {t('calculateRefund')}
-          </Button>
+      <div className="relative">
+        <div
+          className="font-mono text-[11px] uppercase tracking-[0.18em] font-medium text-[#B07D00]"
+        >
+          ★ calcolo gratuito · 2 minuti
         </div>
-      </CardContent>
-    </Card>
+
+        <h2 className="mt-1.5 text-[24px] md:text-[28px] font-extrabold text-[#072534] leading-tight tracking-tight">
+          Calcola il tuo rimborso
+        </h2>
+        <p className="mt-1 text-[13.5px] text-[rgba(15,42,60,0.6)]">
+          Inserisci la tratta, ti diciamo subito se hai diritto.
+        </p>
+
+        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <GlobalAirportInput
+            id="from"
+            name="from"
+            label="Aeroporto di partenza"
+            value={from}
+            onChange={setFrom}
+            placeholder="es. Roma Fiumicino"
+            required
+            inputRef={fromRef}
+          />
+          <GlobalAirportInput
+            id="to"
+            name="to"
+            label="Aeroporto di arrivo"
+            value={to}
+            onChange={setTo}
+            placeholder="es. Milano Linate"
+            required
+            inputRef={toRef}
+          />
+        </div>
+
+        <button
+          onClick={goToRequest}
+          disabled={!ready}
+          style={{
+            marginTop: 14,
+            width: "100%",
+            height: 54,
+            border: "none",
+            background: ready ? "#FF8A00" : "#F4D9BD",
+            color: ready ? "#fff" : "rgba(125,72,18,0.55)",
+            borderRadius: 12,
+            fontSize: 16,
+            fontWeight: 700,
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: 8,
+            boxShadow: ready
+              ? "0 8px 24px rgba(255,138,0,0.32)"
+              : "0 1px 0 rgba(7,37,52,0.04)",
+            cursor: ready ? "pointer" : "not-allowed",
+            transition: "background 180ms ease, color 180ms ease, box-shadow 180ms ease",
+          }}
+        >
+          Calcola il rimborso
+          <ArrowRight className="h-5 w-5" />
+        </button>
+
+        <div className="mt-3 flex items-center gap-2 border-t border-dashed border-[rgba(15,42,60,0.12)] pt-3 text-[11.5px] text-[rgba(15,42,60,0.6)]">
+          <Shield className="h-3.5 w-3.5 flex-shrink-0 text-[#FFC300]" />
+          Dati protetti · solo per la tua pratica · GDPR
+        </div>
+      </div>
+    </div>
   )
 }

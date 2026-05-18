@@ -47,24 +47,30 @@ export function SiteHeader() {
                 <span className="sr-only">Apri menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="bg-[#072534] text-white border-white/10">
+            <SheetContent side="left" className="bg-[#072534] text-white border-white/10 w-[220px]">
               <SheetHeader>
                 <SheetTitle className="flex items-center gap-2 text-[#FFC300]">
                   <Plane className="h-5 w-5" />
                   GiustiziaInVolo
                 </SheetTitle>
               </SheetHeader>
-              <nav className="mt-6 grid gap-4">
-                {nav.map((item) => (
+              <nav className="mt-8 flex flex-col gap-1">
+                {[
+                  { href: "/", label: "Home" },
+                  { href: "/come-funziona", label: "Come funziona" },
+                  { href: "/chi-siamo", label: "Chi siamo" },
+                  { href: "/compenso", label: "Compenso" },
+                  { href: "/blog", label: "Blog" },
+                ].map((item) => (
                   <SheetClose asChild key={item.href}>
-                    <Link href={item.href} className="text-white/90 hover:text-[#FFC300] transition-colors py-2">
+                    <Link
+                      href={item.href}
+                      className="py-2.5 text-[15px] text-white/90 hover:text-[#FFC300] transition-colors"
+                    >
                       {item.label}
                     </Link>
                   </SheetClose>
                 ))}
-                <div className="pt-4 border-t border-white/10">
-                  <LanguageSwitcher />
-                </div>
               </nav>
             </SheetContent>
           </Sheet>
