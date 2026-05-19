@@ -1,0 +1,44 @@
+name: Social Publisher
+
+on:
+  schedule:
+    - cron: "0 16 * * *"   # 16:00 UTC = 18:00 ora italiana
+  workflow_dispatch:        # trigger manuale per test
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run publisher
+        env:
+          MAKE_WEBHOOK_URL: ${{ secrets.MAKE_WEBHOOK_URL }}
+        run: python social/publisher.py
+
+      - name: Commit posts.json aggiornato
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet social/posts.json; then
+            echo "Nessuna modifica a posts.json — skip commit."
+          else
+            git add social/posts.json
+            git commit -m "chore: segna post pubblicati [skip ci]"
+            git push
+          fi
