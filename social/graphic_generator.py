@@ -306,11 +306,184 @@ def _template_question(content: dict, output_path: str, aspect_ratio: str):
     img.save(output_path, "JPEG", quality=95)
 
 
+# ── Template: carousel_intro ───────────────────────────────────────────────────
+def _template_carousel_intro(content: dict, output_path: str, aspect_ratio: str):
+    """
+    Cover del carosello. NAVY_DEEP + diagonali gold, barra gold top, titolo bianco, footer.
+    content: { title, subtitle (opz.) }
+    """
+    img, draw = _canvas(aspect_ratio, NAVY_DEEP)
+    w, h = img.size
+    img = _apply_stripes(img, GOLD, 25, 20)
+    draw = ImageDraw.Draw(img)
+
+    pad = int(w * 0.08)
+    max_w = w - pad * 2
+    footer_h = int(h * 0.12)
+
+    # Barra gold orizzontale in cima (accent cover)
+    bar_h = max(5, int(h * 0.007))
+    draw.rectangle([0, 0, w, bar_h], fill=GOLD)
+
+    # Rombo decorativo centrato
+    y = int(h * 0.11)
+    _diamond(draw, w // 2, y, int(w * 0.018))
+    y += int(h * 0.07)
+
+    # Titolo
+    f_title = _font("ultrablack", int(h * 0.090))
+    for line in _wrap(content["title"], f_title, max_w):
+        bx = draw.textbbox((0, 0), line, font=f_title)
+        lw = bx[2] - bx[0]
+        draw.text(((w - lw) // 2, y), line, fill=WHITE, font=f_title)
+        y += int((bx[3] - bx[1]) * 1.05)
+
+    # Sottotitolo
+    subtitle = content.get("subtitle", "")
+    if subtitle:
+        y += int(h * 0.025)
+        f_sub = _font("medium", int(h * 0.040))
+        for line in _wrap(subtitle, f_sub, max_w):
+            lw = _text_w(line, f_sub)
+            bx = draw.textbbox((0, 0), line, font=f_sub)
+            draw.text(((w - lw) // 2, y), line, fill=GOLD_DIM, font=f_sub)
+            y += int((bx[3] - bx[1]) * 1.3)
+
+    _footer_dark(draw, w, h, footer_h)
+    img.save(output_path, "JPEG", quality=95)
+
+
+# ── Template: carousel_error ───────────────────────────────────────────────────
+def _template_carousel_error(content: dict, output_path: str, aspect_ratio: str):
+    """
+    Slide errore numerato per carosello. PAPER bg, badge gold numero, titolo + body navy.
+    Barra navy sinistra coerente con list_cover.
+    content: { number ("01"/"02"/"03"), title, body }
+    """
+    img, draw = _canvas(aspect_ratio, PAPER)
+    w, h = img.size
+
+    pad = int(w * 0.10)
+    max_w = w - pad * 2
+    sidebar_w = int(w * 0.018)
+
+    # Barra navy sinistra (brand sidebar)
+    draw.rectangle([0, 0, sidebar_w, h], fill=NAVY_DEEP)
+
+    # Badge numero: cerchio gold in alto a sinistra
+    badge_r = int(w * 0.075)
+    badge_cx = pad + badge_r
+    badge_cy = int(h * 0.12) + badge_r
+    draw.ellipse(
+        [badge_cx - badge_r, badge_cy - badge_r,
+         badge_cx + badge_r, badge_cy + badge_r],
+        fill=GOLD,
+    )
+    f_num = _font("ultrablack", int(badge_r * 1.1))
+    num_text = content.get("number", "?")
+    nw = _text_w(num_text, f_num)
+    bx_n = draw.textbbox((0, 0), num_text, font=f_num)
+    nh = bx_n[3] - bx_n[1]
+    draw.text((badge_cx - int(nw // 2), badge_cy - nh // 2), num_text,
+              fill=NAVY_DEEP, font=f_num)
+
+    y = badge_cy + badge_r + int(h * 0.05)
+
+    # Titolo
+    f_title = _font("black", int(h * 0.072))
+    for line in _wrap(content["title"], f_title, max_w):
+        bx = draw.textbbox((0, 0), line, font=f_title)
+        draw.text((pad, y), line, fill=NAVY_DEEP, font=f_title)
+        y += int((bx[3] - bx[1]) * 1.08)
+
+    # Barra gold breve sotto il titolo
+    y += int(h * 0.020)
+    draw.rectangle([pad, y, pad + int(w * 0.08), y + max(3, int(h * 0.004))], fill=GOLD)
+    y += int(h * 0.038)
+
+    # Body text
+    body = content.get("body", "")
+    if body:
+        f_body = _font("regular", int(h * 0.038))
+        for line in _wrap(body, f_body, max_w):
+            bx = draw.textbbox((0, 0), line, font=f_body)
+            draw.text((pad, y), line, fill=NAVY_DIM, font=f_body)
+            y += int((bx[3] - bx[1]) * 1.55)
+
+    img.save(output_path, "JPEG", quality=95)
+
+
+# ── Template: carousel_cta ─────────────────────────────────────────────────────
+def _template_carousel_cta(content: dict, output_path: str, aspect_ratio: str):
+    """
+    Slide CTA finale del carosello. NAVY_DEEP senza pattern, contenuto centrato.
+    content: { title, cta, url (opz.) }
+    """
+    img, draw = _canvas(aspect_ratio, NAVY_DEEP)
+    w, h = img.size
+
+    pad = int(w * 0.08)
+    max_w = w - pad * 2
+
+    # Rombi decorativi verticali (top e bottom)
+    _diamond(draw, w // 2, int(h * 0.11), int(w * 0.018))
+    _diamond(draw, w // 2, int(h * 0.89), int(w * 0.013))
+
+    # Titolo grande centrato
+    y = int(h * 0.21)
+    f_title = _font("ultrablack", int(h * 0.095))
+    for line in _wrap_multiline(content["title"], f_title, max_w):
+        if not line:
+            y += int(h * 0.03)
+            continue
+        bx = draw.textbbox((0, 0), line, font=f_title)
+        lw = bx[2] - bx[0]
+        draw.text(((w - lw) // 2, y), line, fill=WHITE, font=f_title)
+        y += int((bx[3] - bx[1]) * 1.05)
+
+    # Separatore gold
+    y += int(h * 0.04)
+    sep_w = int(w * 0.12)
+    draw.rectangle([(w - sep_w) // 2, y, (w + sep_w) // 2, y + max(3, int(h * 0.004))],
+                   fill=GOLD)
+    y += int(h * 0.05)
+
+    # CTA in pill navy-medium con testo gold
+    cta = content.get("cta", "")
+    if cta:
+        f_cta = _font("bold", int(h * 0.042))
+        cta_w = _text_w(cta, f_cta)
+        bx = draw.textbbox((0, 0), cta, font=f_cta)
+        cta_h = bx[3] - bx[1]
+        px, py = int(h * 0.025), int(h * 0.015)
+        cx = int((w - cta_w) // 2)
+        draw.rounded_rectangle(
+            [cx - px, y - py, cx + int(cta_w) + px, y + cta_h + py],
+            radius=int(h * 0.02),
+            fill=NAVY_MED,
+        )
+        draw.text((cx, y), cta, fill=GOLD, font=f_cta)
+        y += cta_h + py * 2 + int(h * 0.04)
+
+    # URL in basso centrato
+    url = content.get("url", "giustiziainvolo.it")
+    f_url = _font("semibold", int(h * 0.028))
+    url_w = _text_w(url, f_url)
+    bx_u = draw.textbbox((0, 0), url, font=f_url)
+    uh = bx_u[3] - bx_u[1]
+    draw.text((int((w - url_w) // 2), h - int(h * 0.08)), url, fill=GOLD, font=f_url)
+
+    img.save(output_path, "JPEG", quality=95)
+
+
 # ── Public API ─────────────────────────────────────────────────────────────────
 TEMPLATES = {
-    "headline":   _template_headline,
-    "list_cover": _template_list_cover,
-    "question":   _template_question,
+    "headline":        _template_headline,
+    "list_cover":      _template_list_cover,
+    "question":        _template_question,
+    "carousel_intro":  _template_carousel_intro,
+    "carousel_error":  _template_carousel_error,
+    "carousel_cta":    _template_carousel_cta,
 }
 
 def generate_graphic(template_name: str, content: dict,
@@ -327,15 +500,27 @@ if __name__ == "__main__":
     out = Path(__file__).parent / "images"
     out.mkdir(exist_ok=True)
     tests = [
-        ("headline",   {"accent": "Lo sapevi?", "title": "Hai 2 anni\\ndi tempo.",
-                        "subtitle": "per reclamare il rimborso del tuo volo"},
-                       "_test_headline.jpg"),
-        ("list_cover", {"title": "I 3 errori che ti fanno perdere il rimborso del volo",
-                        "subtitle": "(e come evitarli)"},
-                       "_test_list_cover.jpg"),
-        ("question",   {"title": "Hai mai subito un disservizio aereo?",
-                        "subtitle": "Il 70% dei passeggeri non sa di avere diritto fino a €600"},
-                       "_test_question.jpg"),
+        ("headline",       {"accent": "Lo sapevi?", "title": "Hai 2 anni\\ndi tempo.",
+                            "subtitle": "per reclamare il rimborso del tuo volo"},
+                           "_test_headline.jpg"),
+        ("list_cover",     {"title": "I 3 errori che ti fanno perdere il rimborso del volo",
+                            "subtitle": "(e come evitarli)"},
+                           "_test_list_cover.jpg"),
+        ("question",       {"title": "Hai mai subito un disservizio aereo?",
+                            "subtitle": "Il 70% dei passeggeri non sa di avere diritto fino a €600"},
+                           "_test_question.jpg"),
+        ("carousel_intro", {"title": "I 3 errori che ti fanno perdere il rimborso del volo",
+                            "subtitle": "(e come evitarli)"},
+                           "_test_carousel_intro.jpg"),
+        ("carousel_error", {"number": "01", "title": "Accettare il voucher senza leggere",
+                            "body": "La compagnia ti offre un buono viaggio? In alcuni casi "
+                                    "accettarlo significa rinunciare al rimborso in denaro fino a "
+                                    "€600. Leggi sempre le condizioni prima di firmare."},
+                           "_test_carousel_error.jpg"),
+        ("carousel_cta",   {"title": "Non perdere quello che ti spetta.",
+                            "cta": "Verifica subito il tuo caso",
+                            "url": "giustiziainvolo.it"},
+                           "_test_carousel_cta.jpg"),
     ]
     for tmpl, c, fname in tests:
         generate_graphic(tmpl, c, str(out / fname))

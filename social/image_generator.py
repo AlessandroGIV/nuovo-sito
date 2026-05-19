@@ -78,6 +78,42 @@ def main():
 
     for post in data["posts"]:
         post_id = post["id"]
+
+        if post.get("is_carousel"):
+            subfolder = IMAGES_DIR / post["image_subfolder"]
+            subfolder.mkdir(exist_ok=True)
+            slides = post.get("slides", [])
+            c_gen, c_skip, c_fail = 0, 0, 0
+            print(f"[CAROUSEL] {post_id} — {len(slides)} slide...")
+            for i, slide in enumerate(slides, start=1):
+                slide_path = subfolder / f"slide_{i}.jpg"
+                if slide_path.exists():
+                    print(f"           slide_{i}: già presente")
+                    c_skip += 1
+                    continue
+                try:
+                    generate_graphic(
+                        slide["graphic_template"],
+                        slide["graphic_content"],
+                        str(slide_path),
+                        post.get("image_aspect_ratio", "1:1"),
+                    )
+                    print(f"           slide_{i}: ✓ {slide['graphic_template']}")
+                    c_gen += 1
+                except Exception as e:
+                    print(f"           slide_{i}: ✗ {e}")
+                    c_fail += 1
+            if c_fail:
+                failed += 1
+                print(f"           → {c_fail} slide fallite")
+            elif c_gen > 0:
+                generated += 1
+                print(f"           → {c_gen} generate, {c_skip} saltate")
+            else:
+                skipped += 1
+                print(f"           → tutte già presenti")
+            continue
+
         output_path = IMAGES_DIR / f"{post_id}.jpg"
 
         if output_path.exists():

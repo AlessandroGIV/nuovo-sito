@@ -32,9 +32,12 @@ estratti dal sito (`#072534` navy, `#FFC300` gold, `#F6F4EF` paper, Geist Sans).
 
 | Template | Layout | Uso tipico |
 |---|---|---|
-| `headline` | Titolo grande centrato su navy + pattern diagonale gold | "Hai 2 anni di tempo." |
-| `list_cover` | Titolo su sfondo paper + barra navy sinistra + footer navy | "I 3 errori che ti fanno perdere il rimborso" |
-| `question` | Domanda centrata su navy-medium + separatore gold | "Hai mai subito un disservizio aereo?" |
+| `headline`       | Titolo grande centrato su navy + pattern diagonale gold | "Hai 2 anni di tempo." |
+| `list_cover`     | Titolo su sfondo paper + barra navy sinistra + footer navy | "I 3 errori che ti fanno perdere il rimborso" |
+| `question`       | Domanda centrata su navy-medium + separatore gold | "Hai mai subito un disservizio aereo?" |
+| `carousel_intro` | Cover carosello: navy + diagonali + barra gold top | Slide 1 di ogni carosello |
+| `carousel_error` | Slide errore numerata: paper + badge gold cerchio + body | Slide 2-N di un carosello |
+| `carousel_cta`   | Slide CTA finale: navy pulito + pill + url | Ultima slide di ogni carosello |
 
 ---
 
@@ -119,6 +122,25 @@ Modifica `social/posts.json`. Ogni post ha uno dei due setup:
   }
 }
 ```
+
+**Post carosello (Pillow, multi-slide):**
+```json
+{
+  "id": "post_006",
+  "image_url": "https://raw.githubusercontent.com/.../post_006/slide_1.jpg",
+  "is_carousel": true,
+  "image_subfolder": "post_006",
+  "slides": [
+    { "graphic_template": "carousel_intro", "graphic_content": { "title": "...", "subtitle": "..." } },
+    { "graphic_template": "carousel_error", "graphic_content": { "number": "01", "title": "...", "body": "..." } },
+    { "graphic_template": "carousel_cta",   "graphic_content": { "title": "...", "cta": "...", "url": "..." } }
+  ]
+}
+```
+
+Le slide vengono salvate in `social/images/{image_subfolder}/slide_1.jpg`, `slide_2.jpg`, ecc.
+L'`image_url` punta a `slide_1.jpg` (cover) per la pubblicazione temporanea come post singolo
+finché lo scenario Make.com non supporta il carosello nativo.
 
 **Campi comuni a tutti i post:**
 

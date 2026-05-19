@@ -31,7 +31,7 @@
       "platforms": ["facebook", "instagram"],
       "caption": "✈️ Volo cancellato? Niente stress.\n\nMentre gli altri si disperano in aeroporto, tu hai già richiesto il tuo rimborso.\n\nFino a €600 per passeggero, garantiti dal Regolamento UE 261/2004.\n\nCon Giustizia In Volo ci pensiamo noi. Zero anticipo, zero rischio.\n\n🔗 Richiedi ora su giustiziainvolo.it\n\n#voloCancellato #rimborsoVolo #dirittiPasseggeri #travelSmarter #aeroporto #GiustiziaInVolo #UE261 #rimborso600euro #travelItalia #passeggeri",
       "image_url": "https://raw.githubusercontent.com/AlessandroGIV/nuovo-sito/main/social/images/post_003.jpg",
-      "image_prompt": "Cinematic airport terminal photography. Confident Italian businesswoman 35-40 years old in navy blazer, relaxed posture, calm relieved smile. Holding smartphone casually (no visible screen detail). Background: blurred stressed passengers, large departure board. Golden hour light through windows. Photorealistic, shallow depth of field.",
+      "image_prompt": "Cinematic airport terminal photography. Confident Italian businesswoman 35-40 years old in navy blazer, walking through terminal with calm relieved expression and slight confident smile. Hands relaxed at her sides, NO smartphone, NO phone, NO devices. Background: blurred stressed passengers visible in soft bokeh, large departure board partially visible. Golden hour light through floor-to-ceiling windows. Photorealistic editorial photography, shallow depth of field, shot on Sony A7R V with 85mm f/1.4.",
       "image_aspect_ratio": "1:1",
       "add_watermark": true,
       "published": false
@@ -59,7 +59,7 @@
       "platforms": ["facebook", "instagram"],
       "caption": "😤 Tutti in panico. Tu no.\n\nCancellazione dell'ultimo minuto?\nRitardo di ore?\n\nSapere i tuoi diritti cambia tutto.\n\nNoi li facciamo valere per te — senza burocrazia, senza stress, senza costi anticipati.\n\n🔗 giustiziainvolo.it\n\n#aeroporto #voloCancellato #ritardoVolo #travelHacks #dirittiPasseggeri #GiustiziaInVolo #rimborsoVolo #stressLibero",
       "image_url": "https://raw.githubusercontent.com/AlessandroGIV/nuovo-sito/main/social/images/post_005.jpg",
-      "image_prompt": "Wide cinematic shot in a busy airport departure hall: in the center foreground, a relaxed young Italian man in casual clothes stands calmly looking at his phone with a slight satisfied smile. Around him in the blurred background, other travelers look visibly stressed, frustrated, checking boards, pulling luggage frantically. Contrast between his calm and the surrounding chaos. Natural airport lighting, slight warm tones. Commercial lifestyle photography. No text, no logos.",
+      "image_prompt": "Cinematic airport terminal scene. ONE Italian man in his 30s standing still in the foreground, casual business attire, subtle confident smile, looking calmly forward, hands in pockets or holding a coffee cup. AROUND HIM in the middle ground: multiple visibly stressed and frustrated passengers — some on phones with worried faces, others checking watches anxiously, gesturing in frustration, sitting with heads in hands. The calm man is in sharp focus, others in soft motion blur. Warm overhead airport lighting. Photojournalistic editorial style, strong emotional contrast between subject and surroundings.",
       "image_aspect_ratio": "1:1",
       "add_watermark": true,
       "published": false
@@ -70,13 +70,51 @@
       "scheduled_time": "18:00",
       "platforms": ["facebook", "instagram", "linkedin"],
       "caption": "⚠️ Molti passeggeri perdono il rimborso non perché non ne abbiano diritto, ma perché commettono questi 3 errori.\n\nSalva questo post — potrebbe valerti fino a €600 👆\n\n🔗 giustiziainvolo.it\n\n#rimborsoVolo #voloCancellato #dirittiPasseggeri #travelTips #savethispost #GiustiziaInVolo #UE261 #rimborso600",
-      "image_url": "https://raw.githubusercontent.com/AlessandroGIV/nuovo-sito/main/social/images/post_006.jpg",
+      "image_url": "https://raw.githubusercontent.com/AlessandroGIV/nuovo-sito/main/social/images/post_006/slide_1.jpg",
       "image_aspect_ratio": "1:1",
-      "graphic_template": "list_cover",
-      "graphic_content": {
-        "title": "I 3 errori che ti fanno perdere il rimborso del volo",
-        "subtitle": "(e come evitarli)"
-      },
+      "is_carousel": true,
+      "image_subfolder": "post_006",
+      "slides": [
+        {
+          "graphic_template": "carousel_intro",
+          "graphic_content": {
+            "title": "I 3 errori che ti fanno perdere il rimborso del volo",
+            "subtitle": "(e come evitarli)"
+          }
+        },
+        {
+          "graphic_template": "carousel_error",
+          "graphic_content": {
+            "number": "01",
+            "title": "Accettare il voucher senza leggere",
+            "body": "La compagnia ti offre un buono viaggio? In alcuni casi accettarlo significa rinunciare al rimborso in denaro fino a €600. Leggi sempre le condizioni prima di firmare."
+          }
+        },
+        {
+          "graphic_template": "carousel_error",
+          "graphic_content": {
+            "number": "02",
+            "title": "Credere alla \"causa di forza maggiore\"",
+            "body": "Le compagnie usano spesso questa scusa. Ma maltempo, scioperi del personale interno e problemi tecnici non sempre sono motivi legali validi per negarti il rimborso."
+          }
+        },
+        {
+          "graphic_template": "carousel_error",
+          "graphic_content": {
+            "number": "03",
+            "title": "Aspettare troppo",
+            "body": "In Italia hai fino a 2 anni dall'evento. Ma prima agisci, meglio è: le prove (ricevute, comunicazioni, email) sono più facili da raccogliere."
+          }
+        },
+        {
+          "graphic_template": "carousel_cta",
+          "graphic_content": {
+            "title": "Non perdere quello che ti spetta.",
+            "cta": "Verifica subito il tuo caso",
+            "url": "giustiziainvolo.it"
+          }
+        }
+      ],
       "published": false
     },
     {
