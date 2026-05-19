@@ -7,6 +7,9 @@ from pathlib import Path
 from google import genai
 from google.genai import types
 from PIL import Image, ImageDraw, ImageFont
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).parent))
+from graphic_generator import generate_graphic
 
 POSTS_FILE = Path(__file__).parent / "posts.json"
 IMAGES_DIR = Path(__file__).parent / "images"
@@ -63,13 +66,8 @@ def add_watermark(image_path):
 
 
 def main():
-    api_key = os.environ.get("GEMINI_API_KEY")
-    if not api_key:
-        print("ERROR: GEMINI_API_KEY environment variable not set")
-        sys.exit(1)
-
-    client = genai.Client(api_key=api_key)
     data = load_posts()
+    client = None  # inizializzato lazily solo se servono post con image_prompt
 
     total = len(data["posts"])
     generated = 0
@@ -87,19 +85,39 @@ def main():
             skipped += 1
             continue
 
-        print(f"[GEN]   {post_id} — aspect {post.get('image_aspect_ratio', '1:1')}...")
         try:
-            image_bytes = generate_image(client, post)
-            with open(output_path, "wb") as f:
-                f.write(image_bytes)
-            if post.get("add_watermark", False):
-                add_watermark(output_path)
-                print(f"        ✓ Salvato con watermark → {output_path}")
+            if "graphic_template" in post:
+                print(f"[GRAPHIC] {post_id} — template '{post['graphic_template']}'...")
+                generate_graphic(
+                    post["graphic_template"],
+                    post["graphic_content"],
+                    str(output_path),
+                    post.get("image_aspect_ratio", "1:1"),
+                )
+                print(f"          ✓ Generato → {output_path.name}")
+            elif "image_prompt" in post:
+                print(f"[IMAGEN]  {post_id} — aspect {post.get('image_aspect_ratio', '1:1')}...")
+                if client is None:
+                    api_key = os.environ.get("GEMINI_API_KEY")
+                    if not api_key:
+                        print("ERROR: GEMINI_API_KEY non impostata — necessaria per i post fotografici")
+                        sys.exit(1)
+                    client = genai.Client(api_key=api_key)
+                image_bytes = generate_image(client, post)
+                with open(output_path, "wb") as f:
+                    f.write(image_bytes)
+                if post.get("add_watermark", False):
+                    add_watermark(output_path)
+                    print(f"          ✓ Salvato con watermark → {output_path.name}")
+                else:
+                    print(f"          ✓ Salvato → {output_path.name}")
             else:
-                print(f"        ✓ Salvato → {output_path}")
+                print(f"[WARN]    {post_id} — nessun image_prompt né graphic_template, skip.")
+                skipped += 1
+                continue
             generated += 1
         except Exception as e:
-            print(f"        ✗ Errore: {e}")
+            print(f"          ✗ Errore: {e}")
             failed += 1
 
     print(f"\nCompletato: {generated} generate, {skipped} skippate, {failed} fallite.")

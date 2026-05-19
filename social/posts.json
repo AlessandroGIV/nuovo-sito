@@ -31,7 +31,7 @@
       "platforms": ["facebook", "instagram"],
       "caption": "✈️ Volo cancellato? Niente stress.\n\nMentre gli altri si disperano in aeroporto, tu hai già richiesto il tuo rimborso.\n\nFino a €600 per passeggero, garantiti dal Regolamento UE 261/2004.\n\nCon Giustizia In Volo ci pensiamo noi. Zero anticipo, zero rischio.\n\n🔗 Richiedi ora su giustiziainvolo.it\n\n#voloCancellato #rimborsoVolo #dirittiPasseggeri #travelSmarter #aeroporto #GiustiziaInVolo #UE261 #rimborso600euro #travelItalia #passeggeri",
       "image_url": "https://raw.githubusercontent.com/AlessandroGIV/nuovo-sito/main/social/images/post_003.jpg",
-      "image_prompt": "Wide shot of a confident and calm young Italian woman in smart casual clothing, standing in a bright modern airport terminal, smiling at her smartphone which shows a refund confirmation notification. Large windows behind her reveal planes on the tarmac. Background slightly blurred with other travelers. Natural airy lighting, optimistic and empowering mood. Commercial lifestyle photography. No text, no logos.",
+      "image_prompt": "Cinematic airport terminal photography. Confident Italian businesswoman 35-40 years old in navy blazer, relaxed posture, calm relieved smile. Holding smartphone casually (no visible screen detail). Background: blurred stressed passengers, large departure board. Golden hour light through windows. Photorealistic, shallow depth of field.",
       "image_aspect_ratio": "1:1",
       "add_watermark": true,
       "published": false
@@ -43,9 +43,13 @@
       "platforms": ["facebook", "instagram", "linkedin"],
       "caption": "⏰ Hai 2 anni di tempo.\n\nMa la maggior parte dei passeggeri non lo sa e lascia scadere il diritto al rimborso senza fare nulla.\n\nSe il tuo volo ha subito un ritardo, una cancellazione o ti è stato negato l'imbarco negli ultimi 2 anni — puoi ancora reclamare.\n\n👉 Verifica subito su giustiziainvolo.it\n\n#rimborsoVolo #dirittiPasseggeri #voloCancellato #ritardoVolo #sapeviche #regolamentoUE261 #GiustiziaInVolo",
       "image_url": "https://raw.githubusercontent.com/AlessandroGIV/nuovo-sito/main/social/images/post_004.jpg",
-      "image_prompt": "Bold minimalist graphic design square poster. Deep navy blue background. A large white analog clock icon centered at the top. Below it, large bold white sans-serif typography reading 'HAI 2 ANNI DI TEMPO'. Small subtitle in lighter weight: 'per reclamare il rimborso del tuo volo'. Bottom: thin white divider line and small text 'giustiziainvolo.it'. Clean, professional Italian legal brand aesthetic. Flat vector design, no photography.",
       "image_aspect_ratio": "1:1",
-      "add_watermark": false,
+      "graphic_template": "headline",
+      "graphic_content": {
+        "accent": "Lo sapevi?",
+        "title": "Hai 2 anni\\ndi tempo.",
+        "subtitle": "per reclamare il rimborso del tuo volo"
+      },
       "published": false
     },
     {
@@ -67,9 +71,12 @@
       "platforms": ["facebook", "instagram", "linkedin"],
       "caption": "⚠️ Molti passeggeri perdono il rimborso non perché non ne abbiano diritto, ma perché commettono questi 3 errori.\n\nSalva questo post — potrebbe valerti fino a €600 👆\n\n🔗 giustiziainvolo.it\n\n#rimborsoVolo #voloCancellato #dirittiPasseggeri #travelTips #savethispost #GiustiziaInVolo #UE261 #rimborso600",
       "image_url": "https://raw.githubusercontent.com/AlessandroGIV/nuovo-sito/main/social/images/post_006.jpg",
-      "image_prompt": "Clean square graphic design carousel cover slide. White background with navy blue geometric accent bar on the left edge. Bold dark navy typography centered: large '❌' emoji followed by 'I 3 errori che ti fanno perdere il rimborso del volo'. Smaller subtitle: '(e come evitarli)'. Bottom right corner: small 'giustiziainvolo.it' text in navy. Professional Italian brand design, modern sans-serif fonts, flat design. No photography.",
       "image_aspect_ratio": "1:1",
-      "add_watermark": false,
+      "graphic_template": "list_cover",
+      "graphic_content": {
+        "title": "I 3 errori che ti fanno perdere il rimborso del volo",
+        "subtitle": "(e come evitarli)"
+      },
       "published": false
     },
     {
@@ -91,9 +98,12 @@
       "platforms": ["facebook", "instagram"],
       "caption": "🙋 Hai mai subito un disservizio aereo?\n\nVolo cancellato, ritardo di ore, imbarco negato — questi eventi capitano a migliaia di passeggeri ogni giorno.\n\nIl problema è che il 70% non sa di avere diritto a un rimborso fino a €600.\n\nScrivi nei commenti: ✈️ se ti è capitato almeno una volta. Potremmo aiutarti a recuperare quello che ti spetta.\n\n🔗 giustiziainvolo.it\n\n#rimborsoVolo #sondaggio #dirittiPasseggeri #voloCancellato #GiustiziaInVolo #engagement",
       "image_url": "https://raw.githubusercontent.com/AlessandroGIV/nuovo-sito/main/social/images/post_008.jpg",
-      "image_prompt": "Square graphic design poster. Navy blue gradient background with subtle airplane silhouettes pattern. Center: a large bold white raised-hand emoji '🙋' icon. Below it, large white bold typography: 'Hai mai subito un disservizio aereo?' Smaller text below: 'Il 70% dei passeggeri non sa di avere diritto fino a €600'. Bottom: white call-to-action button shape with 'giustiziainvolo.it'. Engaging, modern Italian brand design, flat style.",
       "image_aspect_ratio": "1:1",
-      "add_watermark": false,
+      "graphic_template": "question",
+      "graphic_content": {
+        "title": "Hai mai subito un disservizio aereo?",
+        "subtitle": "Il 70% dei passeggeri non sa di avere diritto fino a 600 euro"
+      },
       "published": false
     }
   ]
