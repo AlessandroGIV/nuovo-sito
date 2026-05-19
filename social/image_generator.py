@@ -6,6 +6,7 @@ from pathlib import Path
 
 from google import genai
 from google.genai import types
+from PIL import Image, ImageDraw, ImageFont
 
 POSTS_FILE = Path(__file__).parent / "posts.json"
 IMAGES_DIR = Path(__file__).parent / "images"
@@ -18,7 +19,7 @@ def load_posts():
 
 def generate_image(client, post):
     result = client.models.generate_images(
-        model="imagen-3.0-generate-002",
+        model="imagen-4.0-generate-001",
         prompt=post["image_prompt"],
         config=types.GenerateImagesConfig(
             number_of_images=1,
@@ -26,6 +27,39 @@ def generate_image(client, post):
         ),
     )
     return result.generated_images[0].image.image_bytes
+
+
+def add_watermark(image_path):
+    img = Image.open(image_path).convert("RGB")
+    draw = ImageDraw.Draw(img, "RGBA")
+    width, height = img.size
+
+    text = "giustiziainvolo.it"
+    font_size = int(height * 0.025)
+
+    try:
+        font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", font_size)
+    except OSError:
+        try:
+            font = ImageFont.truetype("Arial.ttf", font_size)
+        except OSError:
+            font = ImageFont.load_default()
+
+    bbox = draw.textbbox((0, 0), text, font=font)
+    text_w = bbox[2] - bbox[0]
+    text_h = bbox[3] - bbox[1]
+
+    padding = int(height * 0.03)
+    x = width - text_w - padding
+    y = height - text_h - padding
+
+    bg_pad = int(font_size * 0.4)
+    draw.rectangle(
+        [x - bg_pad, y - bg_pad, x + text_w + bg_pad, y + text_h + bg_pad],
+        fill=(0, 0, 0, 140),
+    )
+    draw.text((x, y), text, fill=(255, 255, 255, 255), font=font)
+    img.save(image_path, "JPEG", quality=95)
 
 
 def main():
@@ -58,7 +92,11 @@ def main():
             image_bytes = generate_image(client, post)
             with open(output_path, "wb") as f:
                 f.write(image_bytes)
-            print(f"        ✓ Salvato → {output_path}")
+            if post.get("add_watermark", False):
+                add_watermark(output_path)
+                print(f"        ✓ Salvato con watermark → {output_path}")
+            else:
+                print(f"        ✓ Salvato → {output_path}")
             generated += 1
         except Exception as e:
             print(f"        ✗ Errore: {e}")
