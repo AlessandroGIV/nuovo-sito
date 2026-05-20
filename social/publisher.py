@@ -19,12 +19,35 @@ def save_posts(data):
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
-def publish_post(post):
+def get_caption_groups(post):
+    """Returns list of (caption, platforms) tuples to send for this post.
+
+    Posts with a single 'caption' string send one payload to all platforms.
+    Posts with a 'captions' dict split into per-platform-group payloads so
+    that facebook/instagram and linkedin can carry different copy.
+    """
+    if "caption" in post:
+        return [(post["caption"], post["platforms"])]
+
+    groups = []
+    captions = post["captions"]
+    fi_platforms = [p for p in post["platforms"] if p in ("facebook", "instagram")]
+    li_platforms = [p for p in post["platforms"] if p == "linkedin"]
+
+    if fi_platforms and "facebook_instagram" in captions:
+        groups.append((captions["facebook_instagram"], fi_platforms))
+    if li_platforms and "linkedin" in captions:
+        groups.append((captions["linkedin"], li_platforms))
+
+    return groups
+
+
+def publish_post(post, caption, platforms):
     payload = {
         "id": post["id"],
-        "caption": post["caption"],
+        "caption": caption,
         "image_url": post["image_url"],
-        "platforms": post["platforms"],
+        "platforms": platforms,
         "scheduled_time": post["scheduled_time"],
     }
     response = requests.post(WEBHOOK_URL, json=payload, timeout=30)
@@ -55,15 +78,21 @@ def main():
 
     for post in posts_today:
         print(f"\n→ Invio {post['id']} ({', '.join(post['platforms'])})...")
-        try:
-            resp = publish_post(post)
+        groups = get_caption_groups(post)
+        all_ok = True
+        for caption, platforms in groups:
+            try:
+                resp = publish_post(post, caption, platforms)
+                print(f"  ✓ Inviato ({', '.join(platforms)}) — HTTP {resp.status_code}")
+            except requests.HTTPError as e:
+                print(f"  ✗ Errore HTTP ({', '.join(platforms)}): {e.response.status_code} — {e.response.text}")
+                all_ok = False
+            except requests.RequestException as e:
+                print(f"  ✗ Errore di rete ({', '.join(platforms)}): {e}")
+                all_ok = False
+        if all_ok:
             post["published"] = True
             modified = True
-            print(f"  ✓ Inviato — HTTP {resp.status_code}")
-        except requests.HTTPError as e:
-            print(f"  ✗ Errore HTTP: {e.response.status_code} — {e.response.text}")
-        except requests.RequestException as e:
-            print(f"  ✗ Errore di rete: {e}")
 
     if modified:
         save_posts(data)
