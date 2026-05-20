@@ -1,5 +1,5 @@
 ---
-data: "2026-05-22"
+data: "2026-05-21"
 stato: "da pubblicare"
 immagine: "social/linkedin/images/2026-05-22-presentazione.jpg"
 tipo: "grafica"

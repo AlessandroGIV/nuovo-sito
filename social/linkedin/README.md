@@ -22,18 +22,18 @@ LinkedIn non è connesso a Make.com. La pubblicazione va fatta manualmente segue
 
 | Data | File | Tipo |
 |------|------|------|
-| 22 maggio 2026 | `2026-05-22-presentazione.md` | grafica — post di presentazione |
-| 29 maggio 2026 | `2026-05-29-post_002.md` | fotografica |
-| 5 giugno 2026 | `2026-06-05-post_004.md` | grafica |
-| 12 giugno 2026 | `2026-06-12-post_006.md` | carosello PDF (5 slide) |
+| 21 maggio 2026 | `2026-05-21-presentazione.md` | grafica — post di presentazione |
+| 27 maggio 2026 | `2026-05-27-post_002.md` | fotografica |
+| 3 giugno 2026 | `2026-06-03-post_004.md` | grafica |
+| 10 giugno 2026 | `2026-06-10-post_006.md` | carosello PDF (5 slide) |
 | 16 giugno 2026 | `2026-06-16-post_007.md` | fotografica |
 
 ---
 
-## Note sul carosello PDF (12 giugno)
+## Note sul carosello PDF (10 giugno)
 
 LinkedIn permette di caricare documenti PDF come post a scorrimento (equivalente del carosello).
-Il file `images/2026-06-12-carosello.pdf` contiene le 5 slide nell'ordine corretto.
+Il file `images/2026-06-10-carosello.pdf` contiene le 5 slide nell'ordine corretto.
 Caricarlo come **Documento** nella creazione del post (non come Immagine).
 
 ---
