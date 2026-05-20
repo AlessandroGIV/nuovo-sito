@@ -1,6 +1,21 @@
 {
   "posts": [
     {
+      "id": "post_009",
+      "scheduled_date": "2026-05-22",
+      "scheduled_time": "18:00",
+      "platforms": ["facebook", "instagram"],
+      "caption": "Ciao! Siamo Giustizia In Volo 👋\n\nSe il tuo volo è stato cancellato, è partito in forte ritardo o ti hanno negato l'imbarco, probabilmente hai diritto a un rimborso fino a 600€ — e potresti non saperlo.\n\nCe ne occupiamo noi: verifichiamo il tuo caso e gestiamo tutta la pratica. Tu non anticipi nulla — se non otteniamo il rimborso, non paghi niente.\n\nNiente moduli, niente attese al telefono con la compagnia aerea. Solo il risultato.\n\n✈️ Controlla subito il tuo volo su giustiziainvolo.it\n\n#rimborsovolo #volocancellato #dirittipasseggeri #CE261 #viaggi",
+      "image_url": "https://raw.githubusercontent.com/AlessandroGIV/nuovo-sito/main/social/images/post_009.jpg",
+      "image_aspect_ratio": "1:1",
+      "graphic_template": "headline",
+      "graphic_content": {
+        "accent": "Fino a 600€ — zero anticipo",
+        "title": "Volo in ritardo o cancellato?\\nTi rimborsiamo noi."
+      },
+      "published": false
+    },
+    {
       "id": "post_001",
       "scheduled_date": "2026-05-26",
       "scheduled_time": "18:00",
