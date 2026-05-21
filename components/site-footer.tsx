@@ -4,6 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Mail, Phone, Plane } from "lucide-react"
 import { useLanguage } from "@/contexts/language-context"
+import { ManageCookiesButton } from "@/components/cookie/ManageCookiesButton"
 
 export function SiteFooter() {
   const pathname = usePathname()
@@ -92,7 +93,13 @@ export function SiteFooter() {
         ·{" "}
         <Link href="/termini" className="underline">
           Termini e Condizioni
-        </Link>
+        </Link>{" "}
+        ·{" "}
+        <Link href="/cookie" className="underline">
+          Cookie Policy
+        </Link>{" "}
+        ·{" "}
+        <ManageCookiesButton />
       </div>
     </footer>
   )

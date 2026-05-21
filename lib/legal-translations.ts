@@ -3,7 +3,7 @@ export const legalTranslations = {
     // Privacy Policy
     privacyIntro: "La presente Privacy Policy descrive le modalità di raccolta e trattamento dei dati personali degli utenti che visitano il sito web di GiustiziaInVolo e che utilizzano i nostri servizi.",
     privacySection1Title: "1. Titolare del Trattamento",
-    privacySection1Content: "Il titolare del trattamento dei dati personali è GiustiziaInVolo",
+    privacySection1Content: "Il titolare del trattamento dei dati personali è Dott. Alessandro Petrecca, P.IVA 18069201004. Per contatti: info@giustiziainvolo.it",
     privacySection2Title: "2. Dati Raccolti",
     privacySection2Intro: "Raccogliamo i seguenti tipi di dati personali:",
     privacySection2Items: [
@@ -141,7 +141,7 @@ export const legalTranslations = {
     // Privacy Policy
     privacyIntro: "This Privacy Policy describes how we collect and process the personal data of users who visit the GiustiziaInVolo website and use our services.",
     privacySection1Title: "1. Data Controller",
-    privacySection1Content: "The data controller is GiustiziaInVolo",
+    privacySection1Content: "The data controller is Dott. Alessandro Petrecca, VAT 18069201004. Contact: info@giustiziainvolo.it",
     privacySection2Title: "2. Data Collected",
     privacySection2Intro: "We collect the following types of personal data:",
     privacySection2Items: [
