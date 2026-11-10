@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { useState } from "react"
 import { Menu, Plane } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -11,7 +12,11 @@ import { useLanguage } from "@/contexts/language-context"
 export function SiteHeader() {
   const [open, setOpen] = useState(false)
   const { t } = useLanguage()
-  
+  const pathname = usePathname()
+
+  // Le aree riservate hanno la loro intestazione
+  if (pathname.startsWith("/agenzie/area") || pathname.startsWith("/gestione")) return null
+
   const nav = [
     { href: "/", label: t('home') },
     { href: "/chi-siamo", label: t('whoWeAre') },
