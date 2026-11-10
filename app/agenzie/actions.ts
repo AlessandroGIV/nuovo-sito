@@ -2,6 +2,7 @@
 
 import { redirect } from 'next/navigation'
 import { rateLimit } from '@/lib/rate-limit'
+import { DISRUPTION_LABEL } from '@/lib/portale/constants'
 import { hashPassword, hashToken, verifyPassword } from '@/lib/portale/crypto'
 import {
   addEvent,
@@ -13,6 +14,7 @@ import {
   updateAgency,
 } from '@/lib/portale/data'
 import { dbInsert } from '@/lib/portale/db'
+import { gestioneUrl, itDate, notifyLater } from '@/lib/portale/notify'
 import {
   attivaSchema,
   cambiaPasswordSchema,
@@ -64,7 +66,17 @@ export async function inviaCandidatura(_prev: ActionResult, fd: FormData): Promi
     // Una sola richiesta per partita IVA. La risposta resta la stessa,
     // così non si può scoprire chi è già partner.
     if (!(await agencyExistsByVat(data.partita_iva))) {
-      await dbInsert('agencies', { ...data, status: 'pending', privacy_accepted_at: new Date().toISOString() }, 'id')
+      const created = await dbInsert<{ id: string }>(
+        'agencies',
+        { ...data, status: 'pending', privacy_accepted_at: new Date().toISOString() },
+        'id',
+      )
+      notifyLater(`Nuova richiesta di adesione, ${data.ragione_sociale}`, [
+        `${data.ragione_sociale} (${data.citta}) ha chiesto di aderire al portale agenzie.`,
+        '',
+        'La trovi in gestione, da dove puoi approvarla.',
+        gestioneUrl(`/agenzie/${created.id}`),
+      ])
     }
   } catch (err) {
     console.error('[agenzie] candidatura non salvata', err)
@@ -227,6 +239,13 @@ export async function creaSegnalazione(
       to_status: 'ricevuta',
       message: 'Pratica segnalata dall’agenzia.',
     })
+    notifyLater(`Nuova pratica ${created.ref} da ${agency.ragione_sociale}`, [
+      `${agency.ragione_sociale} (codice ${agency.code}) ha segnalato la pratica ${created.ref}.`,
+      `Tratta ${data.dep_airport}, ${data.arr_airport}. Volo del ${itDate(data.flight_date)}, ${DISRUPTION_LABEL[data.disruption].toLowerCase()}.`,
+      '',
+      'Dati del passeggero e documenti sono in gestione.',
+      gestioneUrl(`/pratiche/${created.id}`),
+    ])
     return { ok: true, data: created }
   } catch (err) {
     console.error('[agenzie] segnalazione non salvata', err)

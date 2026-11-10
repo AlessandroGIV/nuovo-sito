@@ -9,6 +9,7 @@ import {
 } from '@/lib/portale/constants'
 import { addEvent, agencyCaseById, countCaseDocuments, insertDocument } from '@/lib/portale/data'
 import { sameOrigin } from '@/lib/portale/http'
+import { gestioneUrl, notifyLater } from '@/lib/portale/notify'
 import { getAgency } from '@/lib/portale/session'
 import { uploadObject } from '@/lib/portale/storage'
 
@@ -90,6 +91,16 @@ export async function POST(req: Request) {
       kind: 'documento',
       message: filename,
     })
+    // Avviso solo quando l'agenzia risponde a una richiesta di documenti,
+    // e uno solo anche se carica più file di seguito.
+    if (pratica.status === 'documenti_richiesti' && rateLimit(`avviso-doc:${pratica.id}`, 1, 10 * 60_000)) {
+      notifyLater(`Documenti integrati sulla pratica ${pratica.ref}`, [
+        `${agency.ragione_sociale} ha caricato nuovi documenti sulla pratica ${pratica.ref}, che era in attesa di integrazione.`,
+        '',
+        'Li trovi in gestione.',
+        gestioneUrl(`/pratiche/${pratica.id}`),
+      ])
+    }
     return NextResponse.json({ ok: true, filename })
   } catch (err) {
     console.error('[agenzie] documento non salvato', err)
