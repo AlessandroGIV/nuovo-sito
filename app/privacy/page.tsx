@@ -56,7 +56,17 @@ export default function PrivacyPage() {
           <h2 className="mt-8 text-2xl font-extrabold text-[#FFC300]">{lt.privacySection6Title}</h2>
           <p className="mt-2 text-white/90">{lt.privacySection6Content}</p>
 
-          {/* 7 */}
+          {/* 7 - agenzie partner */}
+          <h2 className="mt-8 text-2xl font-extrabold text-[#FFC300]">{lt.privacyAgenciesTitle}</h2>
+          <p className="mt-2 text-white/90">{lt.privacyAgenciesIntro}</p>
+          <ul className="mt-2 list-disc pl-6 text-white/90 space-y-1">
+            {lt.privacyAgenciesItems.map((item, i) => (
+              <li key={i}>{item}</li>
+            ))}
+          </ul>
+          <p className="mt-2 text-white/90">{lt.privacyAgenciesOutro}</p>
+
+          {/* 8 */}
           <h2 className="mt-8 text-2xl font-extrabold text-[#FFC300]">{lt.privacySection7Title}</h2>
           <p className="mt-2 text-white/90">{lt.privacySection7Intro}</p>
           <ul className="mt-2 list-disc pl-6 text-white/90 space-y-1">
@@ -73,7 +83,7 @@ export default function PrivacyPage() {
           <h2 className="mt-8 text-2xl font-extrabold text-[#FFC300]">{lt.privacySection9Title}</h2>
           <p className="mt-2 text-white/90">{lt.privacySection9Content}</p>
 
-          <p className="mt-6 text-sm text-white/70">{t('lastUpdated')}: {language === 'it' ? 'Maggio' : 'May'} 2025</p>
+          <p className="mt-6 text-sm text-white/70">{t('lastUpdated')}: {language === 'it' ? 'Novembre' : 'November'} 2026</p>
         </div>
       </section>
     </main>
