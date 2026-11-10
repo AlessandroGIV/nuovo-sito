@@ -17,6 +17,7 @@ export type Agency = {
   note_interne: string | null
   commission_enabled: boolean
   commission_pct: number
+  agency_contact_enabled: boolean
   created_at: string
   approved_at: string | null
   last_login_at: string | null
@@ -45,6 +46,7 @@ export type CaseRow = {
   passenger_email: string | null
   passenger_phone: string | null
   passengers_count: number
+  contact_via_agency: boolean
   dep_airport: string
   arr_airport: string
   via_airport: string | null
@@ -90,11 +92,11 @@ export type CaseDocument = {
 
 /** Colonne di agencies che si possono mostrare. Mai password_hash o token. */
 export const AGENCY_COLUMNS =
-  'id,status,code,ragione_sociale,partita_iva,citta,provincia,referente,email,telefono,sito,messaggio,note_interne,commission_enabled,commission_pct,created_at,approved_at,last_login_at'
+  'id,status,code,ragione_sociale,partita_iva,citta,provincia,referente,email,telefono,sito,messaggio,note_interne,commission_enabled,commission_pct,agency_contact_enabled,created_at,approved_at,last_login_at'
 
 export const AGENCY_AUTH_COLUMNS =
   'id,status,code,password_hash,session_version,failed_logins,locked_until,setup_token_hash,setup_token_expires_at'
 
 /** Colonne di cases visibili all'agenzia. Niente note interne. */
 export const CASE_COLUMNS_AGENCY =
-  'id,ref,agency_id,source,status,passenger_name,passengers_count,dep_airport,arr_airport,via_airport,airline,flight_number,flight_date,disruption,booking_ref,description,recovered_amount,recovered_at,commission_pct,commission_amount,commission_paid_at,created_at,updated_at'
+  'id,ref,agency_id,source,status,passenger_name,passengers_count,contact_via_agency,dep_airport,arr_airport,via_airport,airline,flight_number,flight_date,disruption,booking_ref,description,recovered_amount,recovered_at,commission_pct,commission_amount,commission_paid_at,created_at,updated_at'

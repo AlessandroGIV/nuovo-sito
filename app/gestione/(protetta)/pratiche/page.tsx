@@ -2,7 +2,14 @@ import Link from 'next/link'
 import { PageTitle } from '@/components/portale/chrome'
 import { formatDate } from '@/components/portale/format'
 import { StatusBadge } from '@/components/portale/status'
-import { CASE_STATUSES, CLOSED_STATUSES, STATUS_LABEL, type CaseStatus } from '@/lib/portale/constants'
+import {
+  CASE_STATUSES,
+  CLOSED_STATUSES,
+  STATUS_LABEL,
+  TRIAGE_STATUSES,
+  WORKING_STATUSES,
+  type CaseStatus,
+} from '@/lib/portale/constants'
 import { listCases } from '@/lib/portale/data'
 import { cn } from '@/lib/utils'
 import { requireAdmin } from '@/lib/portale/session'
@@ -17,26 +24,31 @@ export default async function PraticheGestionePage({
   const { stato } = await searchParams
   const filter = CASE_STATUSES.includes(stato as CaseStatus) ? (stato as CaseStatus) : undefined
   const all = await listCases()
-  const shown = filter
-    ? all.filter((c) => c.status === filter)
-    : stato === 'chiuse'
-      ? all.filter((c) => CLOSED_STATUSES.includes(c.status))
-      : all.filter((c) => !CLOSED_STATUSES.includes(c.status))
+  const groups: Record<string, (c: { status: CaseStatus }) => boolean> = {
+    '': (c) => !CLOSED_STATUSES.includes(c.status),
+    da_valutare: (c) => TRIAGE_STATUSES.includes(c.status),
+    in_corso: (c) => WORKING_STATUSES.includes(c.status),
+    chiuse: (c) => CLOSED_STATUSES.includes(c.status),
+  }
+  const group = !filter && stato && stato in groups ? stato : ''
+  const shown = filter ? all.filter((c) => c.status === filter) : all.filter(groups[group])
 
   const counts = new Map<string, number>()
   for (const c of all) counts.set(c.status, (counts.get(c.status) ?? 0) + 1)
-  const openCount = all.filter((c) => !CLOSED_STATUSES.includes(c.status)).length
+  const n = (k: string) => all.filter(groups[k]).length
 
   const tabs: { key: string; label: string; n: number }[] = [
-    { key: '', label: 'In corso', n: openCount },
+    { key: '', label: 'Aperte', n: n('') },
+    { key: 'da_valutare', label: 'Da valutare', n: n('da_valutare') },
+    { key: 'in_corso', label: 'In corso', n: n('in_corso') },
     ...CASE_STATUSES.filter((s) => !CLOSED_STATUSES.includes(s) && (counts.get(s) ?? 0) > 0).map((s) => ({
       key: s,
       label: STATUS_LABEL[s],
       n: counts.get(s) ?? 0,
     })),
-    { key: 'chiuse', label: 'Chiuse', n: all.length - openCount },
+    { key: 'chiuse', label: 'Chiuse', n: n('chiuse') },
   ]
-  const current = filter ?? (stato === 'chiuse' ? 'chiuse' : '')
+  const current = filter ?? group
 
   return (
     <>

@@ -40,7 +40,11 @@ async function send(subject: string, lines: string[]): Promise<void> {
       signal: AbortSignal.timeout(8000),
       cache: 'no-store',
     })
-    if (!res.ok) console.error(`[avvisi] invio non riuscito (${res.status})`)
+    if (!res.ok) {
+      // Il motivo di Resend dice cosa correggere, es. destinatario non ammesso col mittente di prova
+      const reason = (await res.text().catch(() => '')).replace(/\s+/g, ' ').slice(0, 300)
+      console.error(`[avvisi] invio non riuscito (${res.status}) ${reason}`)
+    }
   } catch (err) {
     console.error('[avvisi] invio non riuscito', err)
   }

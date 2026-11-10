@@ -89,10 +89,27 @@ export const cambiaPasswordSchema = z
   })
   .refine((v) => v.password === v.conferma, { path: ['conferma'], message: 'Le due password non coincidono' })
 
-export const segnalazioneSchema = z.object({
+// Email e telefono del passeggero sono obbligatori, salvo quando un'agenzia
+// abilitata tiene lei i contatti. In quel caso sono facoltativi.
+const optEmail = str()
+  .trim()
+  .toLowerCase()
+  .max(200)
+  .optional()
+  .transform((v) => v || null)
+  .refine((v) => v === null || z.string().email().safeParse(v).success, 'Email non valida')
+const optPhone = str()
+  .trim()
+  .optional()
+  .transform((v) => v || null)
+  .refine((v) => v === null || /^\+?[\d\s\-().]{7,20}$/.test(v), 'Numero di telefono non valido')
+
+export const segnalazioneSchema = z
+  .object({
   passenger_name: req(160),
-  passenger_email: email,
-  passenger_phone: phone,
+  passenger_email: optEmail,
+  passenger_phone: optPhone,
+  contact_via_agency: str().optional().transform((v) => v === 'agenzia'),
   passengers_count: z.coerce.number().int().min(1, 'Almeno 1').max(20, 'Massimo 20'),
   dep_airport: req(120),
   arr_airport: req(120),
@@ -110,6 +127,11 @@ export const segnalazioneSchema = z.object({
   description: opt(2000),
   consenso: checked('Conferma di aver informato il passeggero'),
 })
+  .superRefine((d, ctx) => {
+    if (d.contact_via_agency) return
+    if (!d.passenger_email) ctx.addIssue({ code: 'custom', path: ['passenger_email'], message: 'Campo obbligatorio' })
+    if (!d.passenger_phone) ctx.addIssue({ code: 'custom', path: ['passenger_phone'], message: 'Campo obbligatorio' })
+  })
 
 /** Dati del modulo richiesta del sito, quando il passeggero arriva dal link di un'agenzia. */
 const leg = z.object({
@@ -152,6 +174,7 @@ export const agenziaSchema = z.object({
   id: uuid,
   status: z.enum(['active', 'suspended', 'rejected', 'pending']),
   commission_enabled: str().optional().transform((v) => v === 'on'),
+  agency_contact_enabled: str().optional().transform((v) => v === 'on'),
   commission_pct: str()
     .trim()
     .transform((v) => v.replace(',', '.'))

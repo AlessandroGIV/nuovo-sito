@@ -1,11 +1,11 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft, FileText } from 'lucide-react'
-import { ImportiForm, NotaInternaForm, StatoForm } from '@/components/gestione/forms'
+import { DecisioneForm, ImportiForm, NotaInternaForm, StatoForm } from '@/components/gestione/forms'
 import { Panel } from '@/components/portale/chrome'
 import { formatBytes, formatDate, formatDateTime, formatMoney } from '@/components/portale/format'
 import { RouteTrack, StatusBadge } from '@/components/portale/status'
-import { DISRUPTION_LABEL, SOURCE_LABEL, STATUS_LABEL } from '@/lib/portale/constants'
+import { DISRUPTION_LABEL, SOURCE_LABEL, STATUS_LABEL, TRIAGE_STATUSES } from '@/lib/portale/constants'
 import { agencyById, caseById, caseDocuments, caseEvents } from '@/lib/portale/data'
 import { requireAdmin } from '@/lib/portale/session'
 
@@ -72,6 +72,13 @@ export default async function PraticaGestionePage({ params }: { params: Promise<
       <div className="mt-5 grid gap-5 lg:grid-cols-[1fr_1fr]">
         <div className="space-y-5">
           <Panel title="Passeggero e volo">
+            {pratica.contact_via_agency ? (
+              <p className="mb-3 rounded-xl bg-[#FFC300]/15 px-4 py-3 text-[14.5px] font-medium leading-relaxed text-[#13283D]">
+                I contatti col passeggero li tiene l’agenzia
+                {agency ? `, ${agency.ragione_sociale} (${agency.referente}, ${agency.email}, ${agency.telefono})` : ''}.
+                Documenti e firma passano da lei.
+              </p>
+            ) : null}
             <dl className="divide-y divide-[#072534]/[0.06]">
               <Row label="Email">
                 {pratica.passenger_email ? (
@@ -150,6 +157,12 @@ export default async function PraticaGestionePage({ params }: { params: Promise<
         </div>
 
         <div className="space-y-5">
+          {TRIAGE_STATUSES.includes(pratica.status) ? (
+            <Panel title="Decisione sulla pratica">
+              <DecisioneForm id={pratica.id} />
+            </Panel>
+          ) : null}
+
           <Panel title="Stato e messaggi per l’agenzia">
             <StatoForm id={pratica.id} status={pratica.status} />
           </Panel>

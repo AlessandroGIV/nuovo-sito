@@ -59,7 +59,9 @@ export default async function PraticaPage({
 
       {nuova ? (
         <p role="status" className="mb-5 rounded-2xl bg-emerald-50 px-5 py-4 text-[15px] font-medium text-emerald-900">
-          Pratica segnalata. Contattiamo noi il passeggero per i passi successivi.
+          {pratica.contact_via_agency
+            ? 'Pratica segnalata. Per i passi successivi scriviamo a voi.'
+            : 'Pratica segnalata. Contattiamo noi il passeggero per i passi successivi.'}
         </p>
       ) : null}
       {documenti ? (
@@ -110,6 +112,7 @@ export default async function PraticaPage({
               {pratica.disruption ? <Row label="Disservizio">{DISRUPTION_LABEL[pratica.disruption]}</Row> : null}
               {pratica.booking_ref ? <Row label="Prenotazione">{pratica.booking_ref}</Row> : null}
               <Row label="Origine">{SOURCE_LABEL[pratica.source]}</Row>
+              <Row label="Contatti">{pratica.contact_via_agency ? 'Tramite la vostra agenzia' : 'Giustizia In Volo col passeggero'}</Row>
               <Row label="Segnalata il">{formatDate(pratica.created_at)}</Row>
             </dl>
             {pratica.source === 'modulo_agenzia' && pratica.description ? (

@@ -225,7 +225,10 @@ export async function creaSegnalazione(
   if (!rateLimit(`agenzia-pratica:${agency.id}`, 30, 60 * 60_000)) {
     return { ok: false, message: 'Hai inserito molte pratiche in poco tempo. Riprova tra qualche minuto.' }
   }
-  const parsed = segnalazioneSchema.safeParse(formObject(fd))
+  const input = formObject(fd)
+  // Solo un'agenzia abilitata dalla gestione può tenere lei i contatti col passeggero
+  if (!agency.agency_contact_enabled) delete input.contact_via_agency
+  const parsed = segnalazioneSchema.safeParse(input)
   if (!parsed.success) {
     return { ok: false, message: 'Controlla i campi evidenziati.', fieldErrors: fieldErrors(parsed.error) }
   }
@@ -242,6 +245,7 @@ export async function creaSegnalazione(
     notifyLater(`Nuova pratica ${created.ref} da ${agency.ragione_sociale}`, [
       `${agency.ragione_sociale} (codice ${agency.code}) ha segnalato la pratica ${created.ref}.`,
       `Tratta ${data.dep_airport}, ${data.arr_airport}. Volo del ${itDate(data.flight_date)}, ${DISRUPTION_LABEL[data.disruption].toLowerCase()}.`,
+      ...(data.contact_via_agency ? ['I contatti col passeggero li tiene l’agenzia.'] : []),
       '',
       'Dati del passeggero e documenti sono in gestione.',
       gestioneUrl(`/pratiche/${created.id}`),

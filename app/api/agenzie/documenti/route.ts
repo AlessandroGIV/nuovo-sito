@@ -34,7 +34,9 @@ function looksLike(mime: string, b: Uint8Array): boolean {
   }
 }
 
+// Ogni rifiuto finisce nei log di Vercel con il motivo, senza dati della pratica.
 function json(status: number, message: string) {
+  console.warn(`[agenzie] documento rifiutato (${status}) ${message}`)
   return NextResponse.json({ ok: false, message }, { status })
 }
 
@@ -59,7 +61,10 @@ export async function POST(req: Request) {
   if (file.size === 0) return json(400, 'Il file è vuoto.')
   if (file.size > MAX_UPLOAD_BYTES) return json(413, 'Il file supera i 4 MB.')
   const ext = ALLOWED_UPLOAD_TYPES[file.type]
-  if (!ext) return json(415, 'Formato non accettato. Carica PDF, JPG, PNG, WEBP o HEIC.')
+  if (!ext) {
+    console.warn(`[agenzie] tipo dichiarato dal browser: "${file.type.slice(0, 60)}"`)
+    return json(415, 'Formato non accettato. Carica PDF, JPG, PNG, WEBP o HEIC.')
+  }
 
   try {
     const pratica = await agencyCaseById(agency.id, caseId)
@@ -71,6 +76,7 @@ export async function POST(req: Request) {
 
     const bytes = await file.arrayBuffer()
     if (!looksLike(file.type, new Uint8Array(bytes.slice(0, 16)))) {
+      console.warn(`[agenzie] intestazione non riconosciuta per ${file.type}`)
       return json(415, 'Il contenuto del file non corrisponde al formato.')
     }
 
