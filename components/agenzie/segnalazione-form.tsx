@@ -5,6 +5,7 @@
 
 import type React from 'react'
 import { useState } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { creaSegnalazione } from '@/app/agenzie/actions'
 import { FilePicker, uploadDocument, type PickedFile } from '@/components/portale/doc-uploader'
@@ -28,11 +29,13 @@ function Group({ title, children }: { title: string; children: React.ReactNode }
   )
 }
 
-export function SegnalazioneForm({ today }: { today: string }) {
+export function SegnalazioneForm({ today, agencyContact }: { today: string; agencyContact: boolean }) {
   const router = useRouter()
+  // Chi tiene i contatti col passeggero. La scelta compare solo alle agenzie abilitate.
+  const [viaAgency, setViaAgency] = useState(false)
   const [files, setFiles] = useState<PickedFile[]>([])
   const [uploading, setUploading] = useState(false)
-  const [uploadError, setUploadError] = useState<string | null>(null)
+  const [uploadError, setUploadError] = useState<{ caseId: string; files: string[] } | null>(null)
 
   return (
     <ActionForm
@@ -44,16 +47,15 @@ export function SegnalazioneForm({ today }: { today: string }) {
         const valid = files.filter((f) => !f.error)
         if (valid.length > 0) {
           setUploading(true)
-          let failed = 0
+          const failed: string[] = []
           for (const f of valid) {
             const res = await uploadDocument(created.id, f.file)
-            if (!res.ok) failed++
+            if (!res.ok) failed.push(`${f.file.name}, ${res.message ?? 'non caricato'}`)
           }
           setUploading(false)
-          if (failed > 0) {
-            // La pratica esiste già: si va al dettaglio, da dove si possono ricaricare.
-            setUploadError('La pratica è stata salvata, ma alcuni documenti non sono stati caricati.')
-            router.push(`/agenzie/area/pratiche/${created.id}?documenti=da-ricaricare`)
+          if (failed.length > 0) {
+            // La pratica esiste già. Si resta qui per leggere il motivo e poi si va al dettaglio.
+            setUploadError({ caseId: created.id, files: failed })
             return
           }
         }
@@ -73,9 +75,50 @@ export function SegnalazioneForm({ today }: { today: string }) {
                 hint="Il passeggero che firmerà l’incarico. Se viaggiavano in più persone indica il numero qui sotto."
                 error={e.passenger_name}
               />
+              {agencyContact ? (
+                <fieldset className="rounded-xl bg-[#F6F4EF] p-4">
+                  <legend className="sr-only">Contatti col passeggero</legend>
+                  <p className="text-[14.5px] font-semibold text-[#13283D]">Chi tiene i contatti col passeggero?</p>
+                  <div className="mt-3 space-y-2">
+                    {[
+                      { v: 'giv', label: 'Giustizia In Volo', help: 'Contattate voi il passeggero per documenti e incarico.' },
+                      { v: 'agenzia', label: 'La nostra agenzia', help: 'Scrivete a noi. Raccogliamo noi documenti e firma del passeggero.' },
+                    ].map((o) => (
+                      <label key={o.v} className="flex cursor-pointer items-start gap-3 text-[14px] leading-relaxed text-[#13283D]">
+                        <input
+                          type="radio"
+                          name="contact_via_agency"
+                          value={o.v}
+                          checked={o.v === 'agenzia' ? viaAgency : !viaAgency}
+                          onChange={() => setViaAgency(o.v === 'agenzia')}
+                          className="mt-1 h-4 w-4 accent-[#072534]"
+                        />
+                        <span>
+                          <span className="font-semibold">{o.label}</span>
+                          <span className="block text-[13.5px] text-[#4A5E73]">{o.help}</span>
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
+              ) : null}
               <div className="grid gap-4 sm:grid-cols-2">
-                <TextField label="Email del passeggero" name="passenger_email" type="email" autoComplete="off" error={e.passenger_email} />
-                <TextField label="Telefono del passeggero" name="passenger_phone" type="tel" autoComplete="off" error={e.passenger_phone} />
+                <TextField
+                  label="Email del passeggero"
+                  name="passenger_email"
+                  type="email"
+                  autoComplete="off"
+                  optional={viaAgency}
+                  error={e.passenger_email}
+                />
+                <TextField
+                  label="Telefono del passeggero"
+                  name="passenger_phone"
+                  type="tel"
+                  autoComplete="off"
+                  optional={viaAgency}
+                  error={e.passenger_phone}
+                />
               </div>
               <div className="max-w-[200px]">
                 <TextField
@@ -154,23 +197,34 @@ export function SegnalazioneForm({ today }: { today: string }) {
 
             <CheckField name="consenso" error={e.consenso}>
               Ho informato il passeggero che i suoi dati vengono trasmessi a Giustizia In Volo per la valutazione
-              del caso e che verrà ricontattato.
+              del caso{viaAgency ? '.' : ' e che verrà ricontattato.'}
             </CheckField>
 
             {!state.ok ? <Notice state={state} /> : null}
             {uploadError ? (
-              <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-[14px] font-medium text-red-700">
-                {uploadError}
-              </p>
-            ) : null}
-
-            <SubmitButton
-              pending={busy}
-              pendingLabel={uploading ? 'Caricamento dei documenti…' : 'Invio in corso…'}
-              className="w-full sm:w-auto"
-            >
-              Segnala la pratica
-            </SubmitButton>
+              <div role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-[14px] font-medium text-red-700">
+                <p>La pratica è stata salvata, ma questi documenti non sono stati caricati.</p>
+                <ul className="mt-2 list-disc space-y-1 pl-5">
+                  {uploadError.files.map((f) => (
+                    <li key={f}>{f}</li>
+                  ))}
+                </ul>
+                <Link
+                  href={`/agenzie/area/pratiche/${uploadError.caseId}?documenti=da-ricaricare`}
+                  className="mt-3 inline-block font-bold text-[#072534] underline underline-offset-2"
+                >
+                  Vai alla pratica per riprovare
+                </Link>
+              </div>
+            ) : (
+              <SubmitButton
+                pending={busy}
+                pendingLabel={uploading ? 'Caricamento dei documenti…' : 'Invio in corso…'}
+                className="w-full sm:w-auto"
+              >
+                Segnala la pratica
+              </SubmitButton>
+            )}
           </>
         )
       }}

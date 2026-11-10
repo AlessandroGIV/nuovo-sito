@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { PageTitle, Panel } from '@/components/portale/chrome'
 import { formatDate } from '@/components/portale/format'
 import { StatusBadge } from '@/components/portale/status'
-import { CLOSED_STATUSES } from '@/lib/portale/constants'
+import { TRIAGE_STATUSES, WORKING_STATUSES } from '@/lib/portale/constants'
 import { listAgencies, listCases } from '@/lib/portale/data'
 import { requireAdmin } from '@/lib/portale/session'
 
@@ -12,8 +12,10 @@ export default async function RiepilogoPage() {
   const [agencies, cases] = await Promise.all([listAgencies(), listCases()])
   const pending = agencies.filter((a) => a.status === 'pending')
   const active = agencies.filter((a) => a.status === 'active')
-  const fresh = cases.filter((c) => c.status === 'ricevuta')
-  const open = cases.filter((c) => !CLOSED_STATUSES.includes(c.status))
+  // Da valutare: ricevute, in valutazione o in attesa di documenti.
+  // In corso: solo quelle accettate, fino alla chiusura.
+  const fresh = cases.filter((c) => TRIAGE_STATUSES.includes(c.status))
+  const open = cases.filter((c) => WORKING_STATUSES.includes(c.status))
 
   // Quante pratiche ha portato ogni agenzia
   const perAgency = new Map<string, number>()
@@ -24,8 +26,8 @@ export default async function RiepilogoPage() {
     .slice(0, 8)
 
   const stats = [
-    { label: 'Pratiche da valutare', value: fresh.length, href: '/gestione/pratiche?stato=ricevuta' },
-    { label: 'Pratiche in corso', value: open.length, href: '/gestione/pratiche' },
+    { label: 'Pratiche da valutare', value: fresh.length, href: '/gestione/pratiche?stato=da_valutare' },
+    { label: 'Pratiche in corso', value: open.length, href: '/gestione/pratiche?stato=in_corso' },
     { label: 'Adesioni da valutare', value: pending.length, href: '/gestione/agenzie' },
     { label: 'Agenzie attive', value: active.length, href: '/gestione/agenzie' },
   ]
@@ -49,7 +51,7 @@ export default async function RiepilogoPage() {
       <div className="grid gap-5 lg:grid-cols-2">
         <Panel title="Pratiche da valutare">
           {fresh.length === 0 ? (
-            <p className="text-[14.5px] text-[#4A5E73]">Nessuna pratica nuova.</p>
+            <p className="text-[14.5px] text-[#4A5E73]">Nessuna pratica da valutare.</p>
           ) : (
             <ul className="divide-y divide-[#072534]/[0.06]">
               {fresh.slice(0, 8).map((c) => (

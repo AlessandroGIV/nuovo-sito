@@ -69,6 +69,10 @@ export const STATUS_STOP: Record<CaseStatus, number> = {
 }
 
 export const CLOSED_STATUSES: CaseStatus[] = ['risarcimento_ottenuto', 'non_procedibile', 'esito_negativo']
+/** Pratiche ancora da valutare: non accettate e non respinte. */
+export const TRIAGE_STATUSES: CaseStatus[] = ['ricevuta', 'in_valutazione', 'documenti_richiesti']
+/** Pratiche accettate e in lavorazione. */
+export const WORKING_STATUSES: CaseStatus[] = ['presa_in_carico', 'richiesta_inviata', 'azione_legale', 'recupero_forzoso']
 
 export const DISRUPTIONS = ['ritardo', 'cancellazione', 'negato_imbarco', 'coincidenza_persa', 'altro'] as const
 export type Disruption = (typeof DISRUPTIONS)[number]

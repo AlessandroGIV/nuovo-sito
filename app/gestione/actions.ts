@@ -190,6 +190,14 @@ export async function aggiornaStatoPratica(_prev: ActionResult, fd: FormData): P
     if (!pratica) return { ok: false, message: 'Pratica non trovata.' }
     const changed = pratica.status !== status
     if (!changed && !message) return { ok: false, message: 'Cambia lo stato oppure scrivi un messaggio.' }
+    // Per questi stati l'agenzia legge il motivo nella nota: senza messaggio non si salva
+    if (changed && !message && (status === 'documenti_richiesti' || status === 'non_procedibile')) {
+      return {
+        ok: false,
+        message: 'Scrivi all’agenzia cosa serve o perché la pratica non procede.',
+        fieldErrors: { message: 'Campo obbligatorio per questo stato' },
+      }
+    }
     if (changed) await updateCase(id, { status })
     await addEvent({
       case_id: id,

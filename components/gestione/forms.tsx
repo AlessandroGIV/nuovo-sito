@@ -155,7 +155,14 @@ export function AccessoAgenzia({
 export function AgenziaForm({
   agency,
 }: {
-  agency: { id: string; status: AgencyStatus; commission_enabled: boolean; commission_pct: number; note_interne: string | null }
+  agency: {
+    id: string
+    status: AgencyStatus
+    commission_enabled: boolean
+    commission_pct: number
+    agency_contact_enabled: boolean
+    note_interne: string | null
+  }
 }) {
   return (
     <ActionForm action={aggiornaAgenzia} className="space-y-4">
@@ -188,6 +195,17 @@ export function AgenziaForm({
                 error={state.fieldErrors?.commission_pct}
               />
             </div>
+          </div>
+
+          <div className="rounded-xl bg-[#F6F4EF] p-4">
+            <CheckField name="agency_contact_enabled" defaultChecked={agency.agency_contact_enabled}>
+              <span className="font-semibold">L’agenzia può tenere lei i contatti col passeggero</span>
+              <span className="mt-0.5 block text-[13.5px] text-[#4A5E73]">
+                Se è attivo, quando segnala una pratica l’agenzia sceglie se il passeggero lo contattate voi o se passa
+                tutto da lei. In quel caso email e telefono del passeggero sono facoltativi e documenti e firma li
+                raccoglie l’agenzia.
+              </span>
+            </CheckField>
           </div>
 
           <TextAreaField
@@ -259,6 +277,43 @@ export function NuovaAgenziaForm() {
           </>
         )
       }}
+    </ActionForm>
+  )
+}
+
+/**
+ * Decisione rapida su una pratica ancora da valutare. Il messaggio arriva
+ * all'agenzia insieme al nuovo stato. Per chiedere documenti o respingere
+ * è obbligatorio.
+ */
+export function DecisioneForm({ id }: { id: string }) {
+  return (
+    <ActionForm action={aggiornaStatoPratica} className="space-y-4">
+      {(state, pending) => (
+        <>
+          <input type="hidden" name="id" value={id} />
+          <TextAreaField
+            label="Messaggio per l’agenzia"
+            name="message"
+            optional
+            rows={3}
+            hint="Obbligatorio se chiedi documenti o respingi la pratica. L’agenzia lo legge insieme al nuovo stato."
+            error={state.fieldErrors?.message}
+          />
+          <Notice state={state} />
+          <div className="flex flex-wrap gap-2">
+            <SubmitButton pending={pending} name="status" value="presa_in_carico" variant="navy">
+              Accetta e prendi in carico
+            </SubmitButton>
+            <SubmitButton pending={pending} name="status" value="documenti_richiesti" variant="quiet">
+              Chiedi documenti
+            </SubmitButton>
+            <SubmitButton pending={pending} name="status" value="non_procedibile" variant="danger">
+              Non procedibile
+            </SubmitButton>
+          </div>
+        </>
+      )}
     </ActionForm>
   )
 }

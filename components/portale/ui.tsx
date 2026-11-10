@@ -20,6 +20,9 @@ export function useAction<T>(action: (prev: ActionResult<T>, fd: FormData) => Pr
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const fd = new FormData(e.currentTarget)
+    // Il pulsante premuto, se ha un nome, entra nei dati come in un invio normale
+    const submitter = (e.nativeEvent as SubmitEvent).submitter
+    if (submitter instanceof HTMLButtonElement && submitter.name) fd.set(submitter.name, submitter.value)
     startTransition(() => run(fd))
   }
   return { state, pending, onSubmit }
@@ -214,16 +217,22 @@ export function SubmitButton({
   pendingLabel,
   variant = 'primary',
   className,
+  name,
+  value,
 }: {
   pending: boolean
   children: React.ReactNode
   pendingLabel?: string
-  variant?: 'primary' | 'navy' | 'quiet'
+  variant?: 'primary' | 'navy' | 'quiet' | 'danger'
   className?: string
+  name?: string
+  value?: string
 }) {
   return (
     <button
       type="submit"
+      name={name}
+      value={value}
       disabled={pending}
       className={cn(
         'inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-[15px] font-bold transition-all',
@@ -232,6 +241,7 @@ export function SubmitButton({
         variant === 'primary' && 'bg-[#FFC300] text-[#072534] hover:bg-[#FFB800]',
         variant === 'navy' && 'bg-[#072534] text-white hover:bg-[#0E3A52]',
         variant === 'quiet' && 'border-[1.5px] border-[#DCE3EB] bg-white text-[#13283D] hover:border-[#072534]',
+        variant === 'danger' && 'border-[1.5px] border-red-200 bg-white text-red-700 hover:border-red-500',
         className,
       )}
     >
