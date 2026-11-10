@@ -898,6 +898,9 @@ export default function RequestForm() {
   const params = useSearchParams()
   const presetFrom = params.get("from") ?? ""
   const presetTo = params.get("to") ?? ""
+  // Codice agenzia, presente quando il passeggero arriva da /r/CODICE
+  const agencyCode = (params.get("ag") ?? "").trim().toUpperCase()
+  const [agency, setAgency] = useState<{ code: string; name: string } | null>(null)
   const { toast } = useToast()
 
   const [step, setStep] = useState(1)
@@ -925,6 +928,21 @@ export default function RequestForm() {
   useEffect(() => {
     emailjs.init(process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!)
   }, [])
+
+  // Verifica il codice agenzia e recupera il nome da mostrare al passeggero
+  useEffect(() => {
+    if (!/^[A-Z0-9]{4,16}$/.test(agencyCode)) return
+    let cancelled = false
+    fetch(`/api/agenzie/attribuzione?code=${agencyCode}`)
+      .then((r) => r.json())
+      .then((d: { ok?: boolean; code?: string; name?: string }) => {
+        if (!cancelled && d?.ok && d.code && d.name) setAgency({ code: d.code, name: d.name })
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [agencyCode])
 
   const refs = {
     from: useRef<HTMLInputElement>(null),
@@ -1069,7 +1087,9 @@ export default function RequestForm() {
         segment2_date: direct === "si" ? "" : leg2.date,
         segment2_airline: direct === "si" ? "" : leg2.airline,
         segment2_time: direct === "si" ? "" : leg2.schedDep,
-        description,
+        description: agency
+          ? `${description}\n\n[Pratica da agenzia ${agency.name}, codice ${agency.code}]`
+          : description,
         submission_date: new Date().toLocaleString("it-IT"),
         passengers: passengers.toString(),
       }
@@ -1081,6 +1101,29 @@ export default function RequestForm() {
       )
 
       if (result.status === 200) {
+        // Pratica arrivata dal link di un'agenzia: la salviamo perché l'agenzia
+        // possa seguirla. Un errore qui non blocca l'invio, l'email è già partita.
+        if (agency) {
+          try {
+            await fetch("/api/agenzie/pratica-link", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              keepalive: true,
+              signal: AbortSignal.timeout(8000),
+              body: JSON.stringify({
+                code: agency.code,
+                name, email, phone,
+                from, to, via, direct,
+                leg1,
+                leg2: direct === "no" ? leg2 : undefined,
+                description,
+                passengers,
+              }),
+            })
+          } catch (err) {
+            console.error("Salvataggio pratica agenzia non riuscito:", err)
+          }
+        }
         setSubmitted(true)
         try { window.scrollTo({ top: 0, behavior: "smooth" }) } catch {}
         toast({ title: "Richiesta inviata", description: "Ti ricontatteremo entro 24 ore." })
@@ -1134,6 +1177,16 @@ export default function RequestForm() {
       <div className="flex-1 flex flex-col min-w-0">
         {/* Mobile top progress */}
         {!submitted && <MobileProgress step={step} />}
+
+        {/* Richiesta aperta dal link di un'agenzia */}
+        {agency && !submitted && (
+          <div className="px-3 pt-3 md:px-8 md:pt-6 xl:px-12">
+            <p className="mx-auto w-full max-w-[680px] rounded-xl border border-[#FFC300]/30 bg-[#FFC300]/10 px-4 py-3 text-[13.5px] leading-relaxed text-white/85">
+              Stai aprendo la richiesta tramite <strong className="font-bold text-[#FFC300]">{agency.name}</strong>.
+              L&apos;agenzia potrà vedere lo stato di avanzamento della pratica, non i tuoi documenti.
+            </p>
+          </div>
+        )}
 
         {/* Main content */}
         <div className="flex-1 flex items-start md:items-center justify-center p-3 md:p-8 xl:p-12">
