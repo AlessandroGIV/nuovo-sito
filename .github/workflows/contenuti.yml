@@ -1,0 +1,27 @@
+name: Controllo contenuti
+
+on:
+  pull_request:
+    paths:
+      - "content/**"
+      - "lib/seo/**"
+      - "scripts/check-content.mjs"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Dipendenze del controllo
+        run: npm install --no-save --no-audit --no-fund gray-matter@4
+      - name: Articoli del blog
+        run: node scripts/check-content.mjs
+      - name: Dati delle tratte
+        run: node --experimental-strip-types scripts/check-tratte.mts

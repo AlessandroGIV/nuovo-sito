@@ -344,11 +344,11 @@ export default async function BlogPostPage({ params }: Props) {
                         Richiedi rimborso gratuito
                       </Link>
                       <Link
-                        href="/come-funziona"
+                        href="/faq"
                         className="rounded-xl border px-5 py-2.5 text-sm font-semibold text-white text-center"
                         style={{ borderColor: 'rgba(255,255,255,0.22)' }}
                       >
-                        Come funziona
+                        Domande frequenti
                       </Link>
                     </div>
                   </div>
@@ -400,7 +400,7 @@ export default async function BlogPostPage({ params }: Props) {
                   <div className="mt-1 text-lg font-bold" style={{ color: '#072534' }}>Studio Legale GIV</div>
                   <div className="text-sm" style={{ color: 'rgba(7,37,52,0.6)' }}>Team rimborsi, diritto aeronautico</div>
                   <p className="mt-3 text-[15px] leading-relaxed" style={{ color: 'rgba(7,37,52,0.8)' }}>
-                    Il team legale di Giustizia In Volo si occupa di diritto del trasporto aereo e contenzioso CE 261 dal 2018. Oltre 2.000 pratiche di rimborso gestite con successo.
+                    Gli articoli del blog si fondano sul Regolamento CE 261/2004 e sulla giurisprudenza citata nel testo. Hanno scopo informativo e non sostituiscono la valutazione del caso concreto.
                   </p>
                 </div>
               </div>
