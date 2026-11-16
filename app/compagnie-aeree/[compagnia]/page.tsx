@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { airlines, airlineSubpages, getAirline } from '@/lib/airlines-data'
+import { titoloTratta, tratteDelVettore } from '@/lib/seo/tratte'
 
 interface Props {
   params: Promise<{ compagnia: string }>
@@ -25,6 +26,8 @@ export default async function CompagniaPage({ params }: Props) {
   const { compagnia } = await params
   const airline = getAirline(compagnia)
   if (!airline) notFound()
+
+  const tratteVettore = tratteDelVettore(compagnia).slice(0, 30)
 
   const subpages = airlineSubpages.map((s) => ({
     slug: s.slug,
@@ -129,10 +132,36 @@ export default async function CompagniaPage({ params }: Props) {
         </div>
       </section>
 
+      {/* Tratte del vettore */}
+      {tratteVettore.length > 0 && (
+        <section className="container mx-auto px-4 py-14">
+          <h2 className="text-center text-2xl md:text-3xl font-extrabold text-[#FFC300] mb-8">
+            Ritardi e cancellazioni {airline.name} tratta per tratta
+          </h2>
+          <div className="flex flex-wrap justify-center gap-3 max-w-5xl mx-auto">
+            {tratteVettore.map((t) => (
+              <Link
+                key={t.slug}
+                href={`/voli/${t.vettoreSlug}/${t.slug}/ritardo`}
+                className="rounded-full border border-white/20 px-4 py-2 text-sm text-white/70 hover:text-white hover:border-white transition-colors"
+              >
+                {titoloTratta(t)}
+              </Link>
+            ))}
+            <Link
+              href="/voli"
+              className="rounded-full border border-[#FFC300]/50 px-4 py-2 text-sm text-[#FFC300] hover:border-[#FFC300] transition-colors"
+            >
+              Tutte le tratte
+            </Link>
+          </div>
+        </section>
+      )}
+
       {/* CTA finale */}
       <section className="container mx-auto px-4 py-14 text-center">
         <p className="text-white/85 text-lg mb-6">
-          Hai 3 anni di tempo per reclamare il tuo rimborso da {airline.name}. Non aspettare.
+          I termini per agire nei confronti di {airline.name} sono brevi. Invia la richiesta il prima possibile.
         </p>
         <Link
           href="/richiesta"

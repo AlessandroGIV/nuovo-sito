@@ -6,7 +6,8 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "eslint .",
-    "start": "next start"
+    "start": "next start",
+    "check": "node scripts/check-content.mjs && node --experimental-strip-types scripts/check-tratte.mts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.95.2",

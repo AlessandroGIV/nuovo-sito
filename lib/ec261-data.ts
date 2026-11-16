@@ -18,7 +18,7 @@ export const ec261Pages: Ec261Page[] = [
       { q: 'Da quante ore di ritardo ho diritto al risarcimento?', a: 'Il diritto al risarcimento scatta quando il ritardo all\'arrivo supera le 3 ore. Il ritardo viene misurato all\'atterraggio effettivo a destinazione, non alla partenza.' },
       { q: 'Quanto vale il risarcimento per ritardo aereo?', a: '€250 per voli fino a 1.500 km, €400 per voli intraeuropei oltre 1.500 km e tutti i voli tra 1.500 e 3.500 km, €600 per voli oltre 3.500 km.' },
       { q: 'Il ritardo era dovuto a maltempo: ho comunque diritto al rimborso?', a: 'Il maltempo straordinario è una "circostanza eccezionale" che esonera la compagnia. Tuttavia, deve essere provato. Spesso le compagnie usano questa motivazione in modo improprio.' },
-      { q: 'Entro quando devo fare la richiesta per un volo in ritardo?', a: 'In Italia hai 3 anni dalla data del volo per richiedere il risarcimento.' },
+      { q: 'Entro quando devo fare la richiesta per un volo in ritardo?', a: 'Il regolamento non fissa un termine. In Italia i giudici applicano termini brevi, di un anno o di sei mesi dall\'arrivo a seconda dell\'orientamento. Conviene inviare la richiesta il prima possibile dopo il volo.' },
     ],
   },
   {
@@ -44,7 +44,7 @@ export const ec261Pages: Ec261Page[] = [
       { q: 'Cosa succede se la compagnia nega l\'imbarco per overbooking?', a: 'Devi ricevere immediatamente: scelta tra volo alternativo e rimborso del biglietto, assistenza (pasti, bevande, comunicazioni), e risarcimento monetario da €250 a €600.' },
       { q: 'Ho accettato di cedere il posto in cambio di un voucher. Posso ancora richiedere il risarcimento?', a: 'Se hai accettato volontariamente di cedere il posto e hai firmato una rinuncia, potrebbe essere complicato. Contattaci prima di firmare qualsiasi documento.' },
       { q: 'La differenza tra "overbooking volontario" e "involontario" cambia i miei diritti?', a: 'L\'overbooking involontario dà sempre diritto al risarcimento. Se hai ceduto il posto volontariamente in cambio di benefici, i diritti dipendono dall\'accordo stipulato.' },
-      { q: 'Posso richiedere il risarcimento per overbooking anche anni dopo?', a: 'Sì, hai 3 anni dalla data del volo per presentare la richiesta.' },
+      { q: 'Posso richiedere il risarcimento per overbooking anche anni dopo?', a: 'Dipende da quanto tempo è passato. Il regolamento non fissa un termine. In Italia i giudici applicano termini brevi, di un anno o di sei mesi dall\'arrivo a seconda dell\'orientamento. Conviene inviare la richiesta il prima possibile dopo il volo.' },
     ],
   },
   {
@@ -109,7 +109,7 @@ export const ec261Pages: Ec261Page[] = [
       { q: 'Qual è la prima cosa da fare quando scopro che il volo è cancellato?', a: 'Non abbandonare l\'aeroporto senza aver chiesto alla compagnia una dichiarazione scritta della cancellazione e le opzioni disponibili: rimborso o volo alternativo.' },
       { q: 'Devo restare in aeroporto o posso andarmene?', a: 'Puoi andartene, ma prima assicurati di aver documentato la cancellazione (screenshot, comunicazioni) e di aver scelto formalmente tra rimborso e volo alternativo.' },
       { q: 'Ho prenotato hotel e trasporti per la destinazione: posso chiedere anche quei rimborsi?', a: 'Il Reg. CE 261/2004 copre il risarcimento per la cancellazione. Per i danni consequenziali (hotel, auto) devi valutare la tua polizza di assicurazione viaggio.' },
-      { q: 'Quanto tempo ho per presentare la richiesta dopo la cancellazione?', a: 'In Italia hai 3 anni dalla data del volo cancellato.' },
+      { q: 'Quanto tempo ho per presentare la richiesta dopo la cancellazione?', a: 'Il regolamento non fissa un termine. In Italia i giudici applicano termini brevi, di un anno o di sei mesi dall\'arrivo a seconda dell\'orientamento. Conviene inviare la richiesta il prima possibile dopo il volo.' },
     ],
   },
   {

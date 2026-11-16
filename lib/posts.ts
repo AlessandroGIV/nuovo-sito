@@ -20,6 +20,16 @@ export interface Post extends PostFrontmatter {
   content: string
 }
 
+/**
+ * Il frontmatter YAML può dare la data come stringa ("2026-05-12") o come Date (2026-05-12 senza apici).
+ * La si porta sempre a stringa AAAA-MM-GG, così ordinamento, sitemap e JSON-LD vedono lo stesso formato.
+ */
+function normalizza(data: Record<string, unknown>): PostFrontmatter {
+  const d = data.date
+  const date = d instanceof Date ? d.toISOString().slice(0, 10) : String(d ?? '')
+  return { ...(data as unknown as PostFrontmatter), date }
+}
+
 export function getAllPosts(): PostFrontmatter[] {
   if (!fs.existsSync(POSTS_DIR)) return []
 
@@ -28,7 +38,7 @@ export function getAllPosts(): PostFrontmatter[] {
   const posts = files.map((file) => {
     const raw = fs.readFileSync(path.join(POSTS_DIR, file), 'utf-8')
     const { data } = matter(raw)
-    return data as PostFrontmatter
+    return normalizza(data)
   })
 
   return posts.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
@@ -41,7 +51,7 @@ export function getPostBySlug(slug: string): Post | null {
   const raw = fs.readFileSync(filePath, 'utf-8')
   const { data, content } = matter(raw)
 
-  return { ...(data as PostFrontmatter), content }
+  return { ...normalizza(data), content }
 }
 
 export function getAllSlugs(): string[] {

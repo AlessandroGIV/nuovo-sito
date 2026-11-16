@@ -297,7 +297,7 @@ export function BlogList({ posts }: Props) {
               />
             </div>
             <div className="flex items-center gap-5 text-sm font-mono text-white/45">
-              <span><span className="text-white/85">{posts.length}</span> articoli</span>
+              <span><span className="text-white/85">{posts.length}</span> {posts.length === 1 ? 'articolo' : 'articoli'}</span>
             </div>
           </div>
 
@@ -342,7 +342,7 @@ export function BlogList({ posts }: Props) {
           <h2 className="text-xs font-mono uppercase tracking-[0.2em] text-white/50">
             {cat === 'tutti' ? 'tutti gli articoli' : CATEGORIES.find((c) => c.id === cat)?.label}
           </h2>
-          <span className="text-xs font-mono text-white/45">{rest.length} articoli</span>
+          <span className="text-xs font-mono text-white/45">{rest.length} {rest.length === 1 ? 'articolo' : 'articoli'}</span>
         </div>
 
         {rest.length > 0 ? (

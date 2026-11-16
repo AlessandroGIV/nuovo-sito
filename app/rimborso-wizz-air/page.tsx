@@ -71,7 +71,7 @@ export default function RimborsoWizzAirPage() {
       {/* CTA bottom */}
       <section className="container mx-auto px-4 py-14 text-center">
         <p className="text-white/85 text-lg mb-6">
-          Hai 3 anni di tempo per reclamare il tuo rimborso. Non aspettare.
+          I termini per agire sono brevi. Invia la richiesta il prima possibile.
         </p>
         <Link
           href="/richiesta"
