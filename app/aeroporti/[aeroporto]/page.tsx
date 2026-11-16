@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { airports, getAirport } from '@/lib/airports-data'
+import { titoloTratta, tratteDaAeroporto } from '@/lib/seo/tratte'
 
 interface Props {
   params: Promise<{ aeroporto: string }>
@@ -27,6 +28,7 @@ export default async function AeroportoPage({ params }: Props) {
   if (!airport) notFound()
 
   const isItalian = airport.paese === 'Italia'
+  const tratteAeroporto = tratteDaAeroporto(airport.code).slice(0, 30)
 
   return (
     <main className="bg-[#072534] text-white">
@@ -116,6 +118,26 @@ export default async function AeroportoPage({ params }: Props) {
           ))}
         </div>
       </section>
+
+      {/* Tratte da e per l'aeroporto */}
+      {tratteAeroporto.length > 0 && (
+        <section className="container mx-auto px-4 py-14">
+          <h2 className="text-center text-2xl md:text-3xl font-extrabold text-[#FFC300] mb-8">
+            Ritardi e cancellazioni sulle tratte da e per {airport.citta}
+          </h2>
+          <div className="flex flex-wrap justify-center gap-3 max-w-5xl mx-auto">
+            {tratteAeroporto.map((t) => (
+              <Link
+                key={`${t.vettoreSlug}-${t.slug}`}
+                href={`/voli/${t.vettoreSlug}/${t.slug}/ritardo`}
+                className="rounded-full border border-white/20 px-4 py-2 text-sm text-white/70 hover:text-white hover:border-white transition-colors"
+              >
+                {t.vettoreNome} {titoloTratta(t)}
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* FAQ */}
       <section className="bg-white/5">

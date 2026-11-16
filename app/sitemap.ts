@@ -3,6 +3,8 @@ import { getAllPosts } from '@/lib/posts'
 import { airlines, airlineSubpages } from '@/lib/airlines-data'
 import { airports } from '@/lib/airports-data'
 import { ec261Pages } from '@/lib/ec261-data'
+import { DISSERVIZI } from '@/lib/seo/disservizi'
+import { tratte, VERIFICA_TRATTE } from '@/lib/seo/tratte'
 
 const BASE_URL = 'https://giustiziainvolo.it'
 
@@ -50,6 +52,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
     changeFrequency: 'monthly',
     priority: 0.8,
   }))
+
+  // Pagine vettore + tratta + disservizio (lib/seo). lastModified segue la data di verifica del lotto.
+  const tratteEntries: MetadataRoute.Sitemap = [
+    {
+      url: `${BASE_URL}/voli`,
+      lastModified: new Date(VERIFICA_TRATTE.data),
+      changeFrequency: 'weekly',
+      priority: 0.7,
+    },
+    ...tratte.flatMap((t) =>
+      DISSERVIZI.map((d) => ({
+        url: `${BASE_URL}/voli/${t.vettoreSlug}/${t.slug}/${d.slug}`,
+        lastModified: new Date(VERIFICA_TRATTE.data),
+        changeFrequency: 'monthly' as const,
+        priority: 0.6,
+      }))
+    ),
+  ]
 
   return [
     // Pagine principali
@@ -178,5 +198,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...airlineEntries,
     ...airportEntries,
     ...ec261Entries,
+    ...tratteEntries,
   ]
 }
