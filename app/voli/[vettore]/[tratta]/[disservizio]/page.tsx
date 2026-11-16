@@ -217,8 +217,10 @@ export default async function PaginaTratta({ params }: Props) {
             })}
           </ol>
           <p className="mt-4 text-xs text-white/55 leading-relaxed">
-            Tratta riscontrata nell&apos;operativo pubblicato del vettore il {dataIt(VERIFICA_TRATTE.data)}. I collegamenti
-            cambiano a ogni stagione. Questa pagina ha scopo informativo e non sostituisce la valutazione del caso concreto.
+            {t.stagionale
+              ? `Collegamento stagionale, con ultimi voli riscontrati a ${t.stagionale}.`
+              : `Tratta riscontrata nell'operativo del vettore il ${dataIt(VERIFICA_TRATTE.data)}.`}{' '}
+            I collegamenti cambiano a ogni stagione. Questa pagina ha scopo informativo e non sostituisce la valutazione del caso concreto.
           </p>
         </div>
       </section>

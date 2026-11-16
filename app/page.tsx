@@ -417,7 +417,7 @@ export default async function HomePage() {
                 },
                 {
                   q: "Posso reclamare per voli di anni fa?",
-                  a: "Sì. Il diritto si prescrive in 3 anni in Italia. Verifichiamo subito se il tuo caso è ancora valido.",
+                  a: "Dipende da quanto tempo è passato. Il regolamento non fissa un termine e i giudici italiani applicano termini brevi, di un anno o di sei mesi dall'arrivo a seconda dell'orientamento. Scrivici e verifichiamo se il tuo caso è ancora azionabile.",
                 },
               ].map((f, i) => (
                 <details

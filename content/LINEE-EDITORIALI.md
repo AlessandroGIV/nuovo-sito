@@ -34,7 +34,7 @@ Regole per chi scrive o aggiorna contenuti del sito, persone e agenti automatici
 
 ## 4. Pagine tratta
 
-- Le tratte stanno in `lib/seo/tratte.ts`. Si aggiunge una tratta solo dopo averla riscontrata su una fonte pubblica datata (operativo del vettore, sito dell'aeroporto, elenco destinazioni). Niente tratte a memoria, niente stagionali fuori stagione.
+- Le tratte stanno in `lib/seo/tratte.ts`. Si aggiunge una tratta solo dopo averla riscontrata su una fonte pubblica datata. La fonte di riferimento è la pagina della rotta su flightera.net (voli settimanali e vettori), in mancanza l'operativo del vettore o il sito dell'aeroporto. Niente tratte a memoria. Un collegamento stagionale si tiene solo se operato nell'ultima stagione e va registrato in `STAGIONALI`.
 - Il testo giuridico sta in `lib/seo/disservizi.ts`. Ogni paragrafo porta le sue fonti.
 - Le tratte a meno di 40 km dalla soglia dei 1.500 km non si pubblicano, perché l'importo non sarebbe certo. La build le rifiuta.
 - Quando si ricontrolla il lotto si aggiorna `VERIFICA_TRATTE.data`.

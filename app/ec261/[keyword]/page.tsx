@@ -150,7 +150,7 @@ export default async function Ec261KeywordPage({ params }: Props) {
             Hai subito un disservizio aereo?
           </h2>
           <p className="text-white/85 mb-6">
-            Hai 3 anni di tempo. Non aspettare: verifica subito se hai diritto al rimborso.
+            I termini per agire sono brevi. Verifica subito se hai diritto al rimborso.
           </p>
           <Link
             href="/richiesta"

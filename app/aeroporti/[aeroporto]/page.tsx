@@ -155,7 +155,7 @@ export default async function AeroportoPage({ params }: Props) {
               },
               {
                 q: `Quanto tempo ho per presentare la richiesta di rimborso per un volo da ${airport.citta}?`,
-                a: `In Italia hai 3 anni dalla data del volo per richiedere il risarcimento. Non aspettare: più tempo passa, più è difficile raccogliere le prove.`,
+                a: `Il regolamento non fissa un termine. In Italia i giudici applicano termini brevi, di un anno o di sei mesi dall'arrivo a seconda dell'orientamento. Conviene inviare la richiesta il prima possibile dopo il volo.`,
               },
               {
                 q: `Cosa devo conservare come prova del disservizio subito all'${airport.code}?`,

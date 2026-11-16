@@ -53,7 +53,7 @@ export const translations = {
     faqQuestion5: 'Quanto dura il processo?',
     faqAnswer5: 'I tempi variano: con una diffida stragiudiziale possono bastare poche settimane. Se si arriva in tribunale, il processo può durare alcuni mesi. Ti terremo sempre aggiornato.',
     faqQuestion6: 'Posso farmi seguire anche se il volo è di mesi fa?',
-    faqAnswer6: 'Sì, puoi richiedere il risarcimento fino a 2 anni dalla data del volo.',
+    faqAnswer6: 'Dipende da quanto tempo è passato. Il regolamento non fissa un termine. In Italia i giudici applicano termini brevi, di un anno o di sei mesi dall\'arrivo a seconda dell\'orientamento. Conviene inviare la richiesta il prima possibile dopo il volo.',
     
     // Come Funziona page
     howItWorksPageTitle: 'Come Funziona',
@@ -326,7 +326,7 @@ export const translations = {
     faqQuestion5: 'How long does the process take?',
     faqAnswer5: 'The timeframe varies: with an out-of-court demand letter, it can take just a few weeks. If it goes to court, the process can take several months. We will always keep you updated.',
     faqQuestion6: 'Can I still claim if my flight was months ago?',
-    faqAnswer6: 'Yes, you can claim compensation up to 2 years from the flight date.',
+    faqAnswer6: 'It depends on how much time has passed. The regulation sets no time limit. Italian courts apply short limitation periods, one year or six months from arrival depending on the approach, so send your claim as soon as possible after the flight.',
     
     // Come Funziona page
     howItWorksPageTitle: 'How It Works',

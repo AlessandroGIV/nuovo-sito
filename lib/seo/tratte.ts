@@ -4,14 +4,15 @@ import { aeroporto, distanzaKm, type AeroportoTratta } from './aeroporti'
 /**
  * Lotto di tratte per le pagine /voli/[vettore]/[tratta]/[disservizio].
  *
- * Ogni tratta è stata riscontrata sull'elenco "Airlines and destinations" della pagina Wikipedia
- * (edizione inglese) dell'aeroporto di partenza, come collegamento non stagionale del vettore.
+ * Ogni tratta è stata riscontrata due volte: sull'elenco "Airlines and destinations" della pagina
+ * Wikipedia (EN) dell'aeroporto di partenza e sulla pagina della rotta di flightera.net, che mostra
+ * i voli settimanali e i vettori che la operano. Le tratte non confermate da Flightera sono state tolte.
  * Non si aggiungono tratte a memoria. Chi aggiunge una tratta indica fonte e data della verifica.
  * L'operativo cambia a ogni stagione IATA, quindi l'audit settimanale ricontrolla il lotto.
  */
 export const VERIFICA_TRATTE = {
   data: '2026-11-16',
-  fonte: 'Elenchi "Airlines and destinations" delle pagine Wikipedia (EN) degli aeroporti di partenza',
+  fonte: 'Pagine rotta di flightera.net e elenchi destinazioni delle pagine Wikipedia (EN) degli aeroporti di partenza',
 } as const
 
 /** vettore (slug di lib/airlines-data) → aeroporto di partenza → destinazioni */
@@ -28,9 +29,9 @@ const LOTTO: Record<string, Record<string, string[]>> = {
   },
   easyjet: {
     BRI: ['MXP', 'LGW'],
-    FCO: ['LGW', 'ORY', 'BER', 'NCE'],
+    FCO: ['LGW', 'ORY', 'NCE'],
     MXP: ['BCN', 'LGW', 'AMS', 'CDG', 'LIS', 'CTA', 'PMO', 'NAP', 'BRI'],
-    NAP: ['LGW', 'ORY', 'BER', 'MXP', 'BCN'],
+    NAP: ['LGW', 'ORY', 'MXP', 'BCN'],
     CTA: ['MXP', 'NAP', 'LGW'],
     VCE: ['LGW', 'CDG', 'ORY', 'AMS'],
   },
@@ -46,7 +47,7 @@ const LOTTO: Record<string, Record<string, string[]>> = {
   },
   vueling: {
     BRI: ['BCN'],
-    FCO: ['BCN', 'BIO', 'AGP'],
+    FCO: ['BCN', 'BIO'],
     MXP: ['BCN'],
     NAP: ['BCN'],
     CTA: ['BCN'],
@@ -54,9 +55,8 @@ const LOTTO: Record<string, Record<string, string[]>> = {
     VCE: ['BCN'],
   },
   volotea: {
-    NAP: ['TRN', 'VCE', 'GOA', 'PMO'],
+    NAP: ['TRN', 'GOA'],
     CTA: ['VRN'],
-    VCE: ['NAP'],
   },
   'ita-airways': {
     BRI: ['LIN', 'FCO'],
@@ -66,6 +66,14 @@ const LOTTO: Record<string, Record<string, string[]>> = {
     BLQ: ['FCO'],
     VCE: ['FCO'],
   },
+}
+
+/**
+ * Collegamenti stagionali tenuti nel lotto perché operati di recente. Chiave "vettore|DA-A".
+ * Il valore è l'ultimo periodo in cui Flightera riporta voli.
+ */
+const STAGIONALI: Record<string, string> = {
+  'ryanair|BRI-AGP': 'agosto 2026',
 }
 
 export type Fascia = 'a' | 'b'
@@ -87,6 +95,8 @@ export interface Tratta {
   /** Partenza e arrivo entrambi in aeroporti dell'Unione */
   intraUe: boolean
   nazionale: boolean
+  /** Se stagionale, ultimo periodo con voli riscontrati (es. "agosto 2026") */
+  stagionale?: string
 }
 
 /** Margine di sicurezza attorno alla soglia dei 1.500 km: le tratte troppo vicine non si pubblicano. */
@@ -130,6 +140,7 @@ function costruisci(): Tratta[] {
           oreAssistenza: fascia === 'a' ? 2 : 3,
           intraUe: da.ue && a.ue,
           nazionale: da.paese === a.paese,
+          stagionale: STAGIONALI[`${vettoreSlug}|${daIata}-${aIata}`],
         })
       }
     }

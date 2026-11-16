@@ -86,7 +86,7 @@ export const airlineSubpages: AirlineSubpage[] = [
       },
       {
         q: `Entro quanto tempo posso richiedere il risarcimento a ${n}?`,
-        a: `In Italia hai fino a 3 anni dalla data del volo per presentare la richiesta.`,
+        a: `Il regolamento non fissa un termine. In Italia i giudici applicano termini brevi, di un anno o di sei mesi dall'arrivo a seconda dell'orientamento. Conviene inviare la richiesta il prima possibile dopo il volo.`,
       },
       {
         q: `${n} si rifiuta di pagare. Cosa posso fare?`,
@@ -150,7 +150,7 @@ export const airlineSubpages: AirlineSubpage[] = [
       },
       {
         q: `Quanto tempo ho per richiedere il risarcimento per overbooking ${n}?`,
-        a: `Hai 3 anni dalla data del volo per presentare la richiesta.`,
+        a: `Il regolamento non fissa un termine. In Italia i giudici applicano termini brevi, di un anno o di sei mesi dall'arrivo a seconda dell'orientamento. Conviene inviare la richiesta il prima possibile dopo il volo.`,
       },
     ],
   },
@@ -206,7 +206,7 @@ export const airlineSubpages: AirlineSubpage[] = [
       },
       {
         q: `Posso richiedere il risarcimento per un volo ${n} di anni fa?`,
-        a: `In Italia il termine di prescrizione è di 3 anni dalla data del volo.`,
+        a: `Il regolamento non fissa un termine. In Italia i giudici applicano termini brevi, di un anno o di sei mesi dall'arrivo a seconda dell'orientamento. Conviene inviare la richiesta il prima possibile dopo il volo.`,
       },
       {
         q: `Quanto costa affidarsi a Giustizia In Volo per un reclamo contro ${n}?`,
