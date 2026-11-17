@@ -4,7 +4,7 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: 'Rimborso Volo KLM Cancellato | Fino a €600 – Giustizia In Volo',
   description:
-    'KLM ha cancellato o ritardato il tuo volo? Hai diritto a un indennizzo fino a €600. Nessun costo se non otteniamo nulla.',
+    'KLM ha cancellato o ritardato il tuo volo? Puoi avere diritto fino a 600 € (art. 7 Reg. CE 261/2004). Nessun costo se non otteniamo nulla.',
 }
 
 const steps = [
@@ -34,7 +34,7 @@ export default function RimborsoKlmPage() {
       {/* Hero */}
       <section className="container mx-auto px-4 py-16 text-center">
         <h1 className="text-[#FFC300] text-3xl md:text-5xl font-extrabold leading-tight max-w-3xl mx-auto">
-          Il tuo volo KLM è stato cancellato o in ritardo? Hai diritto fino a €600.
+          Il tuo volo KLM è stato cancellato o in ritardo? Puoi avere diritto fino a 600 € (art. 7 Reg. CE 261/2004).
         </h1>
         <p className="mt-5 text-white/85 max-w-2xl mx-auto text-lg">
           Il Regolamento CE 261/2004 obbliga KLM a risarcirti. Noi ci occupiamo di tutto:

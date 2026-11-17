@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!airline) return {}
   return {
     title: `Rimborso Volo ${airline.name} | Fino a €600 – Giustizia In Volo`,
-    description: `Volo ${airline.name} cancellato, in ritardo o overbooking? Hai diritto fino a €600 ai sensi del Reg. CE 261/2004. Nessun anticipo: paghiamo solo se vinciamo.`,
+    description: `Volo ${airline.name} cancellato, in ritardo o con imbarco negato? Puoi avere diritto fino a 600 € (art. 7 Reg. CE 261/2004). Nessun costo anticipato.`,
   }
 }
 
