@@ -114,15 +114,15 @@ export const ec261Pages: Ec261Page[] = [
   },
   {
     slug: 'ritardo-aereo-3-ore',
-    title: 'Ritardo Aereo di 3 Ore: Rimborso Garantito | Giustizia In Volo',
+    title: 'Ritardo aereo di 3 ore, quando spetta la compensazione | Giustizia In Volo',
     metaDescription: 'Il tuo volo è arrivato con 3 ore di ritardo? Hai diritto al risarcimento. Scopri come ottenerlo gratuitamente.',
     h1: 'Ritardo aereo di 3 ore: hai diritto al risarcimento',
-    intro: 'Tre ore di ritardo all\'arrivo è la soglia magica del Reg. CE 261/2004: superata questa, la compagnia aerea è obbligata a pagarti un risarcimento in denaro. Non basta offrire un pasto o un voucher: hai diritto a compensazione monetaria.',
+    intro: 'Tre ore di ritardo all\'arrivo è la soglia magica del Reg. CE 261/2004: superata questa, puoi avere diritto a una compensazione in denaro, salvo circostanze eccezionali (art. 5 par. 3). Un pasto non la sostituisce, e il pagamento in buoni di viaggio richiede il tuo accordo firmato (art. 7 par. 3).',
     faqs: [
       { q: 'Come si calcola esattamente se il ritardo ha superato le 3 ore?', a: 'Si calcola dall\'orario programmato di apertura delle porte all\'arrivo rispetto all\'orario reale. Anche un ritardo di 3 ore e 1 minuto dà diritto al risarcimento.' },
       { q: 'Il mio volo è partito in orario ma è arrivato con 3 ore di ritardo: ho diritto al rimborso?', a: 'Sì, quello che conta è il ritardo all\'arrivo, non alla partenza.' },
       { q: 'La compagnia mi ha già rimborsato il biglietto: ho ancora diritto al risarcimento?', a: 'Il rimborso del biglietto e il risarcimento per il ritardo sono due diritti separati e cumulabili.' },
-      { q: 'Posso richiedere il risarcimento da solo o devo usare un servizio come Giustizia In Volo?', a: 'Puoi provarci da solo, ma le compagnie spesso ignorano o rifiutano le richieste individuali. Giustizia In Volo ha un tasso di successo molto più alto, senza costi anticipati.' },
+      { q: 'Posso richiedere il risarcimento da solo o devo usare un servizio come Giustizia In Volo?', a: 'Puoi provarci da solo, ma le compagnie spesso ignorano o rifiutano le richieste individuali. Giustizia In Volo valuta il caso e segue la richiesta senza costi anticipati.' },
     ],
   },
   {

@@ -63,9 +63,6 @@ export function SiteFooter() {
               <Link href="/">{t('home')}</Link>
             </li>
             <li>
-              <Link href="/come-funziona">{t('howItWorks')}</Link>
-            </li>
-            <li>
               <Link href="/chi-siamo">{t('whoWeAre')}</Link>
             </li>
             <li>

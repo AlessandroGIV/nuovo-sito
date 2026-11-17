@@ -15,16 +15,23 @@ export const VERIFICA_TRATTE = {
   fonte: 'Pagine rotta di flightera.net e elenchi destinazioni delle pagine Wikipedia (EN) degli aeroporti di partenza',
 } as const
 
-/** vettore (slug di lib/airlines-data) → aeroporto di partenza → destinazioni */
+/**
+ * vettore (slug di lib/airlines-data) → aeroporto di partenza → destinazioni
+ *
+ * 17.11.2026  ricontrollate tutte le tratte in partenza da BRI e BLQ e aggiunte 14 tratte Ryanair
+ *             (BRI → CTA, PMO, CAG, PSA, VRN, GOA, VIE, ATH; BLQ → BDS, SUF, OLB, LIS, VIE, ATH) e Wizz Air BLQ → OTP,
+ *             tutte nell'elenco non stagionale delle pagine Wikipedia (EN) degli aeroporti di Bari e Bologna.
+ *             Flightera non era leggibile in automatico (errore del sito), quindi manca il secondo riscontro.
+ */
 const LOTTO: Record<string, Record<string, string[]>> = {
   ryanair: {
-    BRI: ['AGP', 'MAD', 'STN', 'CRL', 'BGY', 'MXP', 'BLQ', 'FCO', 'TRN', 'VCE'],
+    BRI: ['AGP', 'MAD', 'STN', 'CRL', 'BGY', 'MXP', 'BLQ', 'FCO', 'TRN', 'VCE', 'CTA', 'PMO', 'CAG', 'PSA', 'VRN', 'GOA', 'VIE', 'ATH'],
     FCO: ['BCN', 'MAD', 'AGP', 'SVQ', 'LIS', 'DUB', 'CTA', 'PMO', 'BRI', 'TFS'],
     MXP: ['BCN', 'MAD', 'CTA', 'PMO', 'BRI', 'NAP', 'STN', 'DUB'],
     BGY: ['BCN', 'MAD', 'AGP', 'LIS', 'STN', 'DUB', 'CRL', 'CTA', 'PMO', 'BRI', 'NAP', 'CAG'],
     NAP: ['BCN', 'STN', 'DUB', 'BGY', 'MXP', 'VCE', 'CTA', 'PMO'],
     CTA: ['FCO', 'MXP', 'BGY', 'BLQ', 'VCE', 'TRN', 'PSA', 'NAP', 'STN'],
-    BLQ: ['BCN', 'MAD', 'AGP', 'STN', 'DUB', 'CTA', 'PMO', 'BRI', 'CAG'],
+    BLQ: ['BCN', 'MAD', 'AGP', 'STN', 'DUB', 'CTA', 'PMO', 'BRI', 'CAG', 'BDS', 'SUF', 'OLB', 'LIS', 'VIE', 'ATH'],
     VCE: ['BCN', 'STN', 'DUB', 'CTA', 'PMO', 'NAP'],
   },
   easyjet: {
@@ -42,7 +49,7 @@ const LOTTO: Record<string, Record<string, string[]>> = {
     BGY: ['OTP', 'TIA'],
     NAP: ['BUD', 'TIA'],
     CTA: ['BLQ', 'MXP', 'VCE'],
-    BLQ: ['CTA', 'TIA'],
+    BLQ: ['CTA', 'TIA', 'OTP'],
     VCE: ['CTA', 'NAP', 'LTN'],
   },
   vueling: {

@@ -18,7 +18,7 @@ const AW_ID = 'AW-17322484652'
 export const metadata: Metadata = {
   title: 'Rimborso Volo Cancellato o in Ritardo | Fino a €600 – Giustizia In Volo',
   description:
-    'Volo cancellato o in ritardo di oltre 3 ore? Hai diritto fino a €600. Nessun anticipo, paghiamo solo se vinciamo. Reg. CE 261/2004.',
+    'Volo cancellato o in ritardo di oltre 3 ore? Puoi avere diritto fino a 600 € (art. 7 Reg. CE 261/2004). Nessun anticipo, paghiamo solo se vinciamo.',
   icons: {
     icon: '/favicon.ico',
     apple: '/apple-touch-icon.png',
