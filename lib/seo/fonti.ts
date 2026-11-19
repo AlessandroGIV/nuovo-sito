@@ -113,6 +113,41 @@ export const fonti = {
     stato: 'lexroom',
     verificataIl: '2026-11-08',
   },
+  austrianC826: {
+    id: 'austrianC826',
+    tipo: 'cgue',
+    estremi: 'Corte di giustizia UE, Quarta Sezione, 22 aprile 2021, causa C-826/19, Austrian Airlines',
+    stato: 'lexroom',
+    verificataIl: '2026-11-06',
+  },
+  cass17096: {
+    id: 'cass17096',
+    tipo: 'cassazione',
+    estremi: 'Corte di cassazione, sez. III, ordinanza 31 maggio 2026 n. 17096',
+    stato: 'lexroom',
+    verificataIl: '2026-11-08',
+  },
+  tribCivitavecchia880: {
+    id: 'tribCivitavecchia880',
+    tipo: 'merito',
+    estremi: 'Tribunale di Civitavecchia, 30 maggio 2024 n. 880',
+    stato: 'lexroom',
+    verificataIl: '2026-11-06',
+  },
+  tribCatania828: {
+    id: 'tribCatania828',
+    tipo: 'merito',
+    estremi: 'Tribunale di Catania, sez. IV, 17 febbraio 2026 n. 828',
+    stato: 'lexroom',
+    verificataIl: '2026-11-08',
+  },
+  tribCatania957: {
+    id: 'tribCatania957',
+    tipo: 'merito',
+    estremi: 'Tribunale di Catania, 7 febbraio 2025 n. 957',
+    stato: 'lexroom',
+    verificataIl: '2026-11-06',
+  },
 } as const satisfies Record<string, Fonte>
 
 export type FonteId = keyof typeof fonti
