@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: 'Agenzie di viaggio | Assistenza ai clienti per voli in ritardo o cancellati – Giustizia In Volo',
   description:
     'Un servizio in più per i clienti della tua agenzia. Segnali il volo in ritardo o cancellato, il nostro team legale segue la richiesta di compensazione e tu vedi lo stato della pratica.',
-  alternates: { canonical: 'https://giustiziainvolo.it/agenzie' },
+  alternates: { canonical: 'https://www.giustiziainvolo.it/agenzie' },
 }
 
 const STEPS = [

@@ -6,7 +6,7 @@ import { ChevronRight, ArrowLeft, ArrowRight, Clock, Calendar, Tag, BadgeCheck, 
 import { getPostBySlug, getAllPosts, getAllSlugs } from '@/lib/posts'
 import { TocSidebar, type TocItem } from '../_components/toc'
 
-const BASE_URL = 'https://giustiziainvolo.it'
+import { SITE_URL as BASE_URL } from '@/lib/site'
 
 const CAT_LABEL: Record<string, string> = {
   guide:     'Guide pratiche',

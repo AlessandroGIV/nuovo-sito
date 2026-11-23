@@ -6,7 +6,7 @@ import { ec261Pages } from '@/lib/ec261-data'
 import { DISSERVIZI } from '@/lib/seo/disservizi'
 import { tratte, VERIFICA_TRATTE } from '@/lib/seo/tratte'
 
-const BASE_URL = 'https://giustiziainvolo.it'
+import { SITE_URL as BASE_URL } from '@/lib/site'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const posts = getAllPosts()
