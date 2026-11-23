@@ -4,7 +4,7 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: 'Rimborso Volo Wizz Air | Ritardo o Cancellazione – Fino a €600 – Giustizia In Volo',
   description:
-    'Wizz Air ha cancellato o ritardato il tuo volo? Hai diritto fino a €600. No win, no fee.',
+    'Wizz Air ha cancellato o ritardato il tuo volo? Puoi avere diritto fino a 600 € (art. 7 Reg. CE 261/2004). No win, no fee.',
 }
 
 const steps = [
@@ -34,7 +34,7 @@ export default function RimborsoWizzAirPage() {
       {/* Hero */}
       <section className="container mx-auto px-4 py-16 text-center">
         <h1 className="text-[#FFC300] text-3xl md:text-5xl font-extrabold leading-tight max-w-3xl mx-auto">
-          Il tuo volo Wizz Air è stato cancellato o in ritardo? Hai diritto fino a €600.
+          Il tuo volo Wizz Air è stato cancellato o in ritardo? Puoi avere diritto fino a 600 € (art. 7 Reg. CE 261/2004).
         </h1>
         <p className="mt-5 text-white/85 max-w-2xl mx-auto text-lg">
           Il Regolamento CE 261/2004 obbliga Wizz Air a risarcirti. Noi ci occupiamo di tutto:

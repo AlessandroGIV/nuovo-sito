@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { DISSERVIZI } from '@/lib/seo/disservizi'
 import { titoloTratta, tratte } from '@/lib/seo/tratte'
 
-const BASE_URL = 'https://giustiziainvolo.it'
+import { SITE_URL as BASE_URL } from '@/lib/site'
 
 export const metadata: Metadata = {
   title: 'Ritardi e cancellazioni per compagnia e tratta | Giustizia In Volo',

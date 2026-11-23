@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!airport) return {}
   return {
     title: `Volo in Ritardo da ${airport.citta} (${airport.code}) | Rimborso Fino a €600 – Giustizia In Volo`,
-    description: `Volo cancellato o in ritardo dall'${airport.name}? Hai diritto fino a €600 ai sensi del Reg. CE 261/2004. Nessun anticipo: Giustizia In Volo ti rimborsa.`,
+    description: `Volo cancellato o in ritardo dall'${airport.name}? Puoi avere diritto fino a 600 € (art. 7 Reg. CE 261/2004). Nessun costo anticipato.`,
   }
 }
 
@@ -37,8 +37,6 @@ export default async function AeroportoPage({ params }: Props) {
         <nav className="text-sm text-white/50 flex gap-2 flex-wrap">
           <Link href="/" className="hover:text-white transition-colors">Home</Link>
           <span>/</span>
-          <Link href="/aeroporti" className="hover:text-white transition-colors">Aeroporti</Link>
-          <span>/</span>
           <span className="text-white/80">{airport.citta} ({airport.code})</span>
         </nav>
       </div>
@@ -50,7 +48,7 @@ export default async function AeroportoPage({ params }: Props) {
         </p>
         <h1 className="text-[#FFC300] text-3xl md:text-5xl font-extrabold leading-tight max-w-3xl mx-auto">
           Volo in ritardo o cancellato da {airport.citta}?
-          <br />Hai diritto fino a €600.
+          <br />Puoi avere diritto fino a 600 € (art. 7 Reg. CE 261/2004).
         </h1>
         <p className="mt-5 text-white/85 max-w-2xl mx-auto text-lg">
           {isItalian

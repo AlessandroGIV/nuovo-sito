@@ -52,6 +52,13 @@ const euro = (n: number) => `${n} euro`
 /** Migliaia con il punto anche sotto 10.000 (toLocaleString in italiano non raggruppa le quattro cifre). */
 export const migliaia = (n: number) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '.')
 const km = (n: number) => `${migliaia(n)} km`
+
+/** Meta description entro 160 caratteri: si usa la versione lunga se ci sta, altrimenti quella corta. */
+function entro160(lunga: string, corta: string): string {
+  if (lunga.length <= 160) return lunga
+  if (corta.length <= 160) return corta
+  throw new Error(`[seo] description oltre 160 caratteri anche nella versione corta: ${corta}`)
+}
 const lettera = (t: Tratta) => (t.fascia === 'a' ? 'a)' : 'b)')
 
 function descrizioneFascia(t: Tratta): string {
@@ -143,7 +150,10 @@ function ritardo(t: Tratta): ContenutoDisservizio {
     hrefGuida: '/ec261/ritardo-aereo',
     h1: `Ritardo volo ${t.vettoreNome} ${tr}, quando spetta la compensazione`,
     title: `Ritardo ${t.vettoreNome} ${tr} | Compensazione di ${t.importo} € – Giustizia In Volo`,
-    description: `Volo ${t.vettoreNome} ${tr} arrivato con tre ore o più di ritardo? Su questa tratta di circa ${km(t.km)} la compensazione del Reg. CE 261/2004 è di ${t.importo} € a passeggero.`,
+    description: entro160(
+      `Volo ${t.vettoreNome} ${tr} arrivato con tre ore o più di ritardo? Su questa tratta di circa ${km(t.km)} la compensazione del Reg. CE 261/2004 è di ${t.importo} € a passeggero.`,
+      `Ritardo di 3 ore o più sul volo ${t.vettoreNome} ${tr}? Puoi avere diritto a ${t.importo} € (art. 7 Reg. CE 261/2004).`
+    ),
     intro: `Se il tuo volo ${t.vettoreNome} da ${t.da.nome} a ${t.a.nome} è arrivato a destinazione con tre ore o più di ritardo, puoi avere diritto a una compensazione di ${euro(t.importo)} a passeggero, oltre all'assistenza in aeroporto.`,
     sezioni: [
       {
@@ -206,7 +216,10 @@ function cancellazione(t: Tratta): ContenutoDisservizio {
     hrefGuida: '/ec261/volo-cancellato',
     h1: `Volo ${t.vettoreNome} ${tr} cancellato, rimborso e compensazione`,
     title: `Volo ${t.vettoreNome} ${tr} cancellato | Rimborso e ${t.importo} € – Giustizia In Volo`,
-    description: `Volo ${t.vettoreNome} ${tr} cancellato? Hai diritto al rimborso o a un volo alternativo e, se l'avviso è arrivato tardi, a ${t.importo} € di compensazione a passeggero.`,
+    description: entro160(
+      `Volo ${t.vettoreNome} ${tr} cancellato? Hai diritto al rimborso o a un volo alternativo e, se l'avviso è arrivato tardi, puoi avere diritto a ${t.importo} € a passeggero.`,
+      `Volo ${t.vettoreNome} ${tr} cancellato? Rimborso o volo alternativo e, con preavviso tardivo, puoi avere diritto a ${t.importo} €.`
+    ),
     intro: `Se ${t.vettoreNome} ha cancellato il tuo volo da ${t.da.nome} a ${t.a.nome}, hai diritto a scegliere tra rimborso e volo alternativo, all'assistenza in aeroporto e, in molti casi, a una compensazione di ${euro(t.importo)} a passeggero.`,
     sezioni: [
       {
@@ -282,7 +295,10 @@ function negatoImbarco(t: Tratta): ContenutoDisservizio {
     hrefGuida: '/ec261/overbooking',
     h1: `Imbarco negato sul volo ${t.vettoreNome} ${tr}, cosa spetta`,
     title: `Negato imbarco ${t.vettoreNome} ${tr} | Overbooking, ${t.importo} € – Giustizia In Volo`,
-    description: `Imbarco negato per overbooking sul volo ${t.vettoreNome} ${tr}? La compensazione del Reg. CE 261/2004 su questa tratta è di ${t.importo} € a passeggero, più rimborso o volo alternativo.`,
+    description: entro160(
+      `Imbarco negato per overbooking sul volo ${t.vettoreNome} ${tr}? La compensazione del Reg. CE 261/2004 su questa tratta è di ${t.importo} € a passeggero, più rimborso o volo alternativo.`,
+      `Imbarco negato sul volo ${t.vettoreNome} ${tr}? L'art. 7 Reg. CE 261/2004 prevede ${t.importo} €, più rimborso o volo alternativo.`
+    ),
     intro: `Se ${t.vettoreNome} ti ha negato l'imbarco sul volo da ${t.da.nome} a ${t.a.nome} contro la tua volontà e senza un ragionevole motivo, hai diritto a una compensazione immediata di ${euro(t.importo)} a passeggero, alla scelta tra rimborso e volo alternativo e all'assistenza in aeroporto.`,
     sezioni: [
       {

@@ -6,7 +6,7 @@ import { fonte, type FonteId } from '@/lib/seo/fonti'
 import { contenuto, DISSERVIZI, isDisservizio, migliaia } from '@/lib/seo/disservizi'
 import { getTratta, titoloTratta, tratte, VERIFICA_TRATTE, type Tratta } from '@/lib/seo/tratte'
 
-const BASE_URL = 'https://giustiziainvolo.it'
+import { SITE_URL as BASE_URL } from '@/lib/site'
 
 interface Props {
   params: Promise<{ vettore: string; tratta: string; disservizio: string }>
