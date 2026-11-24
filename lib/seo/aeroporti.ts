@@ -35,6 +35,9 @@ export const aeroportiTratta: AeroportoTratta[] = [
   { iata: 'CAG', slug: 'cagliari', nome: 'Cagliari', citta: 'Cagliari', paese: 'Italia', ue: true, lat: 39.2515, lon: 9.0543 },
   { iata: 'OLB', slug: 'olbia', nome: 'Olbia', citta: 'Olbia', paese: 'Italia', ue: true, lat: 40.8987, lon: 9.5176 },
   { iata: 'SUF', slug: 'lamezia-terme', nome: 'Lamezia Terme', citta: 'Lamezia Terme', paese: 'Italia', ue: true, lat: 38.9054, lon: 16.2423 },
+  { iata: 'TPS', slug: 'trapani', nome: 'Trapani', citta: 'Trapani', paese: 'Italia', ue: true, lat: 37.9114, lon: 12.488 },
+  { iata: 'PSR', slug: 'pescara', nome: 'Pescara', citta: 'Pescara', paese: 'Italia', ue: true, lat: 42.4317, lon: 14.1811 },
+  { iata: 'REG', slug: 'reggio-calabria', nome: 'Reggio Calabria', citta: 'Reggio Calabria', paese: 'Italia', ue: true, lat: 38.0712, lon: 15.6516 },
   // Spagna e Portogallo
   { iata: 'AGP', slug: 'malaga', nome: 'Malaga', citta: 'Malaga', paese: 'Spagna', ue: true, lat: 36.6749, lon: -4.4991 },
   { iata: 'MAD', slug: 'madrid', nome: 'Madrid', citta: 'Madrid', paese: 'Spagna', ue: true, lat: 40.4719, lon: -3.5626 },
@@ -68,6 +71,7 @@ export const aeroportiTratta: AeroportoTratta[] = [
   { iata: 'VIE', slug: 'vienna', nome: 'Vienna', citta: 'Vienna', paese: 'Austria', ue: true, lat: 48.1103, lon: 16.5697 },
   { iata: 'BUD', slug: 'budapest', nome: 'Budapest', citta: 'Budapest', paese: 'Ungheria', ue: true, lat: 47.4369, lon: 19.2556 },
   { iata: 'PRG', slug: 'praga', nome: 'Praga', citta: 'Praga', paese: 'Repubblica Ceca', ue: true, lat: 50.1008, lon: 14.26 },
+  { iata: 'WAW', slug: 'varsavia', nome: 'Varsavia Chopin', citta: 'Varsavia', paese: 'Polonia', ue: true, lat: 52.1657, lon: 20.9671 },
   { iata: 'KRK', slug: 'cracovia', nome: 'Cracovia', citta: 'Cracovia', paese: 'Polonia', ue: true, lat: 50.0777, lon: 19.7848 },
   { iata: 'OTP', slug: 'bucarest', nome: 'Bucarest', citta: 'Bucarest', paese: 'Romania', ue: true, lat: 44.5711, lon: 26.085 },
   { iata: 'SOF', slug: 'sofia', nome: 'Sofia', citta: 'Sofia', paese: 'Bulgaria', ue: true, lat: 42.6952, lon: 23.4062 },
