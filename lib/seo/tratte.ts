@@ -22,12 +22,17 @@ export const VERIFICA_TRATTE = {
  *             (BRI → CTA, PMO, CAG, PSA, VRN, GOA, VIE, ATH; BLQ → BDS, SUF, OLB, LIS, VIE, ATH) e Wizz Air BLQ → OTP,
  *             tutte nell'elenco non stagionale delle pagine Wikipedia (EN) degli aeroporti di Bari e Bologna.
  *             Flightera non era leggibile in automatico (errore del sito), quindi manca il secondo riscontro.
+ * 24.11.2026  ricontrollate tutte le tratte in partenza da FCO e MXP (53, tutte confermate non stagionali) e aggiunte 15 tratte:
+ *             Ryanair FCO → BDS, TPS, BER, VIE, ATH; easyJet FCO → BER; Wizz Air FCO → WAW; ITA Airways FCO → BDS;
+ *             Ryanair MXP → CAG, PSR, REG, SUF; easyJet MXP → OLB, BDS, CAG. Tutte nell'elenco non stagionale delle pagine
+ *             Wikipedia (EN) di Fiumicino e Malpensa lette il 24.11.2026. Flightera ancora non leggibile (errore del sito),
+ *             il sito di ADR non leggibile, quello di Malpensa senza elenco destinazioni: manca il secondo riscontro.
  */
 const LOTTO: Record<string, Record<string, string[]>> = {
   ryanair: {
     BRI: ['AGP', 'MAD', 'STN', 'CRL', 'BGY', 'MXP', 'BLQ', 'FCO', 'TRN', 'VCE', 'CTA', 'PMO', 'CAG', 'PSA', 'VRN', 'GOA', 'VIE', 'ATH'],
-    FCO: ['BCN', 'MAD', 'AGP', 'SVQ', 'LIS', 'DUB', 'CTA', 'PMO', 'BRI', 'TFS'],
-    MXP: ['BCN', 'MAD', 'CTA', 'PMO', 'BRI', 'NAP', 'STN', 'DUB'],
+    FCO: ['BCN', 'MAD', 'AGP', 'SVQ', 'LIS', 'DUB', 'CTA', 'PMO', 'BRI', 'TFS', 'BDS', 'TPS', 'BER', 'VIE', 'ATH'],
+    MXP: ['BCN', 'MAD', 'CTA', 'PMO', 'BRI', 'NAP', 'STN', 'DUB', 'CAG', 'PSR', 'REG', 'SUF'],
     BGY: ['BCN', 'MAD', 'AGP', 'LIS', 'STN', 'DUB', 'CRL', 'CTA', 'PMO', 'BRI', 'NAP', 'CAG'],
     NAP: ['BCN', 'STN', 'DUB', 'BGY', 'MXP', 'VCE', 'CTA', 'PMO'],
     CTA: ['FCO', 'MXP', 'BGY', 'BLQ', 'VCE', 'TRN', 'PSA', 'NAP', 'STN'],
@@ -36,15 +41,15 @@ const LOTTO: Record<string, Record<string, string[]>> = {
   },
   easyjet: {
     BRI: ['MXP', 'LGW'],
-    FCO: ['LGW', 'ORY', 'NCE'],
-    MXP: ['BCN', 'LGW', 'AMS', 'CDG', 'LIS', 'CTA', 'PMO', 'NAP', 'BRI'],
+    FCO: ['LGW', 'ORY', 'NCE', 'BER'],
+    MXP: ['BCN', 'LGW', 'AMS', 'CDG', 'LIS', 'CTA', 'PMO', 'NAP', 'BRI', 'OLB', 'BDS', 'CAG'],
     NAP: ['LGW', 'ORY', 'MXP', 'BCN'],
     CTA: ['MXP', 'NAP', 'LGW'],
     VCE: ['LGW', 'CDG', 'ORY', 'AMS'],
   },
   'wizz-air': {
     BRI: ['BUD', 'TIA'],
-    FCO: ['BUD', 'TIA', 'MAD', 'BCN', 'OTP'],
+    FCO: ['BUD', 'TIA', 'MAD', 'BCN', 'OTP', 'WAW'],
     MXP: ['BUD', 'OTP', 'TIA', 'CTA', 'MAD'],
     BGY: ['OTP', 'TIA'],
     NAP: ['BUD', 'TIA'],
@@ -67,7 +72,7 @@ const LOTTO: Record<string, Record<string, string[]>> = {
   },
   'ita-airways': {
     BRI: ['LIN', 'FCO'],
-    FCO: ['LIN', 'CTA', 'PMO', 'BRI', 'MAD', 'BCN', 'CDG', 'LHR', 'AMS', 'FRA'],
+    FCO: ['LIN', 'CTA', 'PMO', 'BRI', 'MAD', 'BCN', 'CDG', 'LHR', 'AMS', 'FRA', 'BDS'],
     NAP: ['LIN', 'FCO'],
     CTA: ['LIN', 'FCO'],
     BLQ: ['FCO'],
