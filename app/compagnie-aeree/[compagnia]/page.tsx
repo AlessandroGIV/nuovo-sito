@@ -96,7 +96,7 @@ export default async function CompagniaPage({ params }: Props) {
             {
               n: '3',
               title: 'Ricevi il risarcimento',
-              desc: `Se ${airline.name} è obbligata a pagare, ottieni fino a €600. Trattiamo solo una quota concordata sul rimborso ottenuto.`,
+              desc: `Se ${airline.name} è obbligata a pagare, ottieni fino a €600. Tratteniamo solo una quota concordata sul rimborso ottenuto.`,
             },
           ].map((s) => (
             <div key={s.n} className="rounded-xl bg-white/5 p-6 text-center">
