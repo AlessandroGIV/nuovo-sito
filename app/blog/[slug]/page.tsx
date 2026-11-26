@@ -252,18 +252,6 @@ export default async function BlogPostPage({ params }: Props) {
 
               {/* Meta row */}
               <div className="mt-7 flex flex-wrap items-center gap-5 text-sm">
-                {/* Author avatar */}
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full flex items-center justify-center font-bold shrink-0"
-                       style={{ background: 'rgba(255,195,0,0.15)', border: '1px solid rgba(255,195,0,0.35)', color: '#FFC300' }}>
-                    G
-                  </div>
-                  <div>
-                    <div className="text-white font-medium">Studio Legale GIV</div>
-                    <div className="text-white/50 font-mono text-xs">Team rimborsi</div>
-                  </div>
-                </div>
-                <span className="h-6 w-px bg-white/15 hidden md:block" />
                 <span className="inline-flex items-center gap-1.5 text-white/65">
                   <Calendar className="h-4 w-4 text-[#FFC300]" />
                   {dateStr}
@@ -385,24 +373,11 @@ export default async function BlogPostPage({ params }: Props) {
                 </div>
               </div>
 
-              {/* Author box */}
-              <div className="mt-10 rounded-2xl p-6 flex gap-5 items-start" style={{ background: '#F6F4EF' }}>
-                <div
-                  className="h-14 w-14 shrink-0 rounded-full flex items-center justify-center font-bold text-xl"
-                  style={{ background: '#FFF4CC', border: '1px solid #F0CE5C', color: '#8A6A00' }}
-                >
-                  G
-                </div>
-                <div>
-                  <div className="text-xs font-mono uppercase tracking-[0.16em]" style={{ color: 'rgba(7,37,52,0.55)' }}>
-                    Scritto da
-                  </div>
-                  <div className="mt-1 text-lg font-bold" style={{ color: '#072534' }}>Studio Legale GIV</div>
-                  <div className="text-sm" style={{ color: 'rgba(7,37,52,0.6)' }}>Team rimborsi, diritto aeronautico</div>
-                  <p className="mt-3 text-[15px] leading-relaxed" style={{ color: 'rgba(7,37,52,0.8)' }}>
-                    Gli articoli del blog si fondano sul Regolamento CE 261/2004 e sulla giurisprudenza citata nel testo. Hanno scopo informativo e non sostituiscono la valutazione del caso concreto.
-                  </p>
-                </div>
+              {/* Nota informativa (articoli non firmati) */}
+              <div className="mt-10 rounded-2xl p-6" style={{ background: '#F6F4EF' }}>
+                <p className="text-[15px] leading-relaxed" style={{ color: 'rgba(7,37,52,0.8)' }}>
+                  Gli articoli del blog si fondano sul Regolamento CE 261/2004 e sulla giurisprudenza citata nel testo. Hanno scopo informativo e non sostituiscono la valutazione del caso concreto.
+                </p>
               </div>
             </article>
 
