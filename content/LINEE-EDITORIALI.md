@@ -21,6 +21,8 @@ Regole per chi scrive o aggiorna contenuti del sito, persone e agenti automatici
 - Sui termini per agire si riporta il quadro di `lib/seo/disservizi.ts` (sezione «Entro quando agire»). Non si scrive «3 anni».
 - Dove la giurisprudenza è divisa lo si dice.
 - Nessun giudizio sui vettori che non sia sorretto da una fonte.
+- GIV non è uno studio legale. Non si scrive mai «studio legale», «Studio Legale GIV» né il nome dello studio o dei professionisti che seguono le pratiche.
+- Gli articoli sono anonimi, senza firma né autore.
 
 ## 3. Articoli del blog
 
