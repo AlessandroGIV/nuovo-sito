@@ -13,13 +13,15 @@ export function SiteFooter() {
   const hideCta = pathname === "/richiesta" || pathname === "/chi-siamo" || pathname === "/compenso" // niente CTA in queste pagine
   // Pagine per le agenzie e gestione: l'invito rivolto ai passeggeri non c'entra
   const isAgencyPage = pathname === "/agenzie" || pathname.startsWith("/agenzie/")
+  // Blog: gli articoli chiudono già con il proprio invito verso /richiesta, il riquadro sarebbe una ripetizione
+  const isBlog = pathname === "/blog" || pathname.startsWith("/blog/")
   const isReservedArea = pathname.startsWith("/agenzie/area") || pathname.startsWith("/gestione")
 
   if (isReservedArea) return null
 
   return (
     <footer className="border-t border-white/10 bg-[#072534] text-white">
-      {!isAgencyPage && (
+      {!isAgencyPage && !isBlog && (
       <section className="container mx-auto px-4 py-12 text-center">
         <h3 className="text-3xl md:text-4xl font-extrabold text-[#FFC300]">{t('ctaTitle')}</h3>
         <p className="mt-3 text-white/80 max-w-2xl mx-auto">
