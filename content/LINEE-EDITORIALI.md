@@ -34,12 +34,13 @@ Regole per chi scrive o aggiorna contenuti del sito, persone e agenti automatici
 
 ### Copertina
 
-- Ogni articolo ha una copertina generata con IA, salvata in `public/blog/<slug>.webp`, 1280×720, sotto i 400 KB.
-- Nel frontmatter `cover: "/blog/<slug>.webp"` e `coverAlt` con una descrizione breve di ciò che si vede. Il controllo automatico segnala gli articoli senza copertina e blocca quelli con un percorso sbagliato o senza `coverAlt`.
-- Generazione gratuita con il connettore Hugging Face (spazio FLUX), formato orizzontale 16:9.
-- Stile fotografico editoriale, luce calda, toni blu notte e ambra coerenti con il sito. Soggetto legato al tema (gate, tabellone partenze, pista, bagagli, aereo generico).
-- Vietati loghi, livree o nomi di compagnie reali, marchi riconoscibili, testo nell'immagine, volti riconoscibili e scene che facciano pensare a un caso reale.
-- Se la generazione non riesce l'articolo non si blocca. Si apre la PR senza copertina e lo si dice ad Alessandro.
+- Ogni articolo ha una copertina generata con IA, gratis, con gli spazi FLUX di Hugging Face.
+- Nel frontmatter si scrivono `coverPrompt` (la scena in inglese, lo stile lo aggiunge lo script) e `coverAlt` (descrizione breve in italiano di ciò che si vede).
+- Alla PR la GitHub Action `copertine` esegue `scripts/genera-copertina.py`, salva l'immagine in `public/blog/<slug>.webp` (1280×720, sotto i 400 KB) e aggiunge `cover` al frontmatter con un commit sul branch. Serve il secret `HF_TOKEN` del repository.
+- Per rigenerarla con un'altra inquadratura si cambia `coverPrompt` e si cancella il file, oppure si esegue in locale `python3 scripts/genera-copertina.py <slug> <seed>`.
+- Soggetto legato al tema (gate, terminal, pista, bagagli, aereo generico). Vietati loghi, livree o nomi di compagnie reali, marchi, testo nell'immagine, volti riconoscibili e scene che facciano pensare a un caso reale.
+- Chi scrive guarda l'immagine prima di proporla. Se ha scritte, loghi o difetti evidenti la si rigenera.
+- Se la generazione non riesce l'articolo non si blocca. Si pubblica senza copertina e lo si dice ad Alessandro.
 
 ## 4. Pagine tratta
 

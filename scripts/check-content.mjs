@@ -78,6 +78,9 @@ for (const file of fs.readdirSync(POSTS).filter((f) => f.endsWith('.mdx'))) {
     else if (!fs.existsSync(file)) err(`copertina non trovata in public${data.cover}`)
     else if (fs.statSync(file).size > 400 * 1024) avv(`copertina di ${Math.round(fs.statSync(file).size / 1024)} KB, meglio sotto i 400 KB`)
     if (!data.coverAlt) err('copertina senza "coverAlt"')
+  } else if (data.coverPrompt) {
+    avv('copertina in attesa di generazione (la crea la GitHub Action "copertine")')
+    if (!data.coverAlt) err('"coverPrompt" senza "coverAlt"')
   } else {
     avv('articolo senza copertina, richiesta dalle linee editoriali')
   }
