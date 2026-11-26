@@ -51,7 +51,7 @@ def genera(prompt: str, seed: int) -> str:
     ultimo = None
     for spazio, extra in SPAZI:
         try:
-            c = Client(spazio, hf_token=token, verbose=False)
+            c = Client(spazio, token=token, verbose=False)
             res, _ = c.predict(prompt=prompt, seed=seed, randomize_seed=False, width=1280, height=720,
                                api_name='/infer', **extra)
             print(f'  generata con {spazio}')
@@ -119,7 +119,7 @@ def main() -> None:
                 errori += 1
                 print(f'  {e}', file=sys.stderr)
     if errori:
-        print(f'{errori} copertine non generate', file=sys.stderr)
+        print(f'::warning::{errori} copertine non generate, vedi il log del passo precedente')
 
 
 if __name__ == '__main__':
