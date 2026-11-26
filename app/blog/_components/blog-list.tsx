@@ -76,29 +76,11 @@ function PostCover({ variant, slug, ratio = '16/10' }: { variant: string; slug: 
   )
 }
 
-// ── Author avatar ─────────────────────────────────────────────
-
-function AuthorAvatar({ initial, size = 36, onPaper = false }: { initial: string; size?: number; onPaper?: boolean }) {
-  return (
-    <div
-      className="rounded-full flex items-center justify-center font-bold text-sm shrink-0"
-      style={
-        onPaper
-          ? { width: size, height: size, background: '#FFF4CC', border: '1px solid #F0CE5C', color: '#8A6A00' }
-          : { width: size, height: size, background: 'rgba(255,195,0,0.15)', border: '1px solid rgba(255,195,0,0.35)', color: '#FFC300' }
-      }
-    >
-      {initial}
-    </div>
-  )
-}
-
 // ── Post card (paper) ────────────────────────────────────────
 
 function PostCard({ post, featured = false }: { post: PostFrontmatter; featured?: boolean }) {
   const min = readMin(post.excerpt)
   const cover = COVER[post.category]
-  const initial = 'G'
   const dateStr = new Date(post.date).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })
 
   const inner = (
@@ -137,11 +119,9 @@ function PostCard({ post, featured = false }: { post: PostFrontmatter; featured?
           {post.excerpt}
         </p>
 
-        {/* Author + date */}
+        {/* Date */}
         <div className="mt-5 flex items-center gap-3">
-          <AuthorAvatar initial={initial} onPaper />
           <div className="text-xs min-w-0">
-            <div className="font-medium" style={{ color: 'rgba(7,37,52,0.9)' }}>Studio Legale GIV</div>
             <div className="font-mono" style={{ color: 'rgba(15,42,60,0.55)' }}>{dateStr}</div>
           </div>
           {featured && (

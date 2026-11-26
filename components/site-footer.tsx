@@ -9,41 +9,12 @@ import { ManageCookiesButton } from "@/components/cookie/ManageCookiesButton"
 export function SiteFooter() {
   const pathname = usePathname()
   const { t } = useLanguage()
-  const isHome = pathname === "/"
-  const hideCta = pathname === "/richiesta" || pathname === "/chi-siamo" || pathname === "/compenso" // niente CTA in queste pagine
-  // Pagine per le agenzie e gestione: l'invito rivolto ai passeggeri non c'entra
-  const isAgencyPage = pathname === "/agenzie" || pathname.startsWith("/agenzie/")
   const isReservedArea = pathname.startsWith("/agenzie/area") || pathname.startsWith("/gestione")
 
   if (isReservedArea) return null
 
   return (
     <footer className="border-t border-white/10 bg-[#072534] text-white">
-      {!isAgencyPage && (
-      <section className="container mx-auto px-4 py-12 text-center">
-        <h3 className="text-3xl md:text-4xl font-extrabold text-[#FFC300]">{t('ctaTitle')}</h3>
-        <p className="mt-3 text-white/80 max-w-2xl mx-auto">
-          {t('ctaSubtitle')}
-        </p>
-        {!isHome && !hideCta && (
-          <div className="mt-6 flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/#contact-form"
-              className="rounded-md bg-[#FF8A00] px-6 py-3 font-semibold text-white hover:bg-[#ff8a00]/90"
-            >
-              {t('requestFreeClaim')}
-            </Link>
-            <Link
-              href="/faq"
-              className="rounded-md bg-[#FFC300] px-6 py-3 font-semibold text-[#072534] hover:bg-[#FFB800]"
-            >
-              {t('readFAQ')}
-            </Link>
-          </div>
-        )}
-      </section>
-      )}
-
       <div className="container mx-auto grid gap-8 px-4 py-10 md:grid-cols-3">
         <div>
           <div className="flex items-center gap-2 text-[#FFC300] font-extrabold">

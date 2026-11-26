@@ -178,7 +178,7 @@ export const airlineSubpages: AirlineSubpage[] = [
       },
       {
         q: `Perché affidarmi a Giustizia In Volo invece di contattare ${n} da solo?`,
-        a: `Le richieste inviate da uno studio legale hanno una probabilità di successo molto più alta. E non paghi nulla se non otteniamo il rimborso.`,
+        a: `Le richieste inviate con assistenza legale hanno una probabilità di successo molto più alta. E non paghi nulla se non otteniamo il rimborso.`,
       },
     ],
   },

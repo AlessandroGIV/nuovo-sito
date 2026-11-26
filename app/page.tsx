@@ -156,7 +156,7 @@ export default async function HomePage() {
             className="mt-0 font-extrabold tracking-[-0.03em] leading-[1.08] text-[#072534]"
             style={{ fontSize: 32 }}
           >
-            Uno studio legale vero.
+            Un servizio legale vero.
           </h2>
 
           {/* KPI cards + testimonial side by side on desktop */}
