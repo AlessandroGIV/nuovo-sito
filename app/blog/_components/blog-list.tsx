@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useState, useMemo } from 'react'
 import { Search, Clock } from 'lucide-react'
 import type { PostFrontmatter, PostCategory } from '@/lib/posts'
+import { BlogCoverImage } from '@/components/blog-cover'
 
 const CATEGORIES: { id: PostCategory | 'tutti'; label: string }[] = [
   { id: 'tutti',     label: 'Tutti gli articoli' },
@@ -64,14 +65,18 @@ function CategoryPill({
 
 // ── Post cover ───────────────────────────────────────────────
 
-function PostCover({ variant, slug, ratio = '16/10' }: { variant: string; slug: string; ratio?: string }) {
+function PostCover({ variant, slug, ratio = '16/10', src, alt }: { variant: string; slug: string; ratio?: string; src?: string; alt?: string }) {
   return (
     <div className={`${variant} relative overflow-hidden rounded-xl`} style={{ aspectRatio: ratio }}>
-      <div className="absolute inset-x-0 bottom-0 p-3">
-        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/40">
-          {slug.slice(0, 28)}
-        </span>
-      </div>
+      {src ? (
+        <BlogCoverImage src={src} alt={alt} />
+      ) : (
+        <div className="absolute inset-x-0 bottom-0 p-3">
+          <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/40">
+            {slug.slice(0, 28)}
+          </span>
+        </div>
+      )}
     </div>
   )
 }
@@ -157,7 +162,7 @@ function PostCard({ post, featured = false }: { post: PostFrontmatter; featured?
 
       {/* Right / Bottom: cover */}
       <div className={featured ? 'order-1 lg:order-2' : 'mt-1'}>
-        <PostCover variant={cover} slug={post.slug} ratio={featured ? '16/9' : '16/10'} />
+        <PostCover variant={cover} slug={post.slug} ratio={featured ? '16/9' : '16/10'} src={post.cover} alt={post.coverAlt} />
       </div>
     </>
   )

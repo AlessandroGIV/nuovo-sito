@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - "content/**"
+      - "public/blog/**"
       - "lib/seo/**"
       - "scripts/check-content.mjs"
   workflow_dispatch:

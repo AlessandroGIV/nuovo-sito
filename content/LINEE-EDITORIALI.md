@@ -32,6 +32,16 @@ Regole per chi scrive o aggiorna contenuti del sito, persone e agenti automatici
 - Lunghezza tra 900 e 1.800 parole. Meglio un articolo corto e fondato che uno lungo e generico.
 - Prima di aprire la PR si esegue `npm run check`.
 
+### Copertina
+
+- Ogni articolo ha una copertina generata con IA, gratis, con gli spazi FLUX di Hugging Face.
+- Nel frontmatter si scrivono `coverPrompt` (la scena in inglese, lo stile lo aggiunge lo script) e `coverAlt` (descrizione breve in italiano di ciò che si vede).
+- Alla PR la GitHub Action `copertine` esegue `scripts/genera-copertina.py`, salva l'immagine in `public/blog/<slug>.webp` (1280×720, sotto i 400 KB) e aggiunge `cover` al frontmatter con un commit sul branch. Serve il secret `HF_TOKEN` del repository.
+- Per rigenerarla con un'altra inquadratura si cambia `coverPrompt` e si cancella il file, oppure si esegue in locale `python3 scripts/genera-copertina.py <slug> <seed>`.
+- Soggetto legato al tema (gate, terminal, pista, bagagli, aereo generico). Vietati loghi, livree o nomi di compagnie reali, marchi, testo nell'immagine, volti riconoscibili e scene che facciano pensare a un caso reale.
+- Chi scrive guarda l'immagine prima di proporla. Se ha scritte, anche finte, loghi o difetti evidenti la si rigenera. Le fiancate degli aerei in primo piano tendono a riempirsi di scritte inventate, meglio aerei lontani, in controluce o visti di fronte.
+- Se la generazione non riesce l'articolo non si blocca. Si pubblica senza copertina e lo si dice ad Alessandro.
+
 ## 4. Pagine tratta
 
 - Le tratte stanno in `lib/seo/tratte.ts`. Si aggiunge una tratta solo dopo averla riscontrata su una fonte pubblica datata. La fonte di riferimento è la pagina della rotta su flightera.net (voli settimanali e vettori), in mancanza l'operativo del vettore o il sito dell'aeroporto. Niente tratte a memoria. Un collegamento stagionale si tiene solo se operato nell'ultima stagione e va registrato in `STAGIONALI`.

@@ -1,0 +1,46 @@
+name: copertine
+
+# Genera con IA le copertine mancanti degli articoli (scripts/genera-copertina.py)
+# e le aggiunge con un commit al branch della PR. Serve il secret HF_TOKEN.
+on:
+  pull_request:
+    paths:
+      - "content/posts/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: copertine-${{ github.head_ref || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  copertine:
+    # solo PR dello stesso repository, non dai fork
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref || github.ref_name }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install gradio_client pillow
+      - name: Genera le copertine mancanti
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python3 scripts/genera-copertina.py
+      - name: Commit sul branch della PR
+        run: |
+          if [ -n "$(git status --porcelain content/posts public/blog)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add content/posts public/blog
+            git commit -m "Copertine generate con IA"
+            git push
+          else
+            echo "Nessuna copertina da aggiungere"
+          fi
