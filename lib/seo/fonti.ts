@@ -148,6 +148,34 @@ export const fonti = {
     stato: 'lexroom',
     verificataIl: '2026-11-06',
   },
+  ceskeAerolinie: {
+    id: 'ceskeAerolinie',
+    tipo: 'cgue',
+    estremi: 'Corte di giustizia UE, Nona Sezione, 11 luglio 2019, causa C-502/18, České aerolinie',
+    stato: 'lexroom',
+    verificataIl: '2026-11-08',
+  },
+  unitedC561: {
+    id: 'unitedC561',
+    tipo: 'cgue',
+    estremi: 'Corte di giustizia UE, Quarta Sezione, 7 aprile 2022, causa C-561/20, United Airlines',
+    stato: 'lexroom',
+    verificataIl: '2026-11-08',
+  },
+  tribMilano9122: {
+    id: 'tribMilano9122',
+    tipo: 'merito',
+    estremi: 'Tribunale di Milano, sez. XI, 9 novembre 2021 n. 9122',
+    stato: 'lexroom',
+    verificataIl: '2026-11-08',
+  },
+  tribNapoli1243: {
+    id: 'tribNapoli1243',
+    tipo: 'merito',
+    estremi: 'Tribunale di Napoli, sez. XI, 6 febbraio 2025 n. 1243',
+    stato: 'lexroom',
+    verificataIl: '2026-11-08',
+  },
 } as const satisfies Record<string, Fonte>
 
 export type FonteId = keyof typeof fonti
