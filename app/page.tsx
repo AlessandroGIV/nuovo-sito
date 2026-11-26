@@ -1,5 +1,6 @@
 import HomeStartForm from "@/components/home-start-form"
 import { getAllPosts, type PostFrontmatter } from "@/lib/posts"
+import { BlogCoverImage } from "@/components/blog-cover"
 import Link from "next/link"
 import {
   Shield,
@@ -482,7 +483,13 @@ function BlogCard({
   return (
     <Link href={`/blog/${post.slug}`} className="block group">
       <article className="flex h-full flex-col gap-3 rounded-2xl bg-white p-3.5 shadow-[0_1px_0_rgba(7,37,52,0.04),0_6px_20px_rgba(7,37,52,0.08)] hover:shadow-[0_8px_32px_rgba(7,37,52,0.14)] transition-shadow">
-        <CoverStripes variant={variant} className="h-[120px]" />
+        {post.cover ? (
+          <div className="relative h-[120px] overflow-hidden rounded-xl bg-[#0E3A52]">
+            <BlogCoverImage src={post.cover} alt={post.coverAlt} />
+          </div>
+        ) : (
+          <CoverStripes variant={variant} className="h-[120px]" />
+        )}
         <div className="flex items-center gap-2.5 text-[11.5px]">
           <span className="font-mono uppercase tracking-[0.14em] text-[11px] font-medium text-[#B07D00]">
             {CATEGORY_LABELS[post.category] ?? post.category}

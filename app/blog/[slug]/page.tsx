@@ -5,6 +5,7 @@ import { MDXRemote } from 'next-mdx-remote/rsc'
 import { ChevronRight, ArrowLeft, ArrowRight, Clock, Calendar, Tag, BadgeCheck, Twitter, Linkedin, Facebook, Link2 } from 'lucide-react'
 import { getPostBySlug, getAllPosts, getAllSlugs } from '@/lib/posts'
 import { TocSidebar, type TocItem } from '../_components/toc'
+import { BlogCoverImage } from '@/components/blog-cover'
 
 import { SITE_URL as BASE_URL } from '@/lib/site'
 
@@ -47,7 +48,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       url: `${BASE_URL}/blog/${post.slug}`,
       type: 'article',
       publishedTime: post.date,
+      ...(post.cover ? { images: [{ url: `${BASE_URL}${post.cover}`, width: 1280, height: 720, alt: post.coverAlt ?? post.title }] } : {}),
     },
+    ...(post.cover ? { twitter: { card: 'summary_large_image', images: [`${BASE_URL}${post.cover}`] } } : {}),
     keywords: post.keywords,
   }
 }
@@ -129,9 +132,13 @@ function RelatedCard({ post }: { post: import('@/lib/posts').PostFrontmatter }) 
         style={{ borderRadius: '1rem', padding: '1rem', background: '#FFFFFF', boxShadow: '0 1px 0 rgba(7,37,52,0.04), 0 6px 20px rgba(7,37,52,0.10)' }}
       >
         <div className={`${cover} relative overflow-hidden rounded-xl`} style={{ aspectRatio: '16/10' }}>
-          <span className="absolute bottom-2 left-3 font-mono text-[10px] uppercase tracking-[0.18em] text-white/40">
-            {post.slug.slice(0, 24)}
-          </span>
+          {post.cover ? (
+            <BlogCoverImage src={post.cover} alt={post.coverAlt} />
+          ) : (
+            <span className="absolute bottom-2 left-3 font-mono text-[10px] uppercase tracking-[0.18em] text-white/40">
+              {post.slug.slice(0, 24)}
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-2 text-xs">
           <span className="font-mono uppercase tracking-[0.16em]" style={{ color: '#B07D00' }}>
@@ -185,6 +192,7 @@ export default async function BlogPostPage({ params }: Props) {
     headline: post.title,
     description: post.description,
     datePublished: post.date,
+    ...(post.cover ? { image: `${BASE_URL}${post.cover}` } : {}),
     publisher: { '@type': 'Organization', name: 'Giustizia In Volo', url: BASE_URL },
     mainEntityOfPage: { '@type': 'WebPage', '@id': `${BASE_URL}/blog/${post.slug}` },
   }
@@ -278,9 +286,13 @@ export default async function BlogPostPage({ params }: Props) {
             {/* Cover */}
             <div>
               <div className={`${cover} relative overflow-hidden rounded-xl`} style={{ aspectRatio: '16/9' }}>
-                <span className="absolute bottom-3 left-4 font-mono text-[10px] uppercase tracking-[0.18em] text-white/40">
-                  {post.slug.slice(0, 28)}
-                </span>
+                {post.cover ? (
+                  <BlogCoverImage src={post.cover} alt={post.coverAlt} priority />
+                ) : (
+                  <span className="absolute bottom-3 left-4 font-mono text-[10px] uppercase tracking-[0.18em] text-white/40">
+                    {post.slug.slice(0, 28)}
+                  </span>
+                )}
               </div>
             </div>
           </div>

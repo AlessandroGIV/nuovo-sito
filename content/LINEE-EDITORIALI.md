@@ -32,6 +32,15 @@ Regole per chi scrive o aggiorna contenuti del sito, persone e agenti automatici
 - Lunghezza tra 900 e 1.800 parole. Meglio un articolo corto e fondato che uno lungo e generico.
 - Prima di aprire la PR si esegue `npm run check`.
 
+### Copertina
+
+- Ogni articolo ha una copertina generata con IA, salvata in `public/blog/<slug>.webp`, 1280×720, sotto i 400 KB.
+- Nel frontmatter `cover: "/blog/<slug>.webp"` e `coverAlt` con una descrizione breve di ciò che si vede. Il controllo automatico segnala gli articoli senza copertina e blocca quelli con un percorso sbagliato o senza `coverAlt`.
+- Generazione gratuita con il connettore Hugging Face (spazio FLUX), formato orizzontale 16:9.
+- Stile fotografico editoriale, luce calda, toni blu notte e ambra coerenti con il sito. Soggetto legato al tema (gate, tabellone partenze, pista, bagagli, aereo generico).
+- Vietati loghi, livree o nomi di compagnie reali, marchi riconoscibili, testo nell'immagine, volti riconoscibili e scene che facciano pensare a un caso reale.
+- Se la generazione non riesce l'articolo non si blocca. Si apre la PR senza copertina e lo si dice ad Alessandro.
+
 ## 4. Pagine tratta
 
 - Le tratte stanno in `lib/seo/tratte.ts`. Si aggiunge una tratta solo dopo averla riscontrata su una fonte pubblica datata. La fonte di riferimento è la pagina della rotta su flightera.net (voli settimanali e vettori), in mancanza l'operativo del vettore o il sito dell'aeroporto. Niente tratte a memoria. Un collegamento stagionale si tiene solo se operato nell'ultima stagione e va registrato in `STAGIONALI`.

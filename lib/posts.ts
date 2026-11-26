@@ -14,6 +14,10 @@ export interface PostFrontmatter {
   category: PostCategory
   keywords: string[]
   excerpt: string
+  /** Percorso dell'immagine di copertina sotto public, per esempio /blog/<slug>.webp */
+  cover?: string
+  /** Testo alternativo della copertina */
+  coverAlt?: string
 }
 
 export interface Post extends PostFrontmatter {

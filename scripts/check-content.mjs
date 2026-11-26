@@ -71,6 +71,17 @@ for (const file of fs.readdirSync(POSTS).filter((f) => f.endsWith('.mdx'))) {
     err('manca la sezione "## Fonti" richiesta dalle linee editoriali')
   }
 
+  // Copertina: public/blog/<slug>.webp indicata con `cover` e `coverAlt`
+  if (data.cover) {
+    const file = path.join(ROOT, 'public', String(data.cover).replace(/^\//, ''))
+    if (!String(data.cover).startsWith('/blog/')) err(`la copertina deve stare in public/blog, trovato ${data.cover}`)
+    else if (!fs.existsSync(file)) err(`copertina non trovata in public${data.cover}`)
+    else if (fs.statSync(file).size > 400 * 1024) avv(`copertina di ${Math.round(fs.statSync(file).size / 1024)} KB, meglio sotto i 400 KB`)
+    if (!data.coverAlt) err('copertina senza "coverAlt"')
+  } else {
+    avv('articolo senza copertina, richiesta dalle linee editoriali')
+  }
+
   // JSX non chiuso o caratteri che fanno fallire la compilazione MDX
   if (/<(?!\/?(a|br|strong|em|table|thead|tbody|tr|td|th|sup|sub|span|div|details|summary)\b)[A-Za-z]/.test(content)) {
     avv('contiene tag HTML o JSX non comuni, controllare che la pagina compili')
