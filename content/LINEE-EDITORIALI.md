@@ -39,7 +39,7 @@ Regole per chi scrive o aggiorna contenuti del sito, persone e agenti automatici
 - Alla PR la GitHub Action `copertine` esegue `scripts/genera-copertina.py`, salva l'immagine in `public/blog/<slug>.webp` (1280×720, sotto i 400 KB) e aggiunge `cover` al frontmatter con un commit sul branch. Serve il secret `HF_TOKEN` del repository.
 - Per rigenerarla con un'altra inquadratura si cambia `coverPrompt` e si cancella il file, oppure si esegue in locale `python3 scripts/genera-copertina.py <slug> <seed>`.
 - Soggetto legato al tema (gate, terminal, pista, bagagli, aereo generico). Vietati loghi, livree o nomi di compagnie reali, marchi, testo nell'immagine, volti riconoscibili e scene che facciano pensare a un caso reale.
-- Chi scrive guarda l'immagine prima di proporla. Se ha scritte, loghi o difetti evidenti la si rigenera.
+- Chi scrive guarda l'immagine prima di proporla. Se ha scritte, anche finte, loghi o difetti evidenti la si rigenera. Le fiancate degli aerei in primo piano tendono a riempirsi di scritte inventate, meglio aerei lontani, in controluce o visti di fronte.
 - Se la generazione non riesce l'articolo non si blocca. Si pubblica senza copertina e lo si dice ad Alessandro.
 
 ## 4. Pagine tratta

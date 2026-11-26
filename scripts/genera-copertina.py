@@ -33,7 +33,7 @@ SPAZI = [
 ]
 STILE = (
     ' Editorial photography, warm amber light against deep navy blue tones, cinematic, high detail.'
-    ' No text, no letters, no signs, no logos, no airline livery, no brand names, no recognizable faces.'
+    ' No text, no letters, no writing on the aircraft fuselage, no signs, no logos, no airline livery, no brand names, no recognizable faces.'
 )
 
 
