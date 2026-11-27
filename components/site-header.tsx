@@ -48,7 +48,7 @@ export function SiteHeader() {
             <SheetTrigger asChild>
               <Button size="icon" variant="ghost" className="text-white hover:text-[#FFC300]">
                 <Menu className="h-5 w-5" />
-                <span className="sr-only">Apri menu</span>
+                <span className="sr-only">Menu</span>
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="bg-[#0A1E2E] text-white border-l border-white/[0.08] w-[270px] flex flex-col p-0">
@@ -59,12 +59,7 @@ export function SiteHeader() {
                 </SheetTitle>
               </SheetHeader>
               <nav className="flex flex-col gap-0.5 px-3 py-4">
-                {[
-                  { href: "/", label: "Home" },
-                  { href: "/chi-siamo", label: "Chi siamo" },
-                  { href: "/compenso", label: "Compenso" },
-                  { href: "/blog", label: "Blog" },
-                ].map((item) => (
+                {nav.map((item) => (
                   <SheetClose asChild key={item.href}>
                     <Link
                       href={item.href}
@@ -75,6 +70,9 @@ export function SiteHeader() {
                   </SheetClose>
                 ))}
               </nav>
+              <div className="px-3 border-t border-white/[0.08] pt-3">
+                <LanguageSwitcher mobile />
+              </div>
             </SheetContent>
           </Sheet>
         </div>

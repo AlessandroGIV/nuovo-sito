@@ -8,7 +8,8 @@ import { ManageCookiesButton } from "@/components/cookie/ManageCookiesButton"
 
 export function SiteFooter() {
   const pathname = usePathname()
-  const { t } = useLanguage()
+  const { t, language } = useLanguage()
+  const en = language === "en"
   const isHome = pathname === "/"
   const hideCta = pathname === "/richiesta" || pathname === "/chi-siamo" || pathname === "/compenso" // niente CTA in queste pagine
   // Pagine per le agenzie e gestione: l'invito rivolto ai passeggeri non c'entra
@@ -74,7 +75,7 @@ export function SiteFooter() {
               <Link href="/faq">{t('faq')}</Link>
             </li>
             <li>
-              <Link href="/agenzie">Agenzie di viaggio</Link>
+              <Link href="/agenzie">{en ? "Travel agencies" : "Agenzie di viaggio"}</Link>
             </li>
           </ul>
         </div>
@@ -95,13 +96,13 @@ export function SiteFooter() {
       </div>
 
       <div className="border-t border-white/10 py-6 text-center text-white/70 text-sm">
-        © 2025 GiustiziaInVolo - Attività legale regolarmente esercitata ·{" "}
+        © 2025 GiustiziaInVolo - {en ? "Legal services lawfully provided" : "Attività legale regolarmente esercitata"} ·{" "}
         <Link href="/privacy" className="underline">
           Privacy Policy
         </Link>{" "}
         ·{" "}
         <Link href="/termini" className="underline">
-          Termini e Condizioni
+          {en ? "Terms and Conditions" : "Termini e Condizioni"}
         </Link>{" "}
         ·{" "}
         <Link href="/cookie" className="underline">
