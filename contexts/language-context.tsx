@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { isTranslatedPath } from '@/lib/i18n-paths'
 import { getTranslation, type Language, type TranslationKey } from '@/lib/i18n'
 
@@ -33,6 +33,7 @@ export function LanguageProvider({
 }) {
   // initialLanguage arriva dal cookie letto dal layout: evita il flash IT→EN al caricamento
   const [language, setLanguageState] = useState<Language>(initialLanguage)
+  const router = useRouter()
 
   useEffect(() => {
     // 1. URL parameter ha priorità massima (es. QR code con ?lang=en)
@@ -42,6 +43,8 @@ export function LanguageProvider({
       setLanguageState(urlLang)
       setCookieLang(urlLang)
       localStorage.setItem('giustiziainvolo-lang', urlLang)
+      // Le pagine server sono state generate con la lingua precedente: ri-renderizzale
+      if (urlLang !== initialLanguage) router.refresh()
       return
     }
 
@@ -58,7 +61,7 @@ export function LanguageProvider({
       setLanguageState(stored)
       setCookieLang(stored)
     }
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang)
