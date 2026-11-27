@@ -91,7 +91,7 @@ html {
         `}</style>
       </head>
       <body>
-        <LanguageProvider>
+        <LanguageProvider initialLanguage={lang}>
           <ConsentProvider locale={lang}>
             <SiteHeader />
             {children}

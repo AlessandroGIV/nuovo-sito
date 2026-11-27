@@ -4,9 +4,37 @@ import { useRouter } from "next/navigation"
 import { useRef, useState } from "react"
 import GlobalAirportInput from "./global-airport-input"
 import { Plane, ArrowRight, Shield } from "lucide-react"
+import { useLanguage } from "@/contexts/language-context"
+
+const COPY = {
+  it: {
+    kicker: "{c.kicker}",
+    title: "Calcola il tuo rimborso",
+    subtitle: "{c.subtitle}",
+    from: "Aeroporto di partenza",
+    fromPh: "es. Roma Fiumicino",
+    to: "Aeroporto di arrivo",
+    toPh: "es. Milano Linate",
+    cta: "Calcola il rimborso",
+    privacy: "{c.privacy}",
+  },
+  en: {
+    kicker: "★ free check · 2 minutes",
+    title: "Check your compensation",
+    subtitle: "Enter your route and we'll tell you right away if you're entitled.",
+    from: "Departure airport",
+    fromPh: "e.g. Rome Fiumicino",
+    to: "Arrival airport",
+    toPh: "e.g. Milan Linate",
+    cta: "Check compensation",
+    privacy: "Data protected · used only for your claim · GDPR",
+  },
+}
 
 export default function HomeStartForm() {
   const router = useRouter()
+  const { language } = useLanguage()
+  const c = COPY[language]
   const [from, setFrom] = useState("")
   const [to, setTo] = useState("")
   const fromRef = useRef<HTMLInputElement>(null)
@@ -35,34 +63,34 @@ export default function HomeStartForm() {
         <div
           className="font-mono text-[11px] uppercase tracking-[0.18em] font-medium text-[#B07D00]"
         >
-          ★ calcolo gratuito · 2 minuti
+          {c.kicker}
         </div>
 
         <h2 className="mt-1.5 text-[24px] md:text-[28px] font-extrabold text-[#072534] leading-tight tracking-tight">
-          Calcola il tuo rimborso
+          {c.title}
         </h2>
         <p className="mt-1 text-[13.5px] text-[rgba(15,42,60,0.6)]">
-          Inserisci la tratta, ti diciamo subito se hai diritto.
+          {c.subtitle}
         </p>
 
         <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
           <GlobalAirportInput
             id="from"
             name="from"
-            label="Aeroporto di partenza"
+            label={c.from}
             value={from}
             onChange={setFrom}
-            placeholder="es. Roma Fiumicino"
+            placeholder={c.fromPh}
             required
             inputRef={fromRef}
           />
           <GlobalAirportInput
             id="to"
             name="to"
-            label="Aeroporto di arrivo"
+            label={c.to}
             value={to}
             onChange={setTo}
-            placeholder="es. Milano Linate"
+            placeholder={c.toPh}
             required
             inputRef={toRef}
           />
@@ -92,13 +120,13 @@ export default function HomeStartForm() {
             transition: "background 180ms ease, color 180ms ease, box-shadow 180ms ease",
           }}
         >
-          Calcola il rimborso
+          {c.cta}
           <ArrowRight className="h-5 w-5" />
         </button>
 
         <div className="mt-3 flex items-center gap-2 border-t border-dashed border-[rgba(15,42,60,0.12)] pt-3 text-[11.5px] text-[rgba(15,42,60,0.6)]">
           <Shield className="h-3.5 w-3.5 flex-shrink-0 text-[#FFC300]" />
-          Dati protetti · solo per la tua pratica · GDPR
+          {c.privacy}
         </div>
       </div>
     </div>

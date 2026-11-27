@@ -1,6 +1,8 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
+import { usePathname } from 'next/navigation'
+import { isTranslatedPath } from '@/lib/i18n-paths'
 import { getTranslation, type Language, type TranslationKey } from '@/lib/i18n'
 
 interface LanguageContextType {
@@ -22,8 +24,15 @@ function setCookieLang(lang: Language) {
   document.cookie = `giustiziainvolo-lang=${lang}; path=/; max-age=31536000; SameSite=Lax`
 }
 
-export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [language, setLanguageState] = useState<Language>('it')
+export function LanguageProvider({
+  children,
+  initialLanguage = 'it',
+}: {
+  children: ReactNode
+  initialLanguage?: Language
+}) {
+  // initialLanguage arriva dal cookie letto dal layout: evita il flash IT→EN al caricamento
+  const [language, setLanguageState] = useState<Language>(initialLanguage)
 
   useEffect(() => {
     // 1. URL parameter ha priorità massima (es. QR code con ?lang=en)
@@ -57,12 +66,16 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('giustiziainvolo-lang', lang)
   }
 
+  // Sulle pagine solo in italiano anche header/footer restano in italiano
+  const pathname = usePathname()
+  const effective: Language = isTranslatedPath(pathname) ? language : 'it'
+
   const t = (key: TranslationKey, vars?: Record<string, string | number>) => {
-    return getTranslation(language, key, vars)
+    return getTranslation(effective, key, vars)
   }
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+    <LanguageContext.Provider value={{ language: effective, setLanguage, t }}>
       {children}
     </LanguageContext.Provider>
   )
